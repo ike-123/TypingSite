@@ -1,0 +1,138 @@
+.app{
+
+}
+body{
+    background-color: #0b0c10;
+}
+.main{
+    margin-top: 50px;
+
+}
+
+
+
+.wordsPerMinute{
+    font-size: 50px;
+    color: whitesmoke;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    margin: auto;
+    text-align: center;
+
+    margin-bottom: 50px;
+
+}
+
+.TypeTestContainer{
+
+    
+    .TextContainer{
+        padding: 20px;
+        background-color:#0E3044;
+        border-radius: 20px 20px 0px 0px;
+        border-style: solid;
+        border-color: #b5c4c5;
+        border-width: 1px;
+        height: 150px;
+        width: 805px;
+        margin: auto;
+        .QuoteText{
+            font-size: 30px;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            color: #c5e1e3;
+        }   
+
+    }
+
+    .TextInput{
+
+        
+        
+        input{
+            background-color:#20455a;
+            width: 838px;
+            height: 50px;
+           margin: auto;
+           padding-left: 5px;
+            display: block;
+            border-radius: 0px 0px 20px 20px;
+            border-style: solid;
+        border-width: 1px;
+        border-color: #b5c4c5;
+
+             outline: none;
+             font-size: 30px;
+             color: #c5e1e3;
+        }
+  
+ 
+
+
+        
+
+    }
+}
+
+
+.correct{
+    color: aquamarine;
+}
+.incorrect{
+    color: rgb(255, 60, 60);
+}
+.Highlighted{
+    background-color: rgba(255, 228, 196, 0.4);
+    border-radius: 2px;
+}
+
+.Multiplayer{
+
+    .RaceTrack{
+
+        background-color: #376783;
+        height: 350px;
+        width: 1000px;
+        margin: auto;
+        border-radius: 10px;
+        position: relative;
+
+        .PlayerSection{
+
+            background-color:#0E3044;
+            height: 70px;
+            border-width: 1px;
+            border-style: solid;
+            border-radius: 10px;
+            display: flex;
+            align-items:end;
+            padding-bottom: 4px;
+            padding-left: 4px;
+            
+            .PlayerName{
+
+                position: absolute;
+                color: wheat;
+                font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+                margin-right: 5px;
+
+            }
+            .PlayerAvatar{
+                width: 60px;
+                height: 60px;
+                // background-color: red;
+                position: absolute;
+                border-radius: 50%;
+            
+                transition: left 150ms linear;
+            }
+            .WPM{
+                position: absolute;
+                right: 0;
+                color: wheat;
+                font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+            }
+
+        }
+
+    }
+}

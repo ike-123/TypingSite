@@ -1,0 +1,212 @@
+import React, { useState } from 'react'
+import './Style.scss'
+import words from '../words.json'
+
+
+function getRandomWords(amount: number){
+    const randomArray = [...words].sort(() => 0.5-Math.random());
+    return randomArray.slice(0,amount)
+}
+
+const Home = () => {
+
+    const [words] = useState(()=> getRandomWords(30));
+    const [TypedWord,setTypedWord] = useState<string>("")
+    const [CurrentWord,SetNewCurrenetWord] = useState(0)
+    const [startTime,SetStartTime] = useState(0);
+    const [finishTime,SetFinishtTime] = useState(0);
+    const [WPM, setWPM] = useState(0)
+    const [TestFinished, setTestFinished] = useState(false);
+    const [amountofWordsTyped,SetAmountOfWordsTyped] = useState(0);
+    const [progressPercent,setprogressPercent] = useState(0);
+
+    
+  
+    
+
+    function ChangeInput(event:any){
+
+        const value = event.target.value
+        setTypedWord(value)
+
+        if(event.target.value == words[CurrentWord]){
+            // SetNewCurrenetWord((previous)=> previous + 1)
+            // //event.target.value = ""
+            // setTypedWord("");
+            // console.log(CurrentWord + 1);
+        }
+
+        if(!startTime){
+            
+            SetStartTime(Date.now());
+        }
+
+              console.log(CurrentWord)
+
+
+       
+    }
+
+    function HandleKeyDown(event:React.KeyboardEvent<HTMLInputElement>){
+
+        if(event.code === "Space"){
+            event.preventDefault();
+            const candidate = TypedWord.trim()
+            if(candidate === words[CurrentWord]){
+                const nextIndex = CurrentWord + 1;
+                SetNewCurrenetWord((previous)=> previous + 1)
+                setprogressPercent(nextIndex/words.length * 100)
+                console.log(CurrentWord)
+                console.log(words.length)
+
+                setTypedWord("")
+
+                if( nextIndex > words.length -1 ){
+
+
+                    const finish = Date.now()
+                    SetFinishtTime(finish)
+
+                    const timeElapsed = (finish - startTime) / 60000 //elapsed time in minutes
+
+                    //console.log(finishTime);
+                    const wordsLength = words.join(" ").length
+                    //console.log(wordsLength);
+
+                    const WordsTyped = wordsLength/5;
+
+                    setWPM( Math.round(WordsTyped/ timeElapsed)) 
+                    setTestFinished(true);
+
+                    console.log(WPM);
+
+
+
+
+
+
+                }
+            }
+
+            
+            
+        }
+    }   
+
+
+    
+  return (
+
+    <>
+
+    <div className='main'>
+
+
+
+        <div className='Multiplayer'>
+            <div className="RaceTrack">
+                <div className="PlayerSection">
+                    {/* <div className="PlayerAvatar" style={{left: `${progressPercent}%`}}>
+
+                    </div> */}
+                    <div className='PlayerName'>Ik</div>
+                    <img className="PlayerAvatar" style={{left: `${progressPercent}%`}} src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png" alt="" />
+
+                    <div className='WPM'>
+                        {/* {WPM} WPM */}
+                    </div>
+                </div>
+                <div className="PlayerSection">
+                    {/* <div className="PlayerAvatar" style={{left: `${progressPercent}%`}}>
+
+                    </div> */}
+
+                    <img className="PlayerAvatar" style={{left: `${progressPercent}%`}} src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png" alt="" />
+                </div>
+                <div className="PlayerSection">
+                    {/* <div className="PlayerAvatar" style={{left: `${progressPercent}%`}}>
+
+                    </div> */}
+
+                    <img className="PlayerAvatar" style={{left: `${progressPercent}%`}} src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png" alt="" />
+                </div>
+                <div className="PlayerSection">
+                    {/* <div className="PlayerAvatar" style={{left: `${progressPercent}%`}}>
+
+                    </div> */}
+
+                    <img className="PlayerAvatar" style={{left: `${progressPercent}%`}} src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png" alt="" />
+                </div>
+                <div className="PlayerSection">
+                    {/* <div className="PlayerAvatar" style={{left: `${progressPercent}%`}}>
+
+                    </div> */}
+
+                    <img className="PlayerAvatar" style={{left: `${progressPercent}%`}} src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png" alt="" />
+                </div>
+            </div>
+        </div>
+    
+        <div className="wordsPerMinute">
+            {TestFinished?(WPM) + " WPM" :""} 
+        </div>
+
+        <div className="TypeTestContainer">
+
+            <div className='TextContainer'>
+                <div className="QuoteText">
+                    {words.map((word,index)=>(
+                        
+                        <>
+                            <span className={`${CurrentWord > index ? "correct" : ""}${CurrentWord == index ? " Highlighted" : ""}`} key={index}>
+                                
+                                
+
+                                <span>
+                                    {word.split("").map((character,letterindex)=>{
+
+                                        const isCurrent = CurrentWord === index
+                                        const typedchar = TypedWord[letterindex] ?? ""
+
+                                        const charClass = isCurrent? (typedchar === "" ? "" : (typedchar === character? "correct":"incorrect")):""  
+                                        
+                                    
+                                        return(
+                                            <span className={charClass} key={letterindex}>{character}</span>
+                                        )
+                                    
+                                    })}
+                                </span>
+
+
+                            </span>
+
+                            <span> </span>
+                        </>
+                    
+                    ))}
+                </div>
+
+            </div>
+
+
+            <div className='TextInput'>
+
+                
+                <input type="text" value={TypedWord} onKeyDown={HandleKeyDown} onChange={ChangeInput} />
+                
+            </div>
+
+
+
+        </div>
+
+  
+    </div>
+
+    </>
+    
+  )
+}
+
+export default Home
