@@ -1,13 +1,20 @@
 import React, { useState } from 'react'
 import './Style.scss'
 import words from '../words.json'
-
+import {io} from 'socket.io-client'
 
 function getRandomWords(amount: number){
     const randomArray = [...words].sort(() => 0.5-Math.random());
     return randomArray.slice(0,amount)
 }
 
+function connectSocket(){
+
+    const socket = io("http://localhost:3001")
+    socket.on('connect',()=>{
+        console.log("you connected with ", socket.id)
+    })
+}
 const Home = () => {
 
     const [words] = useState(()=> getRandomWords(30));
@@ -20,6 +27,8 @@ const Home = () => {
     const [amountofWordsTyped,SetAmountOfWordsTyped] = useState(0);
     const [progressPercent,setprogressPercent] = useState(0);
 
+
+    connectSocket();
     
   
     
