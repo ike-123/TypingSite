@@ -11,6 +11,7 @@ import {
 import Home from './Pages/Home';
 import Navbar from './Components/Navbar/Navbar';
 import Footer from './Components/Footer';
+import Multiplayer from './Pages/Multiplayer';
 
 
 const PageStructure = ()=>{
@@ -35,7 +36,7 @@ const router = createBrowserRouter([
   children:[
     {
       path:"/",
-      element:<Home/>
+      element:<Multiplayer/>
     }
   ]
   
