@@ -40,7 +40,6 @@ io.on("connection",(socket)=>{
 
        let words = getRandomWords(30)
         
-        //const words = getrandomwords
         status = "countdown"
         let countdown = 3;
 

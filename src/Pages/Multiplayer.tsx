@@ -156,8 +156,13 @@ const Multiplayer = () => {
 
                 <div className="PlayerSection">
                    
+                    <div className='playerAvatar' style={{ position: "absolute", left: `${progressPercent}%`}}>
+
+                        <img src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png" alt="" />
+
+                        <div className='wpm'>{players.find((player)=> player.id === socketRef.current?.id)?.wpm ?? 0} wpm</div> 
+                    </div>
                     
-                    <img  className="PlayerAvatar"style={{ position: "absolute", left: `${progressPercent}%`}} src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png" alt="" />
                 </div>
                     
                 
@@ -169,12 +174,18 @@ const Multiplayer = () => {
                             
                             return (
                             <div className="PlayerSection">
-                                <img
-                                    className="PlayerAvatar"
-                                    key={player.id}
-                                    src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png"
-                                    style={{ position: "absolute", left: `${percent}%` }}
-                                />
+
+                                <div className='playerAvatar' style={{ position: "absolute", left: `${percent}%`}}>
+                                    <img className='image'
+                                        
+                                        key={player.id}
+                                        src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png"
+                                        
+                                    />
+
+                                <div className='wpm'>{player.wpm} wpm</div> 
+
+                                </div>
                             </div>
 
                             );

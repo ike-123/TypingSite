@@ -107,22 +107,27 @@ body{
             padding-bottom: 4px;
             padding-left: 4px;
             
-            .PlayerName{
+            
 
-                position: absolute;
-                color: wheat;
-                font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-                margin-right: 5px;
-
-            }
-            .PlayerAvatar{
+            
+            .playerAvatar{
+           
+              
+                display: flex;
+               
                 width: 60px;
-                height: 60px;
-                // background-color: red;
-                position: absolute;
-                border-radius: 50%;
             
                 transition: left 150ms linear;
+                img{
+                   width: 60px;
+                
+                }
+
+                
+                .wpm{
+                    font-size: 25px;
+                    color: rgb(244, 231, 208);
+                }
             }
             .WPM{
                 position: absolute;
