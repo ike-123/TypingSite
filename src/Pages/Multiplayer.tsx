@@ -3,7 +3,7 @@ import './Style.scss'
 import words from '../words.json'
 import {io,Socket} from 'socket.io-client'
 
-type PlayerState = { id: string; progressIndex: number; wpm: number; finished: boolean };
+type PlayerState = { id: string; progressIndex: number; wpm: number; finished: boolean; finishtime: String };
 
 
 function getRandomWords(amount: number){
@@ -41,6 +41,8 @@ const Multiplayer = () => {
 
     const [players, setPlayers] = useState<PlayerState[]>([]);
 
+    const [status,setStatus] = useState("waiting")
+
 
 
     useEffect(()=>{
@@ -61,8 +63,12 @@ const Multiplayer = () => {
             setCountdown(null);
         })
 
+        socket.on("status",(status)=>{
+            setStatus(status)
+        })
+
         socket.on("state", (ps: PlayerState[]) => {
-            setPlayers(ps);
+            setPlayers(ps); 
             console.log(ps);
         });
 
@@ -86,7 +92,7 @@ const Multiplayer = () => {
             // console.log(CurrentWord + 1);
         }
 
-        console.log(CurrentWord)
+        //console.log(CurrentWord)
 
 
        
@@ -95,41 +101,30 @@ const Multiplayer = () => {
     function HandleKeyDown(event:React.KeyboardEvent<HTMLInputElement>){
 
         if(event.code === "Space"){
+    
             event.preventDefault();
             const candidate = TypedWord.trim()
+            
             if(candidate === words[CurrentWord]){
                 const nextIndex = CurrentWord + 1;
                 SetNewCurrenetWord((previous)=> previous + 1)
                 setprogressPercent(nextIndex/words.length * 100)
 
-                console.log(CurrentWord)
-                console.log(words.length)
-
                 setTypedWord("")
-
-                // if( nextIndex > words.length -1 ){
 
                 const elapsedMs = Date.now() - (startAt ?? 0);
                 const totalChars = words.slice(0, nextIndex).join(" ").length;
-            
 
-                 socketRef.current?.emit("wordDone", { nextIndex, elapsedMs, totalChars });
-                 console.log("word done")
-
-            
-
-
-
-
-
-
-                //}
+                socketRef.current?.emit("wordDone", { nextIndex, elapsedMs, totalChars });
+        
             }
 
             
             
         }
     }   
+
+
 
 
     
@@ -145,22 +140,25 @@ const Multiplayer = () => {
 
         <div className='Multiplayer'>
 
-     {countdown !== null && <h2>Game starts in {countdown}</h2>}
+     {countdown !== null && <h1 className='infotext'>Game starts in {countdown}</h1>}
+     {status === "waiting" ? <h1 className='infotext'>Waiting For more Players</h1> : ""}
+
 
             <div className="RaceTrack">
+        
 
-                {/* <img
-                src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png"
-                style={{ position: "absolute", left: `${progressPercent}%`, top: 10, height: 40 }}
-                /> */}
+                <div className={`PlayerSection ${players.find((player)=> player.id === socketRef.current?.id)?.finished ? "finished" : "notfinished"}`}>
 
-                <div className="PlayerSection">
-                   
+                   {players.find((player)=> player.id === socketRef.current?.id)?.finished ? <div className='FinshedText'>Finished</div>:""}
+
+
                     <div className='playerAvatar' style={{ position: "absolute", left: `${progressPercent}%`}}>
 
                         <img src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png" alt="" />
 
-                        <div className='wpm'>{players.find((player)=> player.id === socketRef.current?.id)?.wpm ?? 0} wpm</div> 
+                        {status != "waiting" && status != "countdown" ? <div className='wpm'>{players.find((player)=> player.id === socketRef.current?.id)?.wpm ?? 0} wpm</div>:"" }
+                        <div className='wpm'>{players.find((player)=> player.id === socketRef.current?.id)?.finishtime ?? ""}</div>
+                      
                     </div>
                     
                 </div>
@@ -170,10 +168,12 @@ const Multiplayer = () => {
                     {players.filter((player) => player.id !== socketRef.current?.id)
                         .map((player) => {
                             const percent = words.length ? (player.progressIndex / words.length) * 100 : 0;
-                            console.log("logging",percent)
+                            const finished = player.finished;
+
+                            
                             
                             return (
-                            <div className="PlayerSection">
+                            <div className={`PlayerSection ${finished?"finished":"notfinished"}`}>
 
                                 <div className='playerAvatar' style={{ position: "absolute", left: `${percent}%`}}>
                                     <img className='image'
@@ -183,7 +183,8 @@ const Multiplayer = () => {
                                         
                                     />
 
-                                <div className='wpm'>{player.wpm} wpm</div> 
+                                {status != "waiting" && status != "countdown" ? <div className='wpm'>{player.wpm} wpm</div>: "" }
+                                <div className='wpm'>{player.finishtime}</div>
 
                                 </div>
                             </div>
