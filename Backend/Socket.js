@@ -43,7 +43,7 @@ io.on("connection",(socket)=>{
 
     if(players.size >= 2 && status === "waiting"){
 
-        words = getRandomWords(10)
+        words = getRandomWords(30)
         status = "countdown"
 
         io.emit("status",status)
@@ -123,7 +123,7 @@ io.on("connection",(socket)=>{
         players.delete(socket.id)
        
         if(players.size === 1){
-            
+
             console.log("only 1 player")
             status = "waiting"
             io.emit("status",status)

@@ -17,7 +17,6 @@ body{
     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
     margin: auto;
     text-align: center;
-
     margin-bottom: 50px;
 
 }
@@ -27,10 +26,10 @@ body{
     
     .TextContainer{
         padding: 20px;
-        background-color:#0E3044;
+        background-color:#1e293b;
         border-radius: 20px 20px 0px 0px;
         border-style: solid;
-        border-color: #b5c4c5;
+        border-color: #334155;
         border-width: 1px;
         height: 150px;
         width: 805px;
@@ -38,7 +37,7 @@ body{
         .QuoteText{
             font-size: 30px;
             font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-            color: #c5e1e3;
+            color: #8a8c8f;
         }   
 
     }
@@ -48,16 +47,16 @@ body{
         
         
         input{
-            background-color:#20455a;
+            background-color:#1e293b;
             width: 838px;
             height: 50px;
-           margin: auto;
-           padding-left: 5px;
+            margin: auto;
+            padding-left: 5px;
             display: block;
             border-radius: 0px 0px 20px 20px;
             border-style: solid;
-        border-width: 1px;
-        border-color: #b5c4c5;
+            border-width: 1px;
+            border-color: #334155;
 
              outline: none;
              font-size: 30px;
@@ -74,13 +73,13 @@ body{
 
 
 .correct{
-    color: aquamarine;
+    color: #e4e9f4;
 }
 .incorrect{
     color: rgb(255, 60, 60);
 }
 .Highlighted{
-    background-color: rgba(255, 228, 196, 0.4);
+    background-color:#c5cde33d;
     border-radius: 2px;
 }
 
@@ -167,7 +166,7 @@ body{
 
     }
 
-    .infotext{
+    .waitingtext{
         
         color: rgb(237, 229, 213);
         text-align: center;
