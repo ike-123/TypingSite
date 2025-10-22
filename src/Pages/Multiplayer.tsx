@@ -47,7 +47,8 @@ const Multiplayer = () => {
 
     useEffect(()=>{
 
-        const socket = io("http://localhost:3001")
+        console.log("hey")
+        const socket = io("192.168.1.240:3001")
 
         socketRef.current= socket;
         

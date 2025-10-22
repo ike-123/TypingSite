@@ -58,14 +58,14 @@ export class GameRoom {
         if(this.players.size >= 2 && this.status === "waiting"){
 
             //generate random words
-            this.words = this.getRandomWords(30)
+            this.words = this.getRandomWords(10)
 
             //set status to countdown and send to clients in room
             this.status = "countdown"
             this.io.to(this.roomId).emit("status",this.status)
     
 
-            let countdown = 10;
+            let countdown = 7;
     
             const interval = setInterval(() => {
                 this.io.to(this.roomId).emit("countdown",countdown)
@@ -91,14 +91,17 @@ export class GameRoom {
 
         this.players.delete(socket.id);
 
-        if(this.players.size === 1){
+        if(this.status === "countdown"){
 
-            this.status = "waiting"
-            this.io.to(this.roomId).emit("state", Array.from(this.players.entries()).map(([id, val]) => ({ id, ...val })));
-            this.io.to(this.roomId).emit("status",this.status)
+            if(this.players.size === 1){
 
-
+                this.status = "waiting"
+            }
         }
+
+        this.io.to(this.roomId).emit("state", Array.from(this.players.entries()).map(([id, val]) => ({ id, ...val })));
+        this.io.to(this.roomId).emit("status",this.status)
+      
     }
 
     HandleWordDone(socket:Socket, data:WordDoneData ){

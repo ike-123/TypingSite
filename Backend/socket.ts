@@ -15,7 +15,7 @@ const server = http.createServer(app as http.RequestListener);
 
 const io = new Server(server,{
    cors:{
-    origin: ["http://localhost:5173"]
+    origin: "*"
    }
 })
 
@@ -43,7 +43,7 @@ let rooms = new Map<string,GameRoom>()
 
 io.on("connection",(socket)=>{
 
-    console.log("connection")
+    console.log(socket.id)
     const GameRoom = FindRoom();
 
     console.log(rooms.size);
