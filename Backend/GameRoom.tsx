@@ -37,6 +37,8 @@ export class GameRoom {
         this.words = [];
         this.startAt = null;
         this.countdownTimer = 10;
+        this.words = this.getRandomWords(10);
+
     }
 
 
@@ -48,6 +50,8 @@ export class GameRoom {
         //Add newly joined player to the array of players
         this.players.set(socket.id,{progressIndex:0,wpm:0,finished:false,finishtime:""})
 
+        this.io.to(this.roomId).emit("setWords",{"words":this.words});
+
         // send the updated array of players back to all the clients in room
         this.io.to(this.roomId).emit("state",Array.from(this.players.entries()).map(([id,val]) =>({id,...val})));
 
@@ -58,8 +62,8 @@ export class GameRoom {
         if(this.players.size >= 2 && this.status === "waiting"){
 
             //generate random words
-            this.words = this.getRandomWords(10)
-
+            // this.words = this.getRandomWords(10)
+            
             //set status to countdown and send to clients in room
             this.status = "countdown"
             this.io.to(this.roomId).emit("status",this.status)

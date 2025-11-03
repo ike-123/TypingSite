@@ -20,16 +20,12 @@ function connectSocket(){
 }
 const Multiplayer = () => {
 
-    //const [words] = useState(()=> getRandomWords(30));
-    const [TypedWord,setTypedWord] = useState<string>("")
-    const [CurrentWord,SetNewCurrenetWord] = useState(0)
-    const [startTime,SetStartTime] = useState(0);
-    const [finishTime,SetFinishtTime] = useState(0);
-    const [WPM, setWPM] = useState(0)
-    const [TestFinished, setTestFinished] = useState(false);
-    const [amountofWordsTyped,SetAmountOfWordsTyped] = useState(0);
-    const [progressPercent,setprogressPercent] = useState(0);
 
+    const [TypedWord,setTypedWord] = useState<string>("")
+
+    const [CurrentWord,SetNewCurrenetWord] = useState(0)
+
+    const [progressPercent,setprogressPercent] = useState(0);
 
     const socketRef = useRef<Socket | null>(null);
 
@@ -41,19 +37,25 @@ const Multiplayer = () => {
 
     const [players, setPlayers] = useState<PlayerState[]>([]);
 
-    const [status,setStatus] = useState("waiting")
+    const [status,setStatus] = useState("waiting");
+
+    const [PlayersInServer,SetPlayersInServer] = useState(0);
+
 
 
 
     useEffect(()=>{
 
         console.log("hey")
-        const socket = io("192.168.1.240:3001")
+        const socket = io("192.168.1.239:3001")
 
         socketRef.current= socket;
         
         socket.on("countdown",(n)=>{
             setCountdown(n);
+        })
+        socket.on("setWords",({words})=>{
+            setWords(words);
         })
          socket.on("start",({words,startAt})=>{
             
@@ -72,6 +74,10 @@ const Multiplayer = () => {
             setPlayers(ps); 
             console.log(ps);
         });
+           socket.on("NumberOfPlayers",(amount)=>{
+            SetPlayersInServer(amount)
+            console.log("amount: ", amount)
+        })
 
         return () => { socket.disconnect(); };
         
@@ -107,9 +113,15 @@ const Multiplayer = () => {
             const candidate = TypedWord.trim()
             
             if(candidate === words[CurrentWord]){
+
+                console.log(CurrentWord);
                 const nextIndex = CurrentWord + 1;
                 SetNewCurrenetWord((previous)=> previous + 1)
-                setprogressPercent(nextIndex/words.length * 100)
+                if(status!="waiting" && status!= "countdown"){
+
+                    setprogressPercent(nextIndex/words.length * 100)
+
+                }
 
                 setTypedWord("")
 
@@ -143,6 +155,8 @@ const Multiplayer = () => {
 
      {countdown !== null && <h1 className='infotext'>Game starts in {countdown}</h1>}
      {status === "waiting" ? <h1 className='infotext'>Waiting For more Players</h1> : ""}
+     {<h1 className='infotext'>Players in Server: {PlayersInServer}</h1>}
+
 
 
             <div className="RaceTrack">
@@ -153,7 +167,7 @@ const Multiplayer = () => {
                    {players.find((player)=> player.id === socketRef.current?.id)?.finished ? <div className='FinshedText'>Finished</div>:""}
 
 
-                    <div className='playerAvatar' style={{ position: "absolute", left: `${progressPercent}%`}}>
+                    <div className='playerAvatar'  style= {{ position: "absolute", left: `${progressPercent}%`}}>
 
                         <img src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png" alt="" />
 
@@ -195,10 +209,6 @@ const Multiplayer = () => {
 
                
             </div>
-        </div>
-    
-        <div className="wordsPerMinute">
-            {TestFinished?(WPM) + " WPM" :""} 
         </div>
 
         <div className="TypeTestContainer">
