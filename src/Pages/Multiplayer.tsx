@@ -99,8 +99,6 @@ const Multiplayer = () => {
         
 
         if(!letterElement){
-
-            console.log("noooo");
             console.log(CurrentWordsSpansRef.current);
             caretElement.style.left = `${(CurrentWordsSpansRef.current[0]?.offsetLeft ?? 0) -2}px`
             caretElement.style.top = `${CurrentWordsSpansRef.current[0]?.offsetTop }px`
@@ -126,8 +124,6 @@ const Multiplayer = () => {
 
     useEffect(()=>{
         
-   
-        console.log("hey")
         const socket = io("192.168.1.239:3001")
 
         socketRef.current= socket;
@@ -170,17 +166,11 @@ const Multiplayer = () => {
 
     function ChangeInput(event:any){
 
-              // Clear the refs array before moving to next word
-             
-
+        // Clear the refs array before moving to next word
         const value = event.target.value
         setTypedWord(value)
 
-
         //console.log(CurrentWord)
-
-
-       
     }
 
     function HandleKeyDown(event:React.KeyboardEvent<HTMLInputElement>){
@@ -195,8 +185,6 @@ const Multiplayer = () => {
 
                 console.log(CurrentWord);
                 const nextIndex = CurrentWord + 1;
-
-              
 
                 SetNewCurrenetWord((previous)=> previous + 1)
                 if(status!="waiting" && status!= "countdown"){
@@ -220,18 +208,12 @@ const Multiplayer = () => {
     }   
 
 
-
-
     
   return (
 
     <>
 
-
     <div className='main'>
-
-
-
 
         <div className='Multiplayer'>
 
@@ -251,7 +233,9 @@ const Multiplayer = () => {
 
                     <div className='playerAvatar'  style= {{ position: "absolute", left: `${progressPercent}%`}}>
 
-                        <img src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png" alt="" />
+                        {/* <img src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png" alt="" /> */}
+                        <img src="https://i.pinimg.com/originals/d5/96/3c/d5963c6f0bc206e3723f796e3b54fd6b.gif" alt="" />
+
 
                         {status != "waiting" && status != "countdown" ? <div className='wpm'>{players.find((player)=> player.id === socketRef.current?.id)?.wpm ?? 0} wpm</div>:"" }
                         <div className='wpm'>{players.find((player)=> player.id === socketRef.current?.id)?.finishtime ?? ""}</div>
@@ -259,8 +243,7 @@ const Multiplayer = () => {
                     </div>
                     
                 </div>
-                    
-                
+                             
                 
                     {players.filter((player) => player.id !== socketRef.current?.id)
                         .map((player) => {
@@ -361,9 +344,7 @@ const Multiplayer = () => {
 
                                 <span> </span>
                         </span>
-
-                            
-                        
+     
                     
                     ))}
 
