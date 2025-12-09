@@ -50,7 +50,7 @@ const Home = () => {
             SetStartTime(Date.now());
         }
 
-              console.log(CurrentWord)
+            console.log(CurrentWord)
 
 
        
