@@ -21,7 +21,7 @@ function getRandomWords(amount: number) {
 const Home = () => {
 
 
-    const [words] = useState(()=> getRandomWords(5));
+    const [words] = useState(() => getRandomWords(5));
 
 
 
@@ -29,17 +29,17 @@ const Home = () => {
 
     const [CurrentWord, SetNewCurrenetWord] = useState(0)
 
-    const [progressPercent, setprogressPercent] = useState(0);
+    // const [progressPercent, setprogressPercent] = useState(0);
 
-    const socketRef = useRef<Socket | null>(null);
+    // const socketRef = useRef<Socket | null>(null);
 
     const [countdown, setCountdown] = useState<number | null>(null);
 
     // const [words, setWords] = useState<string[]>([]);
 
-    const [startAt, setStartAt] = useState<number | null>(null);
+    // const [startAt, setStartAt] = useState<number | null>(null);
 
-    const [players, setPlayers] = useState<PlayerState[]>([]);
+    // const [players, setPlayers] = useState<PlayerState[]>([]);
 
     const [status, setStatus] = useState("waiting");
 
@@ -50,11 +50,18 @@ const Home = () => {
 
     const CurrentWordsSpansRef = useRef<(HTMLSpanElement | null)[]>([]);
 
+    const [AllWordMap, setAllWordMap] = useState<Map<number, string>>(new Map());
+
     const inputref = useRef<HTMLInputElement | null>(null);
 
     const blocked = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"];
 
 
+    const [typedWords, setTypedWords] = useState(() => words.map(() => ({ text: '', chars: [] as string[], isCorrect: false, finished: false })));
+
+    //or
+
+    const [AllWordMap2, setAllWordMap2] = useState<Map<number, {text:string,isCorrect:boolean}>>(new Map());
 
     useEffect(() => {
 
@@ -101,7 +108,7 @@ const Home = () => {
 
 
         if (!letterElement) {
-            console.log(CurrentWordsSpansRef.current);
+            // console.log(CurrentWordsSpansRef.current);
             caretElement.style.left = `${(CurrentWordsSpansRef.current[0]?.offsetLeft ?? 0) - 2}px`
             caretElement.style.top = `${CurrentWordsSpansRef.current[0]?.offsetTop}px`
 
@@ -109,6 +116,7 @@ const Home = () => {
         }
 
         console.log(letterElement);
+        console.log(CurrentWordsSpansRef.current);
 
         caretElement.style.left = `${letterElement.offsetLeft + letterElement.offsetWidth - 2}px`
         caretElement.style.top = `${letterElement.offsetTop}px`
@@ -169,6 +177,16 @@ const Home = () => {
         const value = event.target.value
         setTypedWord(value)
 
+        setAllWordMap(prev => {
+            const newMap = new Map(prev);
+            newMap.set(CurrentWord, value);
+            return newMap;
+        });
+
+        console.log(AllWordMap);
+
+
+
     }
 
     function HandleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -179,26 +197,28 @@ const Home = () => {
             event.preventDefault();
             const candidate = TypedWord.trim()
 
-            if (candidate === words[CurrentWord]) {
+            // if (candidate === words[CurrentWord]) {
 
-                console.log(CurrentWord);
-                const nextIndex = CurrentWord + 1;
+            const nextIndex = CurrentWord + 1;
 
-                SetNewCurrenetWord((previous) => previous + 1)
-                if (status != "waiting" && status != "countdown") {
 
-                    setprogressPercent(nextIndex / words.length * 100)
+            SetNewCurrenetWord((previous) => previous + 1)
+            // if (status != "waiting" && status != "countdown") {
 
-                }
+            //     setprogressPercent(nextIndex / words.length * 100)
 
-                setTypedWord("")
+            // }
 
-                const elapsedMs = Date.now() - (startAt ?? 0);
-                const totalChars = words.slice(0, nextIndex).join(" ").length;
 
-                socketRef.current?.emit("wordDone", { nextIndex, elapsedMs, totalChars });
 
-            }
+            setTypedWord("")
+
+            // const elapsedMs = Date.now() - (startAt ?? 0);
+            // const totalChars = words.slice(0, nextIndex).join(" ").length;
+
+            // socketRef.current?.emit("wordDone", { nextIndex, elapsedMs, totalChars });
+
+            // }
 
 
 
@@ -219,7 +239,7 @@ const Home = () => {
                     {status === "waiting" ? <h1 className='infotext'>Waiting For more Players</h1> : ""}
                     {<h1 className='infotext'>Players in Server: {PlayersInServer}</h1>}
 
-{/* 
+                    {/* 
                     <div className="RaceTrack">
 
 
@@ -286,38 +306,59 @@ const Home = () => {
 
                                 //If CurrentWord is greater than WordIndex then user has alreadly typed the word and class will be "correct"
 
-                                <span className={`${CurrentWord > wordIndex ? "correct" : ""} ${wordIndex === CurrentWord ? "CurrentWord" : ""}`} key={wordIndex}>
-
+                                // <span className={`${CurrentWord > wordIndex ? "correct" : ""} ${wordIndex === CurrentWord ? "" : ""}`} key={wordIndex}>
+                                <span>
                                     <span>
                                         {/* split the word array to retrieve each letter and put in in a span */}
 
                                         {word.split("").map((character, letterindex) => {
 
+                                            const StoredWord = AllWordMap.get(wordIndex);
                                             lettersforOverTypedSection = [];
-                                            const isCurrent = CurrentWord === wordIndex
+                                            const isCurrent = wordIndex === CurrentWord
                                             CurrentWordsSpansRef.current = [];
 
 
-                                            if (isCurrent) {
-                                                //this is the last letter in the word and we want to check if the user has typed any other letters after which we will append after the word and highlight in red
-                                                if (isCurrent && letterindex + 1 === word.length) {
 
+                                            //we check to see if this is the last letter in the word as we want to check if the user has typed any other letters
+                                            //  after which we will append after the word and highlight in red
+                                            if (letterindex + 1 === word.length) {
 
-                                                    if (TypedWord.length > word.length) {
+                                                if (StoredWord != undefined && StoredWord != null) {
+                                                    
+                                                    if (StoredWord.length > word.length) {
                                                         //get the letters that have been overtyped
-
-                                                        const Overtypedsection = TypedWord.slice(word.length, TypedWord.length);
+                                                        console.log(StoredWord.length);
+                                                        const Overtypedsection = StoredWord.slice(word.length, StoredWord.length);
 
                                                         lettersforOverTypedSection = Overtypedsection.split("");
                                                         console.log(lettersforOverTypedSection);
 
                                                     }
-
+                                                    console.log(true);
                                                 }
+                                                else{
+                                                    console.log(false);
+                                                }
+
+
                                             }
 
-                                            //the value the user has typed at the specific letter index
-                                            const typedchar = TypedWord[letterindex] ?? ""
+
+
+                                            var typedchar;
+
+                                            if (isCurrent) {
+                                                //the value the user has typed at the specific letter index
+                                                typedchar = TypedWord[letterindex] ?? ""
+                                            }
+                                            else {
+
+
+                                                //the value the user has typed at the specific letter index
+                                                typedchar = StoredWord?.[letterindex] ?? ""
+                                            }
+
 
                                             const charClass = isCurrent ? (typedchar === "" ? "" : (typedchar === character ? "correct" : "incorrect")) : ""
 
@@ -340,7 +381,9 @@ const Home = () => {
                                     </span>
 
                                     <span> </span>
+
                                 </span>
+                                // </span>
 
 
                             ))}

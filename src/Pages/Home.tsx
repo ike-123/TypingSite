@@ -26,11 +26,6 @@ const Home = () => {
     const [TestFinished, setTestFinished] = useState(false);
     const [amountofWordsTyped,SetAmountOfWordsTyped] = useState(0);
     const [progressPercent,setprogressPercent] = useState(0);
-
-
-    connectSocket();
-    
-  
     
 
     function ChangeInput(event:any){
