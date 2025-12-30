@@ -61,7 +61,7 @@ const Home = () => {
 
     //or
 
-    const [AllWordMap2, setAllWordMap2] = useState<Map<number, {text:string,isCorrect:boolean}>>(new Map());
+    const [AllWordMap2, setAllWordMap2] = useState<Map<number, { text: string, isCorrect: boolean }>>(new Map());
 
     useEffect(() => {
 
@@ -177,13 +177,13 @@ const Home = () => {
         const value = event.target.value
         setTypedWord(value)
 
-        setAllWordMap(prev => {
+        setAllWordMap2(prev => {
             const newMap = new Map(prev);
-            newMap.set(CurrentWord, value);
+            newMap.set(CurrentWord, { text: value, isCorrect: false });
             return newMap;
         });
 
-        console.log(AllWordMap);
+        console.log(AllWordMap2);
 
 
 
@@ -197,19 +197,27 @@ const Home = () => {
             event.preventDefault();
             const candidate = TypedWord.trim()
 
-            // if (candidate === words[CurrentWord]) {
+
+            if (candidate === words[CurrentWord]) {
+
+                setAllWordMap2(prev => {
+                    const newMap = new Map(prev);
+                    newMap.set(CurrentWord, { text: candidate, isCorrect: true });
+                    return newMap;
+                });
+            }
+            else{
+                
+                setAllWordMap2(prev => {
+                    const newMap = new Map(prev);
+                    newMap.set(CurrentWord, { text: candidate, isCorrect: false });
+                    return newMap;
+                });
+            }
 
             const nextIndex = CurrentWord + 1;
 
-
             SetNewCurrenetWord((previous) => previous + 1)
-            // if (status != "waiting" && status != "countdown") {
-
-            //     setprogressPercent(nextIndex / words.length * 100)
-
-            // }
-
-
 
             setTypedWord("")
 
@@ -306,14 +314,14 @@ const Home = () => {
 
                                 //If CurrentWord is greater than WordIndex then user has alreadly typed the word and class will be "correct"
 
-                                // <span className={`${CurrentWord > wordIndex ? "correct" : ""} ${wordIndex === CurrentWord ? "" : ""}`} key={wordIndex}>
-                                <span>
+                                 <span className={ wordIndex < CurrentWord ? (`${  AllWordMap2.get(wordIndex)?.isCorrect ? "correct" : "incorrectword"}`) : ""} key={wordIndex}>
+                                
                                     <span>
                                         {/* split the word array to retrieve each letter and put in in a span */}
 
                                         {word.split("").map((character, letterindex) => {
 
-                                            const StoredWord = AllWordMap.get(wordIndex);
+                                            const StoredWord = AllWordMap2.get(wordIndex);
                                             lettersforOverTypedSection = [];
                                             const isCurrent = wordIndex === CurrentWord
                                             CurrentWordsSpansRef.current = [];
@@ -325,11 +333,11 @@ const Home = () => {
                                             if (letterindex + 1 === word.length) {
 
                                                 if (StoredWord != undefined && StoredWord != null) {
-                                                    
-                                                    if (StoredWord.length > word.length) {
+
+                                                    if (StoredWord.text.length > word.length) {
                                                         //get the letters that have been overtyped
-                                                        console.log(StoredWord.length);
-                                                        const Overtypedsection = StoredWord.slice(word.length, StoredWord.length);
+                                                        console.log(StoredWord.text.length);
+                                                        const Overtypedsection = StoredWord.text.slice(word.length, StoredWord.text.length);
 
                                                         lettersforOverTypedSection = Overtypedsection.split("");
                                                         console.log(lettersforOverTypedSection);
@@ -337,7 +345,7 @@ const Home = () => {
                                                     }
                                                     console.log(true);
                                                 }
-                                                else{
+                                                else {
                                                     console.log(false);
                                                 }
 
@@ -356,11 +364,11 @@ const Home = () => {
 
 
                                                 //the value the user has typed at the specific letter index
-                                                typedchar = StoredWord?.[letterindex] ?? ""
+                                                typedchar = StoredWord?.text[letterindex] ?? ""
                                             }
 
 
-                                            const charClass = isCurrent ? (typedchar === "" ? "" : (typedchar === character ? "correct" : "incorrect")) : ""
+                                            const charClass =  (typedchar === "" ? "" : (typedchar === character ? "correct" : "incorrect")) 
 
 
                                             //put each letter into a span and inside of the ref attribute add the current span into the currentwordsspanref array
@@ -382,8 +390,8 @@ const Home = () => {
 
                                     <span> </span>
 
+                               
                                 </span>
-                                // </span>
 
 
                             ))}
