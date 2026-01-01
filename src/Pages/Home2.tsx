@@ -193,42 +193,45 @@ const Home = () => {
 
 
         if (event.code === "Space") {
-
             event.preventDefault();
-            const candidate = TypedWord.trim()
+
+            if (TypedWord.length > 0) {
 
 
-            if (candidate === words[CurrentWord]) {
+                const candidate = TypedWord.trim()
 
-                setAllWordMap2(prev => {
-                    const newMap = new Map(prev);
-                    newMap.set(CurrentWord, { text: candidate, isCorrect: true });
-                    return newMap;
-                });
+
+                if (candidate === words[CurrentWord]) {
+
+                    setAllWordMap2(prev => {
+                        const newMap = new Map(prev);
+                        newMap.set(CurrentWord, { text: candidate, isCorrect: true });
+                        return newMap;
+                    });
+                }
+                else {
+
+                    setAllWordMap2(prev => {
+                        const newMap = new Map(prev);
+                        newMap.set(CurrentWord, { text: candidate, isCorrect: false });
+                        return newMap;
+                    });
+                }
+
+                const nextIndex = CurrentWord + 1;
+
+                SetNewCurrenetWord((previous) => previous + 1)
+
+                setTypedWord("")
+
+                // const elapsedMs = Date.now() - (startAt ?? 0);
+                // const totalChars = words.slice(0, nextIndex).join(" ").length;
+
+                // socketRef.current?.emit("wordDone", { nextIndex, elapsedMs, totalChars });
+
+                // }
+
             }
-            else {
-
-                setAllWordMap2(prev => {
-                    const newMap = new Map(prev);
-                    newMap.set(CurrentWord, { text: candidate, isCorrect: false });
-                    return newMap;
-                });
-            }
-
-            const nextIndex = CurrentWord + 1;
-
-            SetNewCurrenetWord((previous) => previous + 1)
-
-            setTypedWord("")
-
-            // const elapsedMs = Date.now() - (startAt ?? 0);
-            // const totalChars = words.slice(0, nextIndex).join(" ").length;
-
-            // socketRef.current?.emit("wordDone", { nextIndex, elapsedMs, totalChars });
-
-            // }
-
-
 
         }
 
@@ -236,10 +239,10 @@ const Home = () => {
 
             //if we haven't typed a character in the currentword & the previous word is incorrect
 
-            if(CurrentWord - 1 < 0)
+            if (CurrentWord - 1 < 0)
                 return;
 
-            if(TypedWord.length == 0 && AllWordMap2.get(CurrentWord-1)?.isCorrect == false){
+            if (TypedWord.length == 0 && AllWordMap2.get(CurrentWord - 1)?.isCorrect == false) {
                 event.preventDefault();
 
                 setTypedWord(AllWordMap2.get(CurrentWord - 1)!.text);
