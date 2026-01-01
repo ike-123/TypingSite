@@ -41,6 +41,18 @@ const Home = () => {
 
     // const [players, setPlayers] = useState<PlayerState[]>([]);
 
+    const [startTime, SetStartTime] = useState(0);
+    const [finishTime, SetFinishtTime] = useState(0);
+    const [WPM, setWPM] = useState(0);
+    const [TestFinished, setTestFinished] = useState(false);
+
+    const [correctCount, SetCorrectCount] = useState(0);
+    const [incorrectCount, SetInCorrectCount] = useState(0);
+    const [Accuracy, SetAccuracy] = useState(0);
+
+
+
+
     const [status, setStatus] = useState("waiting");
 
     const [PlayersInServer, SetPlayersInServer] = useState(0);
@@ -124,6 +136,11 @@ const Home = () => {
 
     }, [CurrentWordsSpansRef.current])
 
+    useEffect(()=>{
+
+        //round down
+        SetAccuracy(Math.round((correctCount/(correctCount + incorrectCount)) * 100))
+    },[TestFinished])
 
 
     // const [lettersforOverTypedSection,setOverTypeSection] = useState<string[] | null>([]);
@@ -177,13 +194,62 @@ const Home = () => {
         const value = event.target.value
         setTypedWord(value)
 
-        setAllWordMap2(prev => {
-            const newMap = new Map(prev);
-            newMap.set(CurrentWord, { text: value, isCorrect: false });
-            return newMap;
-        });
+        if (value === words[CurrentWord]) {
+
+            setAllWordMap2(prev => {
+                const newMap = new Map(prev);
+                newMap.set(CurrentWord, { text: value, isCorrect: true });
+                return newMap;
+            });
+
+        }
+        else {
+
+            setAllWordMap2(prev => {
+                const newMap = new Map(prev);
+                newMap.set(CurrentWord, { text: value, isCorrect: false });
+                return newMap;
+            });
+
+        }
+
+        const inputEvent = event.nativeEvent as InputEvent;
+        const data = inputEvent.data;
+
+
+        // console.log(event);
+
+        if (data && data.length === 1 && !/\s/.test(data)) {
+            console.log("Typed character:", data);
+
+            if (value.length > words[CurrentWord].length) {
+                //we are over typing 
+                SetInCorrectCount((prev) => prev + 1);
+
+            }
+            else {
+
+                if (value[value.length - 1] === words[CurrentWord][value.length - 1]) {
+                    console.log("Counted:", event.key);
+                    SetCorrectCount((prev) => prev + 1);
+                }
+                else {
+                    console.log("Counted:", event.key);
+
+                    SetInCorrectCount((prev) => prev + 1);
+                }
+            }
+        }
+
+
 
         console.log(AllWordMap2);
+
+        if (!startTime) {
+
+            SetStartTime(Date.now());
+        }
+
 
 
 
@@ -197,9 +263,7 @@ const Home = () => {
 
             if (TypedWord.length > 0) {
 
-
                 const candidate = TypedWord.trim()
-
 
                 if (candidate === words[CurrentWord]) {
 
@@ -208,6 +272,9 @@ const Home = () => {
                         newMap.set(CurrentWord, { text: candidate, isCorrect: true });
                         return newMap;
                     });
+
+                    SetCorrectCount((prev) => prev + 1);
+
                 }
                 else {
 
@@ -216,13 +283,50 @@ const Home = () => {
                         newMap.set(CurrentWord, { text: candidate, isCorrect: false });
                         return newMap;
                     });
+
+                    SetInCorrectCount((prev) => prev + 1);
                 }
 
+
                 const nextIndex = CurrentWord + 1;
-
                 SetNewCurrenetWord((previous) => previous + 1)
-
                 setTypedWord("")
+
+                //If this is the last word
+                if (nextIndex > words.length - 1) {
+
+                    const finish = Date.now()
+                    SetFinishtTime(finish)
+
+                    const timeElapsed = (finish - startTime) / 60000 //elapsed time in minutes
+
+                    //console.log(finishTime);
+                    // const CharacterLength = words.join(" ").length
+                    //console.log(wordsLength);
+
+
+                    // console.log("Character count = ", CharacterLength);
+
+                    var CorrectlyTypedWordsArr: string[] = new Array();
+
+                    AllWordMap2.forEach(word => {
+                        if (word.isCorrect) {
+                            CorrectlyTypedWordsArr.push(word.text);
+                        }
+                    });
+
+                    const characterLength = CorrectlyTypedWordsArr.join(" ").length;
+
+                    console.log("Character count = ", characterLength);
+
+                    const WordsTyped = characterLength / 5;
+
+                    setWPM(Math.round(WordsTyped / timeElapsed))
+                    setTestFinished(true);
+                    console.log(WPM);
+
+                }
+
 
                 // const elapsedMs = Date.now() - (startAt ?? 0);
                 // const totalChars = words.slice(0, nextIndex).join(" ").length;
@@ -232,6 +336,8 @@ const Home = () => {
                 // }
 
             }
+
+
 
         }
 
@@ -256,6 +362,33 @@ const Home = () => {
 
             }
         }
+
+        console.log(event)
+
+        console.log(console.log(""))
+
+        // if (event.key.length === 1 && !/\s/.test(event.key)) {
+        //     if (TypedWord.length > words[CurrentWord].length) {
+        //         //we are over typing 
+        //         SetInCorrectCount((prev) => prev + 1);
+
+        //     }
+        //     else {
+
+        //         if (TypedWord[TypedWord.length - 1] === words[CurrentWord][TypedWord.length - 1]) {
+        //             console.log("Counted:", event.key);
+        //             SetCorrectCount((prev) => prev + 1);
+        //         }
+        //         else {
+        //             console.log("Counted:", event.key);
+
+        //             SetInCorrectCount((prev) => prev + 1);
+        //         }
+        //     }
+
+        // } else {
+        //     console.log("Ignored:", event.key);
+        // }
     }
 
 
@@ -406,7 +539,7 @@ const Home = () => {
                                         {/* if lettersforOverTypedSection exists then we have overtyped and we can append the extra values after the word */}
                                         {lettersforOverTypedSection && lettersforOverTypedSection.map((character, index) => (
 
-                                            <span ref={wordIndex === CurrentWord ? (element) => { if (element) CurrentWordsSpansRef.current.push(element) } : null} className="incorrect" key={index}>{character}</span>
+                                            <span ref={wordIndex === CurrentWord ? (element) => { if (element) CurrentWordsSpansRef.current.push(element) } : null} className="incorrectOverType" key={index}>{character}</span>
                                         ))}
 
 
@@ -430,6 +563,24 @@ const Home = () => {
 
 
                         <input ref={inputref} id="input" type="text" autoComplete='off' autoFocus value={TypedWord} onKeyDown={HandleKeyDown} onChange={ChangeInput} />
+
+                    </div>
+
+                    <div>
+                        <h1 className='wordsPerMinute'> {TestFinished ? (WPM) + " WPM" : ""} </h1>
+
+                        <h1 className='wordsPerMinute'> {"Accuracy: " + (Accuracy) + "%"} </h1>
+
+
+                        <h1 className='wordsPerMinute'> {(correctCount) + " Correct"} </h1>
+
+                        <h1 className='wordsPerMinute'> {(incorrectCount) + " Incorrect"} </h1>
+
+
+
+
+
+
 
                     </div>
 
