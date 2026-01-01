@@ -206,8 +206,8 @@ const Home = () => {
                     return newMap;
                 });
             }
-            else{
-                
+            else {
+
                 setAllWordMap2(prev => {
                     const newMap = new Map(prev);
                     newMap.set(CurrentWord, { text: candidate, isCorrect: false });
@@ -230,6 +230,28 @@ const Home = () => {
 
 
 
+        }
+
+        if (event.code === "Backspace") {
+
+            //if we haven't typed a character in the currentword & the previous word is incorrect
+
+            if(CurrentWord - 1 < 0)
+                return;
+
+            if(TypedWord.length == 0 && AllWordMap2.get(CurrentWord-1)?.isCorrect == false){
+                event.preventDefault();
+
+                setTypedWord(AllWordMap2.get(CurrentWord - 1)!.text);
+                SetNewCurrenetWord((previous) => previous - 1)
+
+                //  setAllWordMap2(prev => {
+                //     const newMap = new Map(prev);
+                //     newMap.set(CurrentWord,{ text: prev.get(CurrentWord)!.text, isCorrect: true });
+                //     return newMap;
+                // });
+
+            }
         }
     }
 
@@ -314,8 +336,8 @@ const Home = () => {
 
                                 //If CurrentWord is greater than WordIndex then user has alreadly typed the word and class will be "correct"
 
-                                 <span className={ wordIndex < CurrentWord ? (`${  AllWordMap2.get(wordIndex)?.isCorrect ? "correct" : "incorrectword"}`) : ""} key={wordIndex}>
-                                
+                                <span className={wordIndex < CurrentWord ? (`${AllWordMap2.get(wordIndex)?.isCorrect ? "correct" : "incorrectword"}`) : ""} key={wordIndex}>
+
                                     <span>
                                         {/* split the word array to retrieve each letter and put in in a span */}
 
@@ -368,7 +390,7 @@ const Home = () => {
                                             }
 
 
-                                            const charClass =  (typedchar === "" ? "" : (typedchar === character ? "correct" : "incorrect")) 
+                                            const charClass = (typedchar === "" ? "" : (typedchar === character ? "correct" : "incorrect"))
 
 
                                             //put each letter into a span and inside of the ref attribute add the current span into the currentwordsspanref array
@@ -390,7 +412,7 @@ const Home = () => {
 
                                     <span> </span>
 
-                               
+
                                 </span>
 
 
