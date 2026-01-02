@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react'
-import './Style.scss'
+// import './Style.scss'
 import words from '../words.json'
 import { io, Socket } from 'socket.io-client'
+import { Button } from "@/components/ui/button"
 
 type PlayerState = { id: string; progressIndex: number; wpm: number; finished: boolean; finishtime: String };
 
@@ -11,35 +12,18 @@ function getRandomWords(amount: number) {
     return randomArray.slice(0, amount)
 }
 
-// function connectSocket() {
-
-//     const socket = io("http://localhost:3001")
-//     socket.on('connect', () => {
-//         console.log("you connected with ", socket.id)
-//     })
-// }
 const Home = () => {
 
 
     const [words] = useState(() => getRandomWords(5));
 
-
-
     const [TypedWord, setTypedWord] = useState<string>("")
 
     const [CurrentWord, SetNewCurrenetWord] = useState(0)
 
-    // const [progressPercent, setprogressPercent] = useState(0);
-
-    // const socketRef = useRef<Socket | null>(null);
-
     const [countdown, setCountdown] = useState<number | null>(null);
 
     // const [words, setWords] = useState<string[]>([]);
-
-    // const [startAt, setStartAt] = useState<number | null>(null);
-
-    // const [players, setPlayers] = useState<PlayerState[]>([]);
 
     const [startTime, SetStartTime] = useState(0);
     const [finishTime, SetFinishtTime] = useState(0);
@@ -49,8 +33,6 @@ const Home = () => {
     const [correctCount, SetCorrectCount] = useState(0);
     const [incorrectCount, SetInCorrectCount] = useState(0);
     const [Accuracy, SetAccuracy] = useState(0);
-
-
 
 
     const [status, setStatus] = useState("waiting");
@@ -136,56 +118,16 @@ const Home = () => {
 
     }, [CurrentWordsSpansRef.current])
 
-    useEffect(()=>{
+    useEffect(() => {
 
         //round down
-        SetAccuracy(Math.round((correctCount/(correctCount + incorrectCount)) * 100))
-    },[TestFinished])
+        SetAccuracy(Math.round((correctCount / (correctCount + incorrectCount)) * 100))
+    }, [TestFinished])
 
 
     // const [lettersforOverTypedSection,setOverTypeSection] = useState<string[] | null>([]);
 
     let lettersforOverTypedSection: string[] = [];
-
-
-    // useEffect(() => {
-
-    //     const socket = io("192.168.1.239:3001")
-
-    //     socketRef.current = socket;
-
-    //     socket.on("countdown", (n) => {
-    //         setCountdown(n);
-    //     })
-    //     socket.on("setWords", ({ words }) => {
-    //         setWords(words);
-    //     })
-    //     socket.on("start", ({ words, startAt }) => {
-
-    //         setWords(words)
-    //         setStartAt(startAt)
-    //         SetNewCurrenetWord(0);
-    //         setTypedWord("");
-    //         setCountdown(null);
-    //     })
-
-    //     socket.on("status", (status) => {
-    //         setStatus(status)
-    //     })
-
-    //     socket.on("state", (ps: PlayerState[]) => {
-    //         setPlayers(ps);
-    //         console.log(ps);
-    //     });
-    //     socket.on("NumberOfPlayers", (amount) => {
-    //         SetPlayersInServer(amount)
-    //     })
-
-    //     return () => { socket.disconnect(); };
-
-
-    // }, [])
-
 
 
     function ChangeInput(event: any) {
@@ -242,16 +184,12 @@ const Home = () => {
         }
 
 
-
         console.log(AllWordMap2);
 
         if (!startTime) {
 
             SetStartTime(Date.now());
         }
-
-
-
 
     }
 
@@ -301,11 +239,6 @@ const Home = () => {
                     const timeElapsed = (finish - startTime) / 60000 //elapsed time in minutes
 
                     //console.log(finishTime);
-                    // const CharacterLength = words.join(" ").length
-                    //console.log(wordsLength);
-
-
-                    // console.log("Character count = ", CharacterLength);
 
                     var CorrectlyTypedWordsArr: string[] = new Array();
 
@@ -327,24 +260,13 @@ const Home = () => {
 
                 }
 
-
-                // const elapsedMs = Date.now() - (startAt ?? 0);
-                // const totalChars = words.slice(0, nextIndex).join(" ").length;
-
-                // socketRef.current?.emit("wordDone", { nextIndex, elapsedMs, totalChars });
-
-                // }
-
             }
-
-
 
         }
 
         if (event.code === "Backspace") {
 
             //if we haven't typed a character in the currentword & the previous word is incorrect
-
             if (CurrentWord - 1 < 0)
                 return;
 
@@ -354,49 +276,17 @@ const Home = () => {
                 setTypedWord(AllWordMap2.get(CurrentWord - 1)!.text);
                 SetNewCurrenetWord((previous) => previous - 1)
 
-                //  setAllWordMap2(prev => {
-                //     const newMap = new Map(prev);
-                //     newMap.set(CurrentWord,{ text: prev.get(CurrentWord)!.text, isCorrect: true });
-                //     return newMap;
-                // });
-
             }
         }
 
         console.log(event)
-
         console.log(console.log(""))
-
-        // if (event.key.length === 1 && !/\s/.test(event.key)) {
-        //     if (TypedWord.length > words[CurrentWord].length) {
-        //         //we are over typing 
-        //         SetInCorrectCount((prev) => prev + 1);
-
-        //     }
-        //     else {
-
-        //         if (TypedWord[TypedWord.length - 1] === words[CurrentWord][TypedWord.length - 1]) {
-        //             console.log("Counted:", event.key);
-        //             SetCorrectCount((prev) => prev + 1);
-        //         }
-        //         else {
-        //             console.log("Counted:", event.key);
-
-        //             SetInCorrectCount((prev) => prev + 1);
-        //         }
-        //     }
-
-        // } else {
-        //     console.log("Ignored:", event.key);
-        // }
     }
-
 
 
     return (
 
         <>
-
             <div className='main'>
 
                 <div className='Multiplayer'>
@@ -405,58 +295,6 @@ const Home = () => {
                     {status === "waiting" ? <h1 className='infotext'>Waiting For more Players</h1> : ""}
                     {<h1 className='infotext'>Players in Server: {PlayersInServer}</h1>}
 
-                    {/* 
-                    <div className="RaceTrack">
-
-
-                        <div className={`PlayerSection ${players.find((player) => player.id === socketRef.current?.id)?.finished ? "finished" : "notfinished"}`}>
-
-                            {players.find((player) => player.id === socketRef.current?.id)?.finished ? <div className='FinshedText'>Finished</div> : ""}
-
-
-                            <div className='playerAvatar' style={{ position: "absolute", left: `${progressPercent}%` }}>
-
-
-                                <img src="https://i.pinimg.com/originals/d5/96/3c/d5963c6f0bc206e3723f796e3b54fd6b.gif" alt="" />
-
-
-                                {status != "waiting" && status != "countdown" ? <div className='wpm'>{players.find((player) => player.id === socketRef.current?.id)?.wpm ?? 0} wpm</div> : ""}
-                                <div className='wpm'>{players.find((player) => player.id === socketRef.current?.id)?.finishtime ?? ""}</div>
-
-                            </div>
-
-                        </div>
-
-
-                        {players.filter((player) => player.id !== socketRef.current?.id)
-                            .map((player) => {
-                                const percent = words.length ? (player.progressIndex / words.length) * 100 : 0;
-                                const finished = player.finished;
-
-
-
-                                return (
-                                    <div className={`PlayerSection ${finished ? "finished" : "notfinished"}`}>
-
-                                        <div className='playerAvatar' style={{ position: "absolute", left: `${percent}%` }}>
-                                            <img className='image'
-
-                                                key={player.id}
-                                                src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png"
-
-                                            />
-
-                                            {status != "waiting" && status != "countdown" ? <div className='wpm'>{player.wpm} wpm</div> : ""}
-                                            <div className='wpm'>{player.finishtime}</div>
-
-                                        </div>
-                                    </div>
-
-                                );
-                            })}
-
-
-                    </div> */}
                 </div>
 
                 <div className="TypeTestContainer">
@@ -465,7 +303,6 @@ const Home = () => {
                         <div className="QuoteText">
 
                             <div ref={caretRef} className="caret" />
-
 
                             {/* loop through all the words in the words array */}
                             {words.map((word, wordIndex) => (
@@ -483,7 +320,6 @@ const Home = () => {
                                             lettersforOverTypedSection = [];
                                             const isCurrent = wordIndex === CurrentWord
                                             CurrentWordsSpansRef.current = [];
-
 
 
                                             //we check to see if this is the last letter in the word as we want to check if the user has typed any other letters
@@ -506,10 +342,7 @@ const Home = () => {
                                                 else {
                                                     console.log(false);
                                                 }
-
-
                                             }
-
 
 
                                             var typedchar;
@@ -519,7 +352,6 @@ const Home = () => {
                                                 typedchar = TypedWord[letterindex] ?? ""
                                             }
                                             else {
-
 
                                                 //the value the user has typed at the specific letter index
                                                 typedchar = StoredWord?.text[letterindex] ?? ""
@@ -538,19 +370,15 @@ const Home = () => {
 
                                         {/* if lettersforOverTypedSection exists then we have overtyped and we can append the extra values after the word */}
                                         {lettersforOverTypedSection && lettersforOverTypedSection.map((character, index) => (
-
                                             <span ref={wordIndex === CurrentWord ? (element) => { if (element) CurrentWordsSpansRef.current.push(element) } : null} className="incorrectOverType" key={index}>{character}</span>
                                         ))}
-
 
 
                                     </span>
 
                                     <span> </span>
 
-
                                 </span>
-
 
                             ))}
 
@@ -561,7 +389,6 @@ const Home = () => {
 
                     <div className='TextInput'>
 
-
                         <input ref={inputref} id="input" type="text" autoComplete='off' autoFocus value={TypedWord} onKeyDown={HandleKeyDown} onChange={ChangeInput} />
 
                     </div>
@@ -571,23 +398,17 @@ const Home = () => {
 
                         <h1 className='wordsPerMinute'> {"Accuracy: " + (Accuracy) + "%"} </h1>
 
-
                         <h1 className='wordsPerMinute'> {(correctCount) + " Correct"} </h1>
 
                         <h1 className='wordsPerMinute'> {(incorrectCount) + " Incorrect"} </h1>
 
-
-
-
-
+                        <Button variant={'outline'}>Button</Button>
 
 
                     </div>
 
 
-
                 </div>
-
 
             </div>
 

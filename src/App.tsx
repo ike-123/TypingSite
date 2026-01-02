@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
-import './App.css'
+
 import {
   createBrowserRouter,
   Outlet,
@@ -13,6 +13,7 @@ import Navbar from './Components/Navbar/Navbar';
 import Footer from './Components/Footer';
 import Multiplayer from './Pages/Multiplayer';
 import Home2 from './Pages/Home2';
+import ShadcnExperiment from './Pages/ShadcnExperiment';
 
 
 
@@ -38,7 +39,7 @@ const router = createBrowserRouter([
   children:[
     {
       path:"/",
-      element:<Home2/>
+      element:<ShadcnExperiment/>
     }
   ]
   
