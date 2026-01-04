@@ -1,12 +1,67 @@
+"use client"
 import React from 'react'
-import { Card } from './ui/card'
+
+import { TrendingUp } from "lucide-react"
+import { CartesianGrid, Line, LineChart, XAxis } from "recharts"
+
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card"
+
+
+import {
+    ChartContainer,
+    ChartTooltip,
+    ChartTooltipContent,
+    type ChartConfig,
+} from "@/components/ui/chart"
+
+
+export const description = "A line chart"
+
+// const chartData = [
+//     { month: "January", desktop: 186 },
+//     { month: "February", desktop: 305 },
+//     { month: "March", desktop: 237 },
+//     { month: "April", desktop: 73 },
+//     { month: "May", desktop: 209 },
+//     { month: "June", desktop: 214 },
+// ]
+
+const chartData = [
+    { time: "1", wpm: 96 },
+    { time: "2", wpm: 126 },
+    { time: "3", wpm: 130 },
+    { time: "4", wpm: 94 },
+    { time: "5", wpm: 86 },
+]
+
+
+// const chartConfig = {
+//     desktop: {
+//         label: "Desktop",
+//         color: "var(--chart-1)",
+//     },
+// } satisfies ChartConfig
+
+const chartConfig = {
+    wpm: {
+        label: "Word Per Minute",
+        color: "var(--chart-1)",
+    },
+} satisfies ChartConfig
 
 const TestResults = () => {
     return (
         <div className='bg-background'>
-            <Card className='w-220 m-auto h-150 mt-20 flex flex-row '>
+            <Card className='w-220 m-auto h-150 mt-20 flex flex-row gap-0'>
 
-                <div className='bg-amber-400 h-full w-full flex-1'>
+                <div className=' h-full w-full flex-1'>
 
                     {/* WPM */}
                     <div className='flex flex-col items-center mt-2'>
@@ -32,12 +87,96 @@ const TestResults = () => {
                     </div>
                 </div>
 
-                <div className='bg-purple-400 h-full w-full flex-5'>
+                <div className=' h-full w-full flex-5'>
+                    <div className=''>
+
+                        <ChartContainer config={chartConfig}>
+
+                            <LineChart
+                                accessibilityLayer
+                                data={chartData}
+                                margin={{
+                                    left: 12,
+                                    right: 12,
+                                }}
+                            >
+                                <CartesianGrid vertical={false} />
+                                <XAxis
+                                    dataKey="time"
+                                    tickLine={false}
+                                    axisLine={false}
+                                    tickMargin={8}
+                                    tickFormatter={(value) => value.slice(0, 3)}
+                                />
+                                <ChartTooltip
+                                    cursor={false}
+                                    content={<ChartTooltipContent hideLabel />}
+                                />
+                                <Line
+                                    dataKey="wpm"
+                                    type="natural"
+                                    stroke="var(--color-wpm)"
+                                    strokeWidth={2}
+                                    dot={false}
+                                />
+                            </LineChart>
+
+                        </ChartContainer>
+                    </div>
 
                 </div>
 
             </Card>
+
+            {/* <Card> */}
+            {/* <CardHeader>
+                    <CardTitle>Line Chart</CardTitle>
+                    <CardDescription>January - June 2024</CardDescription>
+                </CardHeader> */}
+            {/* <CardContent> */}
+            <ChartContainer config={chartConfig}>
+                <LineChart
+                    accessibilityLayer
+                    data={chartData}
+                    margin={{
+                        left: 12,
+                        right: 12,
+                    }}
+                >
+                    <CartesianGrid vertical={false} />
+                    <XAxis
+                        dataKey="time"
+                        tickLine={false}
+                        axisLine={false}
+                        tickMargin={8}
+                        tickFormatter={(value) => value.slice(0, 3)}
+                    />
+                    <ChartTooltip
+                        cursor={false}
+                        content={<ChartTooltipContent hideLabel />}
+                    />
+                    <Line
+                        dataKey="wpm"
+                        type="natural"
+                        stroke="var(--color-wpm)"
+                        strokeWidth={2}
+                        dot={false}
+                    />
+                </LineChart>
+            </ChartContainer>
+            {/* </CardContent> */}
+            {/* <CardFooter className="flex-col items-start gap-2 text-sm">
+                    <div className="flex gap-2 leading-none font-medium">
+                        Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+                    </div>
+                    <div className="text-muted-foreground leading-none">
+                        Showing total visitors for the last 6 months
+                    </div>
+                </CardFooter> */}
+            {/* </Card> */}
         </div>
+
+
     )
 }
 

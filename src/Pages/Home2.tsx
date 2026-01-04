@@ -4,6 +4,10 @@ import words from '../words.json'
 import { io, Socket } from 'socket.io-client'
 import { Button } from "@/components/ui/button"
 
+
+
+import { Input } from '@/Components/ui/input'
+
 type PlayerState = { id: string; progressIndex: number; wpm: number; finished: boolean; finishtime: String };
 
 
@@ -57,6 +61,8 @@ const Home = () => {
 
     const [AllWordMap2, setAllWordMap2] = useState<Map<number, { text: string, isCorrect: boolean }>>(new Map());
 
+
+    // Caret Position
     useEffect(() => {
 
         if (!CurrentWordsSpansRef.current || !caretRef.current || !inputref.current) return;
@@ -117,6 +123,7 @@ const Home = () => {
 
 
     }, [CurrentWordsSpansRef.current])
+    
 
     useEffect(() => {
 
@@ -282,6 +289,7 @@ const Home = () => {
         console.log(event)
         console.log(console.log(""))
     }
+    
 
 
     return (
@@ -289,13 +297,28 @@ const Home = () => {
         <>
             <div className='main'>
 
-                <div className='Multiplayer'>
+                {/* <div className='Multiplayer'>
 
                     {countdown !== null && <h1 className='infotext'>Game starts in {countdown}</h1>}
                     {status === "waiting" ? <h1 className='infotext'>Waiting For more Players</h1> : ""}
                     {<h1 className='infotext'>Players in Server: {PlayersInServer}</h1>}
 
+                </div> */}
+
+                <div className='m-4'>
+                    <h1>30 seconds</h1>
                 </div>
+
+                <div className='flex justify-center mb-4 gap-2'>
+                    <Button variant={'outline'}>Time</Button>
+                    <Button variant={'outline'}>Words</Button>
+
+                </div>
+                
+                <div className='flex mb-5'>
+                    <Input className='w-40 m-auto' type='text' placeholder='text'></Input>
+                </div>
+
 
                 <div className="TypeTestContainer">
 
@@ -402,7 +425,6 @@ const Home = () => {
 
                         <h1 className='wordsPerMinute'> {(incorrectCount) + " Incorrect"} </h1>
 
-                        <Button variant={'outline'}>Button</Button>
 
 
                     </div>
