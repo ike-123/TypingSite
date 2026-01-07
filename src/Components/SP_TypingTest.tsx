@@ -5,9 +5,7 @@ import { useTypingEnigne } from '../Hooks/useTypingEngine'
 
 
 
-const SP_TypingTest = () => {
-
-const engine =  useTypingEnigne()
+const SP_TypingTest = ({engine}: {engine:ReturnType<typeof useTypingEnigne>}) => {
 
     return (
         <>
@@ -30,20 +28,20 @@ const engine =  useTypingEnigne()
                             <div ref={engine.caretRef} className="caret" />
 
                             {/* loop through all the words in the words array */}
-                            {engine.words.map((word, wordIndex) => (
+                            {engine.state.words.map((word, wordIndex) => (
 
                                 //If CurrentWord is greater than WordIndex then user has alreadly typed the word and class will be "correct"
 
-                                <span className={wordIndex < engine.CurrentWord ? (`${engine.AllWordMap2.get(wordIndex)?.isCorrect ? "correct" : "incorrectword"}`) : ""} key={wordIndex}>
+                                <span className={wordIndex < engine.state.CurrentWordIndex ? (`${engine.state.AllWordMap.get(wordIndex)?.isCorrect ? "correct" : "incorrectword"}`) : ""} key={wordIndex}>
 
                                     <span>
                                         {/* split the word array to retrieve each letter and put in in a span */}
 
                                         {word.split("").map((character, letterindex) => {
 
-                                            const StoredWord = engine.AllWordMap2.get(wordIndex);
+                                            const StoredWord = engine.state.AllWordMap.get(wordIndex);
                                             engine.lettersforOverTypedSection = [];
-                                            const isCurrent = wordIndex === engine.CurrentWord
+                                            const isCurrent = wordIndex === engine.state.CurrentWordIndex
                                             engine.CurrentWordsSpansRef.current = [];
 
 
@@ -74,7 +72,7 @@ const engine =  useTypingEnigne()
 
                                             if (isCurrent) {
                                                 //the value the user has typed at the specific letter index
-                                                typedchar = engine.TypedWord[letterindex] ?? ""
+                                                typedchar = engine.state.TypedWord[letterindex] ?? ""
                                             }
                                             else {
 
@@ -88,14 +86,14 @@ const engine =  useTypingEnigne()
 
                                             //put each letter into a span and inside of the ref attribute add the current span into the currentwordsspanref array
                                             return (
-                                                <span ref={wordIndex === engine.CurrentWord ? (element) => { if (element) engine.CurrentWordsSpansRef.current.push(element) } : null} className={charClass} key={letterindex}>{character}</span>
+                                                <span ref={wordIndex === engine.state.CurrentWordIndex ? (element) => { if (element) engine.CurrentWordsSpansRef.current.push(element) } : null} className={charClass} key={letterindex}>{character}</span>
                                             )
 
                                         })}
 
                                         {/* if lettersforOverTypedSection exists then we have overtyped and we can append the extra values after the word */}
                                         {engine.lettersforOverTypedSection && engine.lettersforOverTypedSection.map((character, index) => (
-                                            <span ref={wordIndex === engine.CurrentWord ? (element) => { if (element) engine.CurrentWordsSpansRef.current.push(element) } : null} className="incorrectOverType" key={index}>{character}</span>
+                                            <span ref={wordIndex === engine.state.CurrentWordIndex ? (element) => { if (element) engine.CurrentWordsSpansRef.current.push(element) } : null} className="incorrectOverType" key={index}>{character}</span>
                                         ))}
 
 
@@ -114,18 +112,18 @@ const engine =  useTypingEnigne()
 
                     <div className='TextInput'>
 
-                        <input ref={engine.inputref} id="input" type="text" autoComplete='off' autoFocus value={engine.TypedWord} onKeyDown={engine.HandleKeyDown} onChange={engine.ChangeInput} />
+                        <input ref={engine.inputref} id="input" type="text" autoComplete='off' autoFocus value={engine.state.TypedWord} onKeyDown={engine.HandleKeyDown} onChange={engine.ChangeInput} />
 
                     </div>
 
                     <div>
-                        <h1 className='wordsPerMinute'> {engine.TestFinished ? (engine.WPM) + " WPM" : ""} </h1>
+                        <h1 className='wordsPerMinute'> {engine.state.TestFinished ? (engine.state.WPM) + " WPM" : ""} </h1>
 
-                        <h1 className='wordsPerMinute'> {"Accuracy: " + (engine.Accuracy) + "%"} </h1>
+                        <h1 className='wordsPerMinute'> {"Accuracy: " + (engine.state.Accuracy) + "%"} </h1>
 
-                        <h1 className='wordsPerMinute'> {(engine.correctCount) + " Correct"} </h1>
+                        <h1 className='wordsPerMinute'> {(engine.state.correctCount) + " Correct"} </h1>
 
-                        <h1 className='wordsPerMinute'> {(engine.incorrectCount) + " Incorrect"} </h1>
+                        <h1 className='wordsPerMinute'> {(engine.state.incorrectCount) + " Incorrect"} </h1>
 
 
 

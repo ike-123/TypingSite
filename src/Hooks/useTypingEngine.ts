@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useReducer } from 'react'
 // import './Style.scss'
 import words from '../words.json'
 import { io, Socket } from 'socket.io-client'
@@ -10,6 +10,12 @@ import { Input } from '@/Components/ui/input'
 
 
 
+export interface TypingModeConfig {
+
+    mode: string,
+    config: string[],
+
+}
 
 function getRandomWords(amount: number) {
     const randomArray = [...words].sort(() => 0.5 - Math.random());
@@ -22,28 +28,40 @@ export function useTypingEnigne() {
 
     const [words] = useState(() => getRandomWords(5));
 
-    const [TypedWord, setTypedWord] = useState<string>("")
 
     const [CurrentWord, SetNewCurrenetWord] = useState(0)
+    const [AllWordMap2, setAllWordMap2] = useState<Map<number, { text: string, isCorrect: boolean }>>(new Map());
 
-    const [countdown, setCountdown] = useState<number | null>(null);
+
+
+    const [TypedWord, setTypedWord] = useState<string>("")
+
 
     const [startTime, SetStartTime] = useState(0);
     const [finishTime, SetFinishtTime] = useState(0);
-    const [WPM, setWPM] = useState(0);
-    const [TestFinished, setTestFinished] = useState(false);
+
+
 
     const [correctCount, SetCorrectCount] = useState<number>(0);
     const [incorrectCount, SetInCorrectCount] = useState<number>(0);
+
+
+    const [TestFinished, setTestFinished] = useState(false);
+
+
+    const [WPM, setWPM] = useState(0);
     const [Accuracy, SetAccuracy] = useState(0);
 
 
-    const [status, setStatus] = useState("waiting");
 
-    const [PlayersInServer, SetPlayersInServer] = useState(0);
+    // const [state, SetState] = useState("notStarted");
 
 
-    // const [status, setStatus] = useState("waiting");
+
+
+
+
+
 
 
     const caretRef = useRef<HTMLDivElement | null>(null);
@@ -54,7 +72,259 @@ export function useTypingEnigne() {
 
     const blocked = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"];
 
-    const [AllWordMap2, setAllWordMap2] = useState<Map<number, { text: string, isCorrect: boolean }>>(new Map());
+
+
+
+
+
+
+    let lettersforOverTypedSection: string[] = [];
+
+    interface State {
+        words: string[],
+        CurrentWordIndex: number,
+        AllWordMap: Map<number, { text: string, isCorrect: boolean }>
+        TypedWord: string,
+        startTime: number,
+        finishTime: number,
+        correctCount: number,
+        incorrectCount: number,
+        TestFinished: boolean,
+        WPM: number,
+        Accuracy: number
+    }
+    interface Action {
+        type: "InputChanged" | "SpacebarPressed" | "BackspacePressed" | "Reset",
+        payload: any
+    }
+
+    function reducer(state: State, action: Action): State {
+
+        let CurrentWordIndex = state.CurrentWordIndex;
+        // const CurrentWord = state.words[state.CurrentWordIndex]
+
+        let TypedWord = state.TypedWord;
+        const AllWordMap = state.AllWordMap;
+        let incorrectCount = state.incorrectCount;
+        let correctCount = state.correctCount;
+        // const nextIndex = state.CurrentWordIndex;
+        let startTime = state.startTime;
+        let finishTime = state.finishTime;
+        let TestFinished = state.TestFinished;
+
+        let WPM = state.WPM;
+        let Accuracy = state.Accuracy;
+
+
+        const { value, inputEventData, keyPressEvent } = action.payload
+
+
+        switch (action.type) {
+            case "InputChanged":
+
+                // Clear the refs array before moving to next word
+
+                //check if the word we typed is equal to the current word
+
+                TypedWord = value;
+                const iscorrect = value === state.words[CurrentWordIndex];
+
+                // setAllWordMap2(prev => {
+                //     const newMap = new Map(prev);
+                //     newMap.set(CurrentWord, { text: value, isCorrect: iscorrect });
+                //     return newMap;
+                // });
+
+                AllWordMap.set(CurrentWordIndex, { text: value, isCorrect: iscorrect });
+
+                console.log(AllWordMap);
+
+                // const inputEvent = event.nativeEvent as InputEvent;
+                // const data = inputEvent.data;
+
+                //UPDATE CORRECT AND INCORRECT COUNTS
+
+                //get key input and make sure it's a valid character key
+                if (inputEventData && inputEventData.length === 1 && !/\s/.test(inputEventData)) {
+                    console.log("Typed character:", inputEventData);
+
+                    if (value.length > state.words[CurrentWordIndex].length) {
+                        //we are over typing 
+                        // SetInCorrectCount((prev: number) => prev + 1);
+                        incorrectCount++;
+
+                    }
+                    else {
+
+                        //check the last character in the currently typed word and check if it is the same as the current words last character
+                        if (value[value.length - 1] === state.words[CurrentWordIndex][value.length - 1]) {
+                            correctCount++;
+                        }
+                        else {
+                            incorrectCount++;
+
+                        }
+                    }
+                }
+
+                if (!state.startTime) {
+
+                    startTime = Date.now();
+                }
+
+                return {
+                    ...state,
+                    TypedWord: TypedWord,
+                    AllWordMap: AllWordMap,
+                    correctCount: correctCount,
+                    incorrectCount: incorrectCount,
+                    startTime: startTime
+                }
+
+
+
+            case "SpacebarPressed":
+
+
+                if (TypedWord.length > 0) {
+
+                    const candidate = TypedWord.trim()
+
+                    if (candidate === state.words[CurrentWordIndex]) {
+
+                        AllWordMap.set(CurrentWordIndex, { text: candidate, isCorrect: true })
+
+                        correctCount++;
+
+                    }
+                    else {
+
+                        AllWordMap.set(CurrentWordIndex, { text: candidate, isCorrect: false })
+
+                        incorrectCount++;
+
+                    }
+
+
+                    CurrentWordIndex++;
+                    // SetNewCurrenetWord((previous: any) => previous + 1)
+
+                    TypedWord = "";
+
+                    //If this is the last word
+                    if (CurrentWordIndex > state.words.length - 1) {
+
+
+                        finishTime = Date.now()
+
+
+                        const timeElapsed = (finishTime - startTime) / 60000 //elapsed time in minutes
+
+
+                        var CorrectlyTypedWordsArr: string[] = new Array();
+
+                        AllWordMap.forEach((word: any) => {
+                            if (word.isCorrect) {
+                                CorrectlyTypedWordsArr.push(word.text);
+                            }
+                        });
+
+                        const characterLength = CorrectlyTypedWordsArr.join(" ").length;
+
+                        console.log("Character count = ", characterLength);
+
+                        const WordsTyped = characterLength / 5;
+
+                        // setWPM(Math.round(WordsTyped / timeElapsed))
+                        WPM = Math.round(WordsTyped / timeElapsed)
+
+                        Accuracy = Math.round((correctCount / (correctCount + incorrectCount)) * 100)
+
+                        // setTestFinished(true);
+                        TestFinished = true;
+
+                        console.log(WPM);
+
+                    }
+
+                }
+                return {
+                    ...state,
+                    TypedWord: TypedWord,
+                    CurrentWordIndex: CurrentWordIndex,
+                    correctCount: correctCount,
+                    incorrectCount: incorrectCount,
+                    AllWordMap: AllWordMap,
+                    finishTime: finishTime,
+                    WPM: WPM,
+                    Accuracy: Accuracy,
+                    TestFinished: TestFinished,
+                }
+
+
+            case "BackspacePressed":
+
+                if (CurrentWordIndex - 1 < 0)
+                    return {
+                        ...state,
+                    };
+
+                //if we haven't typed a character in the currentword & the previous word is incorrect
+                if (TypedWord.length == 0 && AllWordMap.get(CurrentWordIndex - 1)?.isCorrect == false) {
+                    keyPressEvent.preventDefault();
+
+                    // SetNewCurrenetWord((previous: any) => previous - 1)
+
+                    CurrentWordIndex--;
+
+                    // setTypedWord(AllWordMap2.get(CurrentWord - 1)!.text);
+
+                    TypedWord = AllWordMap.get(CurrentWordIndex)!.text
+
+
+
+                }
+
+                return {
+                    ...state,
+                    CurrentWordIndex: CurrentWordIndex,
+                    TypedWord: TypedWord,
+
+                }
+
+            case "Reset":
+                return {
+                    words: getRandomWords(5),
+                    CurrentWordIndex: 0,
+                    AllWordMap: new Map(),
+                    TypedWord: "",
+                    startTime: 0,
+                    finishTime: 0,
+                    correctCount: 0,
+                    incorrectCount: 0,
+                    TestFinished: false,
+                    WPM: 0,
+                    Accuracy: 0
+                }
+
+
+        }
+    }
+
+    const [state, dispatch] = useReducer(reducer, {
+        words: getRandomWords(5),
+        CurrentWordIndex: 0,
+        AllWordMap: new Map(),
+        TypedWord: "",
+        startTime: 0,
+        finishTime: 0,
+        correctCount: 0,
+        incorrectCount: 0,
+        TestFinished: false,
+        WPM: 0,
+        Accuracy: 0
+
+    })
 
 
     // Caret Position
@@ -64,7 +334,7 @@ export function useTypingEnigne() {
 
         const caretElement = caretRef.current;
 
-        const letterElement = CurrentWordsSpansRef.current[TypedWord.length - 1];
+        const letterElement = CurrentWordsSpansRef.current[state.TypedWord.length - 1];
 
         //const inputelment = document.getElementById("input");
 
@@ -96,13 +366,14 @@ export function useTypingEnigne() {
         // });
 
 
-        console.log("currentword ", CurrentWordsSpansRef.current.length);
+        // console.log("currentword ", CurrentWordsSpansRef.current.length);
 
-        console.log("typedword ", TypedWord.length);
-        console.log(CurrentWord);
+        // console.log("typedword ", TypedWord.length);
+        // console.log(CurrentWord);
 
 
         if (!letterElement) {
+            //position caret before the first letter in the word
             // console.log(CurrentWordsSpansRef.current);
             caretElement.style.left = `${(CurrentWordsSpansRef.current[0]?.offsetLeft ?? 0) - 2}px`
             caretElement.style.top = `${CurrentWordsSpansRef.current[0]?.offsetTop}px`
@@ -127,184 +398,218 @@ export function useTypingEnigne() {
     }, [TestFinished])
 
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        //round down
-        SetAccuracy(Math.round((correctCount / (correctCount + incorrectCount)) * 100))
-    }, [TestFinished])
+    //     SetState("notStarted")
+
+    // }, [mode])
+
+
+    // useEffect(() => {
+
+    //    if(state === "notStarted"){
+
+    //     SetStartTime(0);
+    //     SetCorrectCount(0);
+    //     SetInCorrectCount(0);
+    //     SetAccuracy(0);
+    //     setTestFinished(false);
+    //    }
+
+
+
+    // }, [state])
 
 
     // const [lettersforOverTypedSection,setOverTypeSection] = useState<string[] | null>([]);
 
-    let lettersforOverTypedSection: string[] = [];
 
 
     function ChangeInput(event: any) {
 
         // Clear the refs array before moving to next word
+
         const value = event.target.value
-        setTypedWord(value)
 
-        if (value === words[CurrentWord]) {
-
-            setAllWordMap2(prev => {
-                const newMap = new Map(prev);
-                newMap.set(CurrentWord, { text: value, isCorrect: true });
-                return newMap;
-            });
-
-        }
-        else {
-
-            setAllWordMap2(prev => {
-                const newMap = new Map(prev);
-                newMap.set(CurrentWord, { text: value, isCorrect: false });
-                return newMap;
-            });
-
-        }
 
         const inputEvent = event.nativeEvent as InputEvent;
-        const data = inputEvent.data;
-
-        if (data && data.length === 1 && !/\s/.test(data)) {
-            console.log("Typed character:", data);
-
-            if (value.length > words[CurrentWord].length) {
-                //we are over typing 
-                SetInCorrectCount((prev: number) => prev + 1);
-
-            }
-            else {
-
-                if (value[value.length - 1] === words[CurrentWord][value.length - 1]) {
-                    console.log("Counted:", event.key);
-                    SetCorrectCount((prev: number) => prev + 1);
-                }
-                else {
-                    console.log("Counted:", event.key);
-
-                    SetInCorrectCount((prev: number) => prev + 1);
-                }
-            }
-        }
+        const inputEventData = inputEvent.data;
 
 
-        console.log(AllWordMap2);
+        dispatch({ type: "InputChanged", payload: { value, inputEventData } })
 
-        if (!startTime) {
+        // setTypedWord(value)
 
-            SetStartTime(Date.now());
-        }
+        // //check if the word we typed is equal to the current word
+
+        // if (value === words[CurrentWord]) {
+
+        //     setAllWordMap2(prev => {
+        //         const newMap = new Map(prev);
+        //         newMap.set(CurrentWord, { text: value, isCorrect: true });
+        //         return newMap;
+        //     });
+
+        // }
+        // else {
+
+        //     setAllWordMap2(prev => {
+        //         const newMap = new Map(prev);
+        //         newMap.set(CurrentWord, { text: value, isCorrect: false });
+        //         return newMap;
+        //     });
+
+        // }
+
+        // // const inputEvent = event.nativeEvent as InputEvent;
+        // // const data = inputEvent.data;
+
+        // //get key input and make sure it's a valid character key
+
+        // if (inputEventData && inputEventData.length === 1 && !/\s/.test(inputEventData)) {
+        //     console.log("Typed character:", inputEventData);
+
+        //     if (value.length > words[CurrentWord].length) {
+        //         //we are over typing 
+        //         SetInCorrectCount((prev: number) => prev + 1);
+
+        //     }
+        //     else {
+
+        //         //check the last character in the currently typed word and check if it is the same as the current words last character
+        //         if (value[value.length - 1] === words[CurrentWord][value.length - 1]) {
+        //             console.log("Counted:", event.key);
+        //             SetCorrectCount((prev: number) => prev + 1);
+        //         }
+        //         else {
+        //             console.log("Counted:", event.key);
+        //             SetInCorrectCount((prev: number) => prev + 1);
+        //         }
+        //     }
+        // }
+
+
+        // console.log(AllWordMap2);
+
+        // if (!startTime) {
+
+        //     SetStartTime(Date.now());
+        // }
 
     }
 
     function HandleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
 
 
+
         if (event.code === "Space") {
             event.preventDefault();
 
-            if (TypedWord.length > 0) {
 
-                const candidate = TypedWord.trim()
-
-                if (candidate === words[CurrentWord]) {
-
-                    setAllWordMap2(prev => {
-                        const newMap = new Map(prev);
-                        newMap.set(CurrentWord, { text: candidate, isCorrect: true });
-                        return newMap;
-                    });
-
-                    SetCorrectCount((prev: number) => prev + 1);
-
-                }
-                else {
-
-                    setAllWordMap2(prev => {
-                        const newMap = new Map(prev);
-                        newMap.set(CurrentWord, { text: candidate, isCorrect: false });
-                        return newMap;
-                    });
-
-                    SetInCorrectCount((prev: number) => prev + 1);
-                }
+            dispatch({ type: "SpacebarPressed", payload: { keyPressEvent:event } })
 
 
-                const nextIndex = CurrentWord + 1;
-                SetNewCurrenetWord((previous: any) => previous + 1)
-                setTypedWord("")
+            // if (TypedWord.length > 0) {
 
-                //If this is the last word
-                if (nextIndex > words.length - 1) {
+            //     const candidate = TypedWord.trim()
 
-                    const finish = Date.now()
-                    SetFinishtTime(finish)
+            //     if (candidate === words[CurrentWord]) {
 
-                    const timeElapsed = (finish - startTime) / 60000 //elapsed time in minutes
+            //         setAllWordMap2(prev => {
+            //             const newMap = new Map(prev);
+            //             newMap.set(CurrentWord, { text: candidate, isCorrect: true });
+            //             return newMap;
+            //         });
 
-                    //console.log(finishTime);
+            //         SetCorrectCount((prev: number) => prev + 1);
 
-                    var CorrectlyTypedWordsArr: string[] = new Array();
+            //     }
+            //     else {
 
-                    AllWordMap2.forEach((word: any) => {
-                        if (word.isCorrect) {
-                            CorrectlyTypedWordsArr.push(word.text);
-                        }
-                    });
+            //         setAllWordMap2(prev => {
+            //             const newMap = new Map(prev);
+            //             newMap.set(CurrentWord, { text: candidate, isCorrect: false });
+            //             return newMap;
+            //         });
 
-                    const characterLength = CorrectlyTypedWordsArr.join(" ").length;
+            //         SetInCorrectCount((prev: number) => prev + 1);
+            //     }
 
-                    console.log("Character count = ", characterLength);
 
-                    const WordsTyped = characterLength / 5;
+            //     const nextIndex = CurrentWord + 1;
+            //     SetNewCurrenetWord((previous: any) => previous + 1)
+            //     setTypedWord("")
 
-                    setWPM(Math.round(WordsTyped / timeElapsed))
-                    setTestFinished(true);
-                    console.log(WPM);
+            //     //If this is the last word
+            //     if (nextIndex > words.length - 1) {
 
-                }
+            //         const finish = Date.now()
+            //         SetFinishtTime(finish)
 
-            }
+            //         const timeElapsed = (finish - startTime) / 60000 //elapsed time in minutes
+
+            //         //console.log(finishTime);
+
+            //         var CorrectlyTypedWordsArr: string[] = new Array();
+
+            //         AllWordMap2.forEach((word: any) => {
+            //             if (word.isCorrect) {
+            //                 CorrectlyTypedWordsArr.push(word.text);
+            //             }
+            //         });
+
+            //         const characterLength = CorrectlyTypedWordsArr.join(" ").length;
+
+            //         console.log("Character count = ", characterLength);
+
+            //         const WordsTyped = characterLength / 5;
+
+            //         setWPM(Math.round(WordsTyped / timeElapsed))
+            //         setTestFinished(true);
+            //         console.log(WPM);
+
+            //     }
+
+            // }
 
         }
 
         if (event.code === "Backspace") {
 
-            //if we haven't typed a character in the currentword & the previous word is incorrect
-            if (CurrentWord - 1 < 0)
-                return;
+            dispatch({ type: "BackspacePressed", payload: { keyPressEvent:event } })
 
-            if (TypedWord.length == 0 && AllWordMap2.get(CurrentWord - 1)?.isCorrect == false) {
-                event.preventDefault();
+            // if (CurrentWord - 1 < 0)
+            //     return;
 
-                setTypedWord(AllWordMap2.get(CurrentWord - 1)!.text);
-                SetNewCurrenetWord((previous: any) => previous - 1)
+            // //if we haven't typed a character in the currentword & the previous word is incorrect
+            // if (TypedWord.length == 0 && AllWordMap2.get(CurrentWord - 1)?.isCorrect == false) {
+            //     event.preventDefault();
 
-            }
+            //     setTypedWord(AllWordMap2.get(CurrentWord - 1)!.text);
+            //     SetNewCurrenetWord((previous: any) => previous - 1)
+
+            // }
         }
+
+    }
+
+    function Reset(){
+
+        dispatch({ type: "Reset", payload:{}})
 
     }
 
 
     return {
 
-        words,
-        CurrentWord,
-        AllWordMap2,
+        state,
         caretRef,
-        lettersforOverTypedSection,
-        CurrentWordsSpansRef,
-        TypedWord,
         inputref,
+        CurrentWordsSpansRef,
         HandleKeyDown,
         ChangeInput,
-        TestFinished,
-        WPM,
-        Accuracy,
-        correctCount,
-        incorrectCount
+        Reset,
+        lettersforOverTypedSection,
 
 
     }

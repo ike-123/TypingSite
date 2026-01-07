@@ -13,7 +13,7 @@ import Navbar from './Components/Navbar/Navbar';
 import Footer from './Components/Footer';
 import Multiplayer from './Pages/Multiplayer';
 import Home2 from './Pages/Home2';
-import ShadcnExperiment from './Pages/ShadcnExperiment';
+import SinglePageTypingTest from './Pages/SinglePageTypingTest';
 import TestResults from './Components/TestResults';
 
 
@@ -40,7 +40,7 @@ const router = createBrowserRouter([
   children:[
     {
       path:"/",
-      element:<ShadcnExperiment/>
+      element:<SinglePageTypingTest/>
     }
   ]
   

@@ -123,7 +123,7 @@ const Home = () => {
 
 
     }, [CurrentWordsSpansRef.current])
-    
+
 
     useEffect(() => {
 
@@ -143,30 +143,16 @@ const Home = () => {
         const value = event.target.value
         setTypedWord(value)
 
-        if (value === words[CurrentWord]) {
+        const iscorrect = value === words[CurrentWord];
 
-            setAllWordMap2(prev => {
-                const newMap = new Map(prev);
-                newMap.set(CurrentWord, { text: value, isCorrect: true });
-                return newMap;
-            });
-
-        }
-        else {
-
-            setAllWordMap2(prev => {
-                const newMap = new Map(prev);
-                newMap.set(CurrentWord, { text: value, isCorrect: false });
-                return newMap;
-            });
-
-        }
+        setAllWordMap2(prev => {
+            const newMap = new Map(prev);
+            newMap.set(CurrentWord, { text: value, isCorrect: iscorrect });
+            return newMap;
+        });
 
         const inputEvent = event.nativeEvent as InputEvent;
         const data = inputEvent.data;
-
-
-        // console.log(event);
 
         if (data && data.length === 1 && !/\s/.test(data)) {
             console.log("Typed character:", data);
@@ -189,7 +175,6 @@ const Home = () => {
                 }
             }
         }
-
 
         console.log(AllWordMap2);
 
@@ -253,6 +238,7 @@ const Home = () => {
                         if (word.isCorrect) {
                             CorrectlyTypedWordsArr.push(word.text);
                         }
+                        console.log(word.text);
                     });
 
                     const characterLength = CorrectlyTypedWordsArr.join(" ").length;
@@ -273,10 +259,10 @@ const Home = () => {
 
         if (event.code === "Backspace") {
 
-            //if we haven't typed a character in the currentword & the previous word is incorrect
             if (CurrentWord - 1 < 0)
                 return;
 
+            //if we haven't typed a character in the currentword & the previous word is incorrect
             if (TypedWord.length == 0 && AllWordMap2.get(CurrentWord - 1)?.isCorrect == false) {
                 event.preventDefault();
 
@@ -289,7 +275,7 @@ const Home = () => {
         console.log(event)
         console.log(console.log(""))
     }
-    
+
 
 
     return (
@@ -314,7 +300,7 @@ const Home = () => {
                     <Button variant={'outline'}>Words</Button>
 
                 </div>
-                
+
                 <div className='flex mb-5'>
                     <Input className='w-40 m-auto' type='text' placeholder='text'></Input>
                 </div>
