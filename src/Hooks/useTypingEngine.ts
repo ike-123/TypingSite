@@ -23,7 +23,7 @@ function getRandomWords(amount: number) {
 }
 
 
-export function useTypingEnigne() {
+export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
 
     const [words] = useState(() => getRandomWords(5));
@@ -147,6 +147,10 @@ export function useTypingEnigne() {
                 //get key input and make sure it's a valid character key
                 if (inputEventData && inputEventData.length === 1 && !/\s/.test(inputEventData)) {
                     console.log("Typed character:", inputEventData);
+
+                    console.log("typedvalue ", value);
+                    console.log("currentword length ", state.words[CurrentWordIndex]);
+
 
                     if (value.length > state.words[CurrentWordIndex].length) {
                         //we are over typing 
@@ -292,6 +296,7 @@ export function useTypingEnigne() {
 
                 }
 
+
             case "Reset":
                 return {
                     words: getRandomWords(5),
@@ -308,6 +313,19 @@ export function useTypingEnigne() {
                 }
 
 
+        }
+    }
+
+    function StartTest() {
+
+        switch (mode) {
+            case "word":
+                
+
+                break;
+
+            default:
+                break;
         }
     }
 
@@ -506,7 +524,7 @@ export function useTypingEnigne() {
             event.preventDefault();
 
 
-            dispatch({ type: "SpacebarPressed", payload: { keyPressEvent:event } })
+            dispatch({ type: "SpacebarPressed", payload: { keyPressEvent: event } })
 
 
             // if (TypedWord.length > 0) {
@@ -576,7 +594,7 @@ export function useTypingEnigne() {
 
         if (event.code === "Backspace") {
 
-            dispatch({ type: "BackspacePressed", payload: { keyPressEvent:event } })
+            dispatch({ type: "BackspacePressed", payload: { keyPressEvent: event } })
 
             // if (CurrentWord - 1 < 0)
             //     return;
@@ -593,9 +611,9 @@ export function useTypingEnigne() {
 
     }
 
-    function Reset(){
+    function Reset() {
 
-        dispatch({ type: "Reset", payload:{}})
+        dispatch({ type: "Reset", payload: {} })
 
     }
 
