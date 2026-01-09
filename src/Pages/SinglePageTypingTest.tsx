@@ -2,16 +2,18 @@ import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/Components/ui/card'
 import SP_TypingTest from '@/Components/SP_TypingTest'
-import { useTypingEnigne } from '@/Hooks/useTypingEngine'
+import { useTypingEnigne, type TypingModeConfig } from '@/Hooks/useTypingEngine'
 
 import { type modeID, Modes, type configID } from '@/utils/Typingmode'
 
 
 
 const SinglePageTypingTest = () => {
+    //store the mode itself instead of the modeid
 
     const [modeID, SetMode] = useState<modeID>("word")
     const [configs, SetConfig] = useState<configID[]>([])
+
 
 
     function selectMode(id: modeID) {
@@ -61,7 +63,7 @@ const SinglePageTypingTest = () => {
             </Card> */}
 
 
-
+           
 
             <div className='flex justify-center gap-5 m-10'>
 
@@ -72,8 +74,6 @@ const SinglePageTypingTest = () => {
                 }
 
             </div>
-
-
 
 
             {/* <div className='flex justify-center gap-5 m-10'>
@@ -91,6 +91,10 @@ const SinglePageTypingTest = () => {
 
                     ))
                 }
+            </div>
+
+             <div>
+                <h1 className='text-2xl font-bold mt-5 text-primary flex justify-center'>{engine.state.displayText}</h1>
             </div>
 
 

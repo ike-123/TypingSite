@@ -20,6 +20,8 @@ const SP_TypingTest = ({engine}: {engine:ReturnType<typeof useTypingEnigne>}) =>
 
                 </div> */}
 
+                {/* <h1 className='text-2xl font-bold mt-6 text-primary flex justify-center'>{engine.state.displayText}</h1> */}
+
                 <div className="TypeTestContainer">
 
                     <div className='TextContainer'>

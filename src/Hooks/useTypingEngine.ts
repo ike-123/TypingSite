@@ -8,14 +8,40 @@ import { Button } from "@/components/ui/button"
 
 import { Input } from '@/Components/ui/input'
 
+import { Modes, type modeID } from '@/utils/Typingmode'
+
 
 
 export interface TypingModeConfig {
 
-    mode: string,
+    mode: modeID,
     config: string[],
 
 }
+
+export interface State {
+    words: string[],
+    CurrentWordIndex: number,
+    AllWordMap: Map<number, { text: string, isCorrect: boolean }>
+    TypedWord: string,
+    startTime: number,
+    finishTime: number,
+    correctCount: number,
+    incorrectCount: number,
+    TestFinished: boolean,
+    WPM: number,
+    Accuracy: number,
+    displayText: string | null,
+    status: Status,
+}
+
+
+export interface Action {
+    type: "InputChanged" | "SpacebarPressed" | "BackspacePressed" | "Reset" | "StartTest" | "FinishTest" | "1_Second_Update",
+    payload: any
+}
+
+export type Status = "notstarted" | "typing" | "finished";
 
 function getRandomWords(amount: number) {
     const randomArray = [...words].sort(() => 0.5 - Math.random());
@@ -26,39 +52,35 @@ function getRandomWords(amount: number) {
 export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
 
-    const [words] = useState(() => getRandomWords(5));
+    // const [words] = useState(() => getRandomWords(5));
 
 
-    const [CurrentWord, SetNewCurrenetWord] = useState(0)
-    const [AllWordMap2, setAllWordMap2] = useState<Map<number, { text: string, isCorrect: boolean }>>(new Map());
-
-
-
-    const [TypedWord, setTypedWord] = useState<string>("")
-
-
-    const [startTime, SetStartTime] = useState(0);
-    const [finishTime, SetFinishtTime] = useState(0);
+    // const [CurrentWord, SetNewCurrenetWord] = useState(0)
+    // const [AllWordMap2, setAllWordMap2] = useState<Map<number, { text: string, isCorrect: boolean }>>(new Map());
 
 
 
-    const [correctCount, SetCorrectCount] = useState<number>(0);
-    const [incorrectCount, SetInCorrectCount] = useState<number>(0);
+    // const [TypedWord, setTypedWord] = useState<string>("")
 
 
-    const [TestFinished, setTestFinished] = useState(false);
+    // const [startTime, SetStartTime] = useState(0);
+    // const [finishTime, SetFinishtTime] = useState(0);
 
 
-    const [WPM, setWPM] = useState(0);
-    const [Accuracy, SetAccuracy] = useState(0);
+
+    // const [correctCount, SetCorrectCount] = useState<number>(0);
+    // const [incorrectCount, SetInCorrectCount] = useState<number>(0);
+
+
+    // const [TestFinished, setTestFinished] = useState(false);
+
+
+    // const [WPM, setWPM] = useState(0);
+    // const [Accuracy, SetAccuracy] = useState(0);
 
 
 
     // const [state, SetState] = useState("notStarted");
-
-
-
-
 
 
 
@@ -73,6 +95,9 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
     const blocked = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"];
 
 
+    // const [TypingMode, SetTypingModeLogic] = useState<TypingModeConfig>();
+    // const TypingMode = Modes[mode].ModeLogic.
+
 
 
 
@@ -80,23 +105,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
     let lettersforOverTypedSection: string[] = [];
 
-    interface State {
-        words: string[],
-        CurrentWordIndex: number,
-        AllWordMap: Map<number, { text: string, isCorrect: boolean }>
-        TypedWord: string,
-        startTime: number,
-        finishTime: number,
-        correctCount: number,
-        incorrectCount: number,
-        TestFinished: boolean,
-        WPM: number,
-        Accuracy: number
-    }
-    interface Action {
-        type: "InputChanged" | "SpacebarPressed" | "BackspacePressed" | "Reset",
-        payload: any
-    }
+
 
     function reducer(state: State, action: Action): State {
 
@@ -115,8 +124,14 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         let WPM = state.WPM;
         let Accuracy = state.Accuracy;
 
+        let displayText = state.displayText;
 
-        const { value, inputEventData, keyPressEvent } = action.payload
+        let status = state.status;
+
+
+
+
+        const { value, inputEventData, keyPressEvent, textForDisplay } = action.payload
 
 
         switch (action.type) {
@@ -171,10 +186,10 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
                     }
                 }
 
-                if (!state.startTime) {
+                // if (!state.startTime) {
 
-                    startTime = Date.now();
-                }
+                //     startTime = Date.now();
+                // }
 
                 return {
                     ...state,
@@ -219,35 +234,35 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
                     if (CurrentWordIndex > state.words.length - 1) {
 
 
-                        finishTime = Date.now()
+                        // finishTime = Date.now()
 
 
-                        const timeElapsed = (finishTime - startTime) / 60000 //elapsed time in minutes
+                        // const timeElapsed = (finishTime - startTime) / 60000 //elapsed time in minutes
 
 
-                        var CorrectlyTypedWordsArr: string[] = new Array();
+                        // var CorrectlyTypedWordsArr: string[] = new Array();
 
-                        AllWordMap.forEach((word: any) => {
-                            if (word.isCorrect) {
-                                CorrectlyTypedWordsArr.push(word.text);
-                            }
-                        });
+                        // AllWordMap.forEach((word: any) => {
+                        //     if (word.isCorrect) {
+                        //         CorrectlyTypedWordsArr.push(word.text);
+                        //     }
+                        // });
 
-                        const characterLength = CorrectlyTypedWordsArr.join(" ").length;
+                        // const characterLength = CorrectlyTypedWordsArr.join(" ").length;
 
-                        console.log("Character count = ", characterLength);
+                        // console.log("Character count = ", characterLength);
 
-                        const WordsTyped = characterLength / 5;
+                        // const WordsTyped = characterLength / 5;
 
-                        // setWPM(Math.round(WordsTyped / timeElapsed))
-                        WPM = Math.round(WordsTyped / timeElapsed)
+                        // // setWPM(Math.round(WordsTyped / timeElapsed))
+                        // WPM = Math.round(WordsTyped / timeElapsed)
 
-                        Accuracy = Math.round((correctCount / (correctCount + incorrectCount)) * 100)
+                        // Accuracy = Math.round((correctCount / (correctCount + incorrectCount)) * 100)
 
-                        // setTestFinished(true);
-                        TestFinished = true;
+                        // // setTestFinished(true);
+                        // TestFinished = true;
 
-                        console.log(WPM);
+                        // console.log(WPM);
 
                     }
 
@@ -309,7 +324,72 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
                     incorrectCount: 0,
                     TestFinished: false,
                     WPM: 0,
-                    Accuracy: 0
+                    Accuracy: 0,
+                    displayText: null,
+                    status: "notstarted",
+                }
+
+
+            case "StartTest":
+
+                status = "typing";
+                startTime = Date.now();
+
+                return {
+                    ...state,
+                    startTime: startTime,
+                    status: status
+                }
+
+            case "FinishTest":
+
+                status = "finished";
+
+                finishTime = Date.now()
+
+                const timeElapsed = (finishTime - startTime) / 60000 //elapsed time in minutes
+
+                var CorrectlyTypedWordsArr: string[] = new Array();
+
+                AllWordMap.forEach((word: any) => {
+                    if (word.isCorrect) {
+                        CorrectlyTypedWordsArr.push(word.text);
+                    }
+                });
+
+                const characterLength = CorrectlyTypedWordsArr.join(" ").length;
+
+                console.log("Character count = ", characterLength);
+
+                const WordsTyped = characterLength / 5;
+
+                WPM = Math.round(WordsTyped / timeElapsed)
+
+                Accuracy = Math.round((correctCount / (correctCount + incorrectCount)) * 100)
+
+                TestFinished = true;
+
+                return {
+                    ...state,
+                    finishTime: finishTime,
+                    status: status,
+                    AllWordMap: AllWordMap,
+                    WPM: WPM,
+                    Accuracy: Accuracy,
+                    correctCount: correctCount,
+                    incorrectCount: incorrectCount,
+                    TestFinished: TestFinished,
+                }
+
+
+            case "1_Second_Update":
+
+                displayText = textForDisplay;
+                console.log("display text ", textForDisplay);
+
+                return {
+                    ...state,
+                    displayText: displayText
                 }
 
 
@@ -320,7 +400,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
         switch (mode) {
             case "word":
-                
+
 
                 break;
 
@@ -340,7 +420,9 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         incorrectCount: 0,
         TestFinished: false,
         WPM: 0,
-        Accuracy: 0
+        Accuracy: 0,
+        displayText: null,
+        status: "notstarted"
 
     })
 
@@ -409,11 +491,11 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
     }, [CurrentWordsSpansRef.current])
 
 
-    useEffect(() => {
 
-        //round down
-        SetAccuracy(Math.round((correctCount / (correctCount + incorrectCount)) * 100))
-    }, [TestFinished])
+    // useEffect(() => {
+
+
+    // }, [TestFinished])
 
 
     // useEffect(() => {
@@ -441,15 +523,22 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
     // const [lettersforOverTypedSection,setOverTypeSection] = useState<string[] | null>([]);
 
-
+    useEffect(()=>{
+        Modes[mode].ModeLogic.OnCurrentWordChange?.({ state, dispatch });
+    },[state.CurrentWordIndex])
 
     function ChangeInput(event: any) {
 
-        // Clear the refs array before moving to next word
+        console.log("tstate = ", state.status);
+        if (state.status === "notstarted") {
 
-        const value = event.target.value
+            dispatch({ type: "StartTest", payload: {} });
 
+            Modes[mode].ModeLogic.TestStart?.({ state, dispatch });
 
+        }
+
+        const value = event.target.value;
         const inputEvent = event.nativeEvent as InputEvent;
         const inputEventData = inputEvent.data;
 
