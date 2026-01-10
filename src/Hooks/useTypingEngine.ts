@@ -11,7 +11,6 @@ import { Input } from '@/Components/ui/input'
 import { Modes, type modeID } from '@/utils/Typingmode'
 
 
-
 export interface TypingModeConfig {
 
     mode: modeID,
@@ -33,11 +32,13 @@ export interface State {
     Accuracy: number,
     displayText: string | null,
     status: Status,
+    setintervalTimer: NodeJS.Timeout | undefined
+    count: number,
 }
 
 
 export interface Action {
-    type: "InputChanged" | "SpacebarPressed" | "BackspacePressed" | "Reset" | "StartTest" | "FinishTest" | "1_Second_Update",
+    type: "InputChanged" | "SpacebarPressed" | "BackspacePressed" | "Reset" | "StartTest" | "FinishTest" | "Update_EverySecond" | "CurrentWordChange",
     payload: any
 }
 
@@ -94,6 +95,8 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
     const blocked = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"];
 
+    const intervalRef = useRef<NodeJS.Timeout | undefined>(undefined);
+
 
     // const [TypingMode, SetTypingModeLogic] = useState<TypingModeConfig>();
     // const TypingMode = Modes[mode].ModeLogic.
@@ -127,6 +130,13 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         let displayText = state.displayText;
 
         let status = state.status;
+
+
+        // let setintervalTimer = state.setintervalTimer;
+
+
+        let CurrentModeLogic = Modes[mode].ModeLogic
+
 
 
 
@@ -313,6 +323,9 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
 
             case "Reset":
+
+                ClearTimer();
+
                 return {
                     words: getRandomWords(5),
                     CurrentWordIndex: 0,
@@ -327,6 +340,8 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
                     Accuracy: 0,
                     displayText: null,
                     status: "notstarted",
+                    setintervalTimer: undefined,
+                    count: 0
                 }
 
 
@@ -335,11 +350,15 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
                 status = "typing";
                 startTime = Date.now();
 
-                return {
+                CurrentModeLogic = Modes[mode].ModeLogic
+
+                const updatedState = {
                     ...state,
-                    startTime: startTime,
-                    status: status
+                    status: status,
+                    startTime: startTime
                 }
+
+                return CurrentModeLogic.update_everysecond ? CurrentModeLogic.update_everysecond(updatedState) : updatedState
 
             case "FinishTest":
 
@@ -379,35 +398,48 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
                     correctCount: correctCount,
                     incorrectCount: incorrectCount,
                     TestFinished: TestFinished,
+
                 }
 
 
-            case "1_Second_Update":
+            case "Update_EverySecond":
 
-                displayText = textForDisplay;
-                console.log("display text ", textForDisplay);
+                CurrentModeLogic = Modes[mode].ModeLogic
 
-                return {
+
+                const stateWithIncrementedTimer = {
                     ...state,
-                    displayText: displayText
+                    count: state.count + 1
+
                 }
 
+                return CurrentModeLogic.update_everysecond ? CurrentModeLogic.update_everysecond(stateWithIncrementedTimer) : stateWithIncrementedTimer
+
+
+            case "CurrentWordChange":
+
+                CurrentModeLogic = Modes[mode].ModeLogic
+
+                return CurrentModeLogic.OnCurrentWordChange ? CurrentModeLogic.OnCurrentWordChange(state) : state
+
+
+
 
         }
     }
 
-    function StartTest() {
+    // function StartTest() {
 
-        switch (mode) {
-            case "word":
+    //     switch (mode) {
+    //         case "word":
 
 
-                break;
+    //             break;
 
-            default:
-                break;
-        }
-    }
+    //         default:
+    //             break;
+    //     }
+    // }
 
     const [state, dispatch] = useReducer(reducer, {
         words: getRandomWords(5),
@@ -422,7 +454,10 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         WPM: 0,
         Accuracy: 0,
         displayText: null,
-        status: "notstarted"
+        status: "notstarted",
+        setintervalTimer: undefined,
+        count: 0,
+
 
     })
 
@@ -523,25 +558,60 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
     // const [lettersforOverTypedSection,setOverTypeSection] = useState<string[] | null>([]);
 
-    useEffect(()=>{
-        Modes[mode].ModeLogic.OnCurrentWordChange?.({ state, dispatch });
-    },[state.CurrentWordIndex])
+
+    useEffect(() => {
+        Reset();
+    }, [mode])
+
+    useEffect(() => {
+
+        if (state.status === "typing") {
+
+            intervalRef.current = setInterval(() => {
+
+                dispatch({ type: "Update_EverySecond", payload: {} })
+
+            }, 1000);
+        }
+
+        if (state.status === "finished") {
+
+            dispatch({ type: "FinishTest", payload: {} })
+
+        }
+
+        return () => {
+            ClearTimer()
+        };
+
+    }, [state.status])
+
+    //CurrentWord index Change
+    useEffect(() => {
+        dispatch({ type: "CurrentWordChange", payload: {} })
+
+        // Modes[mode].ModeLogic.OnCurrentWordChange?.({ state, dispatch });
+    }, [state.CurrentWordIndex])
+
+    function ClearTimer() {
+
+        // clearInterval(state.setintervalTimer)
+        clearInterval(intervalRef.current)
+        intervalRef.current = undefined;
+        // clearInterval?.(state.setintervalTimer)
+    }
 
     function ChangeInput(event: any) {
 
         console.log("tstate = ", state.status);
-        if (state.status === "notstarted") {
 
+        if (state.status === "notstarted") {
             dispatch({ type: "StartTest", payload: {} });
 
-            Modes[mode].ModeLogic.TestStart?.({ state, dispatch });
-
         }
-
         const value = event.target.value;
         const inputEvent = event.nativeEvent as InputEvent;
         const inputEventData = inputEvent.data;
-
 
         dispatch({ type: "InputChanged", payload: { value, inputEventData } })
 
@@ -703,6 +773,8 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
     function Reset() {
 
         dispatch({ type: "Reset", payload: {} })
+        ClearTimer()
+
 
     }
 

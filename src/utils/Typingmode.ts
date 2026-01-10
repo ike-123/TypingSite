@@ -17,11 +17,18 @@ export interface EngineContext {
     dispatch: React.Dispatch<Action>;
 }
 
+// export interface ModeLogic {
+
+//     TestStart?: (ctx: EngineContext) => void;
+//     OnCurrentWordChange?: (ctx: EngineContext) => void;
+//     update_everysecond?: (ctx: EngineContext) => void;
+// }
+
 export interface ModeLogic {
 
-    TestStart?: (ctx: EngineContext) => void;
-    OnCurrentWordChange?: (ctx: EngineContext) => void;
-
+    TestStart?: (state:State) => State;
+    OnCurrentWordChange?: (state: State) => State;
+    update_everysecond?: (state: State) => State;
 }
 
 export interface TypingModeConfig {
@@ -42,25 +49,30 @@ export const Modes: Record<modeID, TypingModeConfig> = {
         label: "Complete the test before the timer runs out",
         allowedConfigs: ["punctuation", "numbers", "error"],
         ModeLogic: {
-            TestStart: ({ state, dispatch }) => {
-                let count = 0;
+              TestStart: ( state ) => {
+                const TextToDisplay = `${10-state.count}`
+                // console.log("displaytext = ", TextToDisplay);
+                const isFinished = state.count >= 10;
 
-                dispatch({ type: "1_Second_Update", payload: { textForDisplay: 10 } })
+                return{
+                    ...state,
+                    displayText:TextToDisplay,
+                    status: isFinished ? "finished" : state.status
+                }
+            },
 
-                const timer = setInterval(() => {
-                    count++;
+            update_everysecond: ( state ) => {
 
-                    const TextToDisplay = 10 - count;
-                    dispatch({ type: "1_Second_Update", payload: { textForDisplay: TextToDisplay } })
-                    console.log("Timer running");
+                const TextToDisplay = `${10-state.count}`
+                // console.log("displaytext = ", TextToDisplay);
+                const isFinished = state.count >= 10;
 
-                    if (count === 10) {
-                        clearInterval(timer);
-                        console.log("Timer Cleared");
-                    }
-
-                }, 1000);
-            }
+                return{
+                    ...state,
+                    displayText:TextToDisplay,
+                    status: isFinished ? "finished" : state.status
+                }
+            },
         }
     },
     word: {
@@ -68,17 +80,15 @@ export const Modes: Record<modeID, TypingModeConfig> = {
         label: "Complete the test before the timer runs out",
         allowedConfigs: ["punctuation", "numbers", "error"],
         ModeLogic: {
-            TestStart: ({ state }) => {
+            OnCurrentWordChange(state) {
 
-
-            },
-            OnCurrentWordChange({ state, dispatch }) {
                 const TextToDisplay = `${state.CurrentWordIndex}/${state.words.length}`
-                dispatch({ type: "1_Second_Update", payload: { textForDisplay: TextToDisplay } })
+                const isFinished = state.CurrentWordIndex > state.words.length - 1;
 
-                if (state.CurrentWordIndex > state.words.length - 1) {
-                    dispatch({ type: "FinishTest", payload: {} })
-
+                return{
+                    ...state,
+                    displayText:TextToDisplay,
+                    status: isFinished ? "finished" : state.status
                 }
 
             },
@@ -89,15 +99,62 @@ export const Modes: Record<modeID, TypingModeConfig> = {
         label: "Complete the test before the timer runs out",
         allowedConfigs: ["error"],
         ModeLogic: {
-            TestStart: ({ state }) => {
-
-            },
-            OnCurrentWordChange({ state }) {
-
-            },
+           
         }
     }
 
 
 }
+
+
+// export const Modes: Record<modeID, TypingModeConfig> = {
+
+//     time: {
+//         id: "time",
+//         label: "Complete the test before the timer runs out",
+//         allowedConfigs: ["punctuation", "numbers", "error"],
+//         ModeLogic: {
+//             TestStart: ({ state }) => {
+                
+//             }
+//         }
+//     },
+//     word: {
+//         id: "word",
+//         label: "Complete the test before the timer runs out",
+//         allowedConfigs: ["punctuation", "numbers", "error"],
+//         ModeLogic: {
+//             TestStart: ({ state }) => {
+
+
+//             },
+
+//             OnCurrentWordChange({ state, dispatch }) {
+//                 const TextToDisplay = `${state.CurrentWordIndex}/${state.words.length}`
+//                 dispatch({ type: "Update_Progress_Display", payload: { textForDisplay: TextToDisplay } })
+
+//                 if (state.CurrentWordIndex > state.words.length - 1) {
+//                     dispatch({ type: "FinishTest", payload: {} })
+
+//                 }
+
+//             },
+//         }
+//     },
+//     quote: {
+//         id: "quote",
+//         label: "Complete the test before the timer runs out",
+//         allowedConfigs: ["error"],
+//         ModeLogic: {
+//             TestStart: ({ state }) => {
+
+//             },
+//             OnCurrentWordChange({ state }) {
+
+//             },
+//         }
+//     }
+
+
+// }
 
