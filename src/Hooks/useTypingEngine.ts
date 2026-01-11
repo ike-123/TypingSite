@@ -44,10 +44,16 @@ export interface Action {
 
 export type Status = "notstarted" | "typing" | "finished";
 
-function getRandomWords(amount: number) {
-    const randomArray = [...words].sort(() => 0.5 - Math.random());
-    return randomArray.slice(0, amount)
-}
+const PUNCTUATION_WEIGHTS = [
+    { value: ",", weight: 0.45 },
+    { value: "?", weight: 0.08 },
+    { value: "!", weight: 0.07 },
+    { value: ";", weight: 0.05 },
+    { value: ":", weight: 0.05 },
+    { value: "\"", weight: 0.05 },
+    // { value: "'", weight: 0.15 },
+    // { value: "()", weight: 0.10 }
+];
 
 
 export function useTypingEnigne({ mode, config }: TypingModeConfig) {
@@ -94,6 +100,9 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
     const inputref = useRef<HTMLInputElement | null>(null);
 
     const blocked = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"];
+
+    const punctuation = ["!",]
+
 
     const intervalRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
@@ -769,6 +778,134 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         }
 
     }
+
+    function getRandomWords(amount: number) {
+
+        let FinalWordArray: string[] = [];
+
+
+
+        if (config.includes("punctuation")) {
+
+            for (let i = 0; i < 2; i++) {
+
+
+                const randomArray = [...words].sort(() => 0.5 - Math.random());
+                const RandomSentenceLength = Math.floor(Math.random() * (15 - 3 + 1)) + 3;
+
+
+                //Generate a new Sentence array of random words
+                let NewSentence = randomArray.slice(0, RandomSentenceLength);
+
+                // let currentIndexPosition = 0
+
+                let currentIndexPosition = Math.floor(Math.random() * (6 - 3 + 1)) + 3;
+
+
+
+                while (currentIndexPosition < NewSentence.length - 1) {
+
+
+                    // const RandomGeneratedIndex = Math.floor(Math.random() * (10 - 3 + 1)) + 3;
+
+
+                    //add puncutation to the word
+                    //make new function called add punctuation to word (where you input the word into to functin) that will allow brackets to be wrapped around a word and be returned back
+
+                    const punctuation = RandomlyGeneratePunctuation();
+                    console.log(punctuation);
+
+                    const WordToChange = NewSentence[currentIndexPosition];
+
+                    NewSentence[currentIndexPosition] = WordToChange + punctuation;
+
+                    console.log(NewSentence[currentIndexPosition])
+
+
+                    const RandomGeneratedIndex = Math.floor(Math.random() * (10 - 3 + 1)) + 3;
+                    currentIndexPosition = currentIndexPosition + RandomGeneratedIndex;
+
+
+                }
+
+                //Capitalize first word and add full-stop to last word.
+
+                NewSentence[0] = NewSentence[0][0].toUpperCase() + NewSentence[0].slice(1);
+                NewSentence[NewSentence.length - 1] =
+                    NewSentence[NewSentence.length - 1] + "."
+
+
+                NewSentence.forEach(element => {
+                    FinalWordArray.push(element)
+                });
+
+
+
+            }
+
+        }
+
+        else {
+            const randomArray = [...words].sort(() => 0.5 - Math.random());
+            FinalWordArray = randomArray.slice(0, amount)
+        }
+
+
+
+        if (config.includes("numbers")) {
+            console.log("numbers");
+
+
+            let currentIndexPosition = Math.floor(Math.random() * (6 - 3 + 1)) + 3;
+
+            while (currentIndexPosition < FinalWordArray.length - 1) {
+
+                const RandomNumber = Math.floor(Math.random() * 1001).toString();
+
+                FinalWordArray.splice(currentIndexPosition,0,RandomNumber);
+
+                const RandomGeneratedIndex = Math.floor(Math.random() * (6 - 3 + 1)) + 3;
+                currentIndexPosition = currentIndexPosition + RandomGeneratedIndex;
+            }
+
+
+
+        }
+
+
+
+
+
+
+
+        return FinalWordArray;
+
+    }
+
+
+
+    function RandomlyGeneratePunctuation() {
+
+
+
+        const totalWeight = PUNCTUATION_WEIGHTS.reduce(
+            (sum, p) => sum + p.weight,
+            0
+        );
+
+        let r = Math.random() * totalWeight;
+
+        for (const p of PUNCTUATION_WEIGHTS) {
+            if (r < p.weight) {
+                return p.value;
+            }
+            r -= p.weight;
+        }
+
+        return ","
+
+    }
+
 
     function Reset() {
 
