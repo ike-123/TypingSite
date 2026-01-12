@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from '@/Components/ui/input'
 
 import { Modes, type modeID } from '@/utils/Typingmode'
+import { quotes } from '@/utils/Quotes'
 
 
 export interface TypingModeConfig {
@@ -88,9 +89,6 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
 
     // const [state, SetState] = useState("notStarted");
-
-
-
 
 
     const caretRef = useRef<HTMLDivElement | null>(null);
@@ -336,7 +334,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
                 ClearTimer();
 
                 return {
-                    words: getRandomWords(5),
+                    words: getRandomWords(20),
                     CurrentWordIndex: 0,
                     AllWordMap: new Map(),
                     TypedWord: "",
@@ -451,7 +449,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
     // }
 
     const [state, dispatch] = useReducer(reducer, {
-        words: getRandomWords(5),
+        words: getRandomWords(20),
         CurrentWordIndex: 0,
         AllWordMap: new Map(),
         TypedWord: "",
@@ -601,6 +599,14 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
         // Modes[mode].ModeLogic.OnCurrentWordChange?.({ state, dispatch });
     }, [state.CurrentWordIndex])
+
+    useEffect(() => {
+
+        if (config.includes("error") && state.incorrectCount > 0) {
+            dispatch({ type: "FinishTest", payload: {} })
+        }
+
+    }, [state.incorrectCount])
 
     function ClearTimer() {
 
@@ -784,94 +790,108 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         let FinalWordArray: string[] = [];
 
 
+        //If mode = quote
+        if (mode == "quote") {
 
-        if (config.includes("punctuation")) {
+            const randindex = Math.floor(Math.random() * quotes.length);
 
-            for (let i = 0; i < 2; i++) {
+            console.log(quotes[randindex].text.split(""));
+            FinalWordArray = quotes[randindex].text.split(" ");
 
-
-                const randomArray = [...words].sort(() => 0.5 - Math.random());
-                const RandomSentenceLength = Math.floor(Math.random() * (15 - 3 + 1)) + 3;
-
-
-                //Generate a new Sentence array of random words
-                let NewSentence = randomArray.slice(0, RandomSentenceLength);
-
-                // let currentIndexPosition = 0
-
-                let currentIndexPosition = Math.floor(Math.random() * (6 - 3 + 1)) + 3;
+        }
+        else {
 
 
 
-                while (currentIndexPosition < NewSentence.length - 1) {
 
 
-                    // const RandomGeneratedIndex = Math.floor(Math.random() * (10 - 3 + 1)) + 3;
+            if (config.includes("punctuation")) {
+
+                for (let i = 0; i < 2; i++) {
 
 
-                    //add puncutation to the word
-                    //make new function called add punctuation to word (where you input the word into to functin) that will allow brackets to be wrapped around a word and be returned back
-
-                    const punctuation = RandomlyGeneratePunctuation();
-                    console.log(punctuation);
-
-                    const WordToChange = NewSentence[currentIndexPosition];
-
-                    NewSentence[currentIndexPosition] = WordToChange + punctuation;
-
-                    console.log(NewSentence[currentIndexPosition])
+                    const randomArray = [...words].sort(() => 0.5 - Math.random());
+                    const RandomSentenceLength = Math.floor(Math.random() * (15 - 3 + 1)) + 3;
 
 
-                    const RandomGeneratedIndex = Math.floor(Math.random() * (10 - 3 + 1)) + 3;
-                    currentIndexPosition = currentIndexPosition + RandomGeneratedIndex;
+                    //Generate a new Sentence array of random words
+                    let NewSentence = randomArray.slice(0, RandomSentenceLength);
+
+                    // let currentIndexPosition = 0
+
+                    let currentIndexPosition = Math.floor(Math.random() * (6 - 3 + 1)) + 3;
+
+
+
+                    while (currentIndexPosition < NewSentence.length - 1) {
+
+
+                        // const RandomGeneratedIndex = Math.floor(Math.random() * (10 - 3 + 1)) + 3;
+
+
+                        //add puncutation to the word
+                        //make new function called add punctuation to word (where you input the word into to functin) that will allow brackets to be wrapped around a word and be returned back
+
+                        const punctuation = RandomlyGeneratePunctuation();
+                        console.log(punctuation);
+
+                        const WordToChange = NewSentence[currentIndexPosition];
+
+                        NewSentence[currentIndexPosition] = WordToChange + punctuation;
+
+                        console.log(NewSentence[currentIndexPosition])
+
+
+                        const RandomGeneratedIndex = Math.floor(Math.random() * (10 - 3 + 1)) + 3;
+                        currentIndexPosition = currentIndexPosition + RandomGeneratedIndex;
+
+
+                    }
+
+                    //Capitalize first word and add full-stop to last word.
+
+                    NewSentence[0] = NewSentence[0][0].toUpperCase() + NewSentence[0].slice(1);
+                    NewSentence[NewSentence.length - 1] =
+                        NewSentence[NewSentence.length - 1] + "."
+
+
+                    NewSentence.forEach(element => {
+                        FinalWordArray.push(element)
+                    });
+
 
 
                 }
 
-                //Capitalize first word and add full-stop to last word.
-
-                NewSentence[0] = NewSentence[0][0].toUpperCase() + NewSentence[0].slice(1);
-                NewSentence[NewSentence.length - 1] =
-                    NewSentence[NewSentence.length - 1] + "."
-
-
-                NewSentence.forEach(element => {
-                    FinalWordArray.push(element)
-                });
-
-
-
             }
 
-        }
-
-        else {
-            const randomArray = [...words].sort(() => 0.5 - Math.random());
-            FinalWordArray = randomArray.slice(0, amount)
-        }
-
-
-
-        if (config.includes("numbers")) {
-            console.log("numbers");
-
-
-            let currentIndexPosition = Math.floor(Math.random() * (6 - 3 + 1)) + 3;
-
-            while (currentIndexPosition < FinalWordArray.length - 1) {
-
-                const RandomNumber = Math.floor(Math.random() * 1001).toString();
-
-                FinalWordArray.splice(currentIndexPosition,0,RandomNumber);
-
-                const RandomGeneratedIndex = Math.floor(Math.random() * (6 - 3 + 1)) + 3;
-                currentIndexPosition = currentIndexPosition + RandomGeneratedIndex;
+            else {
+                const randomArray = [...words].sort(() => 0.5 - Math.random());
+                FinalWordArray = randomArray.slice(0, amount)
             }
 
 
 
-        }
+            if (config.includes("numbers")) {
+                console.log("numbers");
 
+
+                let currentIndexPosition = Math.floor(Math.random() * (6 - 3 + 1)) + 3;
+
+                while (currentIndexPosition < FinalWordArray.length - 1) {
+
+                    const RandomNumber = Math.floor(Math.random() * 1001).toString();
+
+                    FinalWordArray.splice(currentIndexPosition, 0, RandomNumber);
+
+                    const RandomGeneratedIndex = Math.floor(Math.random() * (6 - 3 + 1)) + 3;
+                    currentIndexPosition = currentIndexPosition + RandomGeneratedIndex;
+                }
+
+
+
+            }
+        }
 
 
 
