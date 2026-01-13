@@ -99,7 +99,15 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
     const blocked = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"];
 
+    const [margin, SetMargin] = useState<number>(0)
+
+    const [Top, SetTop] = useState(0);
+
+
     const punctuation = ["!",]
+
+
+
 
 
     const intervalRef = useRef<NodeJS.Timeout | undefined>(undefined);
@@ -334,7 +342,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
                 ClearTimer();
 
                 return {
-                    words: getRandomWords(20),
+                    words: getRandomWords(25),
                     CurrentWordIndex: 0,
                     AllWordMap: new Map(),
                     TypedWord: "",
@@ -449,7 +457,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
     // }
 
     const [state, dispatch] = useReducer(reducer, {
-        words: getRandomWords(20),
+        words: getRandomWords(25),
         CurrentWordIndex: 0,
         AllWordMap: new Map(),
         TypedWord: "",
@@ -473,6 +481,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
     useEffect(() => {
 
         if (!CurrentWordsSpansRef.current || !caretRef.current || !inputref.current) return;
+        console.log("yay")
 
         const caretElement = caretRef.current;
 
@@ -515,22 +524,72 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
 
         if (!letterElement) {
+            //if no letter has been typed then we are at the first letter in the word
             //position caret before the first letter in the word
             // console.log(CurrentWordsSpansRef.current);
             caretElement.style.left = `${(CurrentWordsSpansRef.current[0]?.offsetLeft ?? 0) - 2}px`
+            // SetTop(CurrentWordsSpansRef.current[0]?.offsetTop!);
             caretElement.style.top = `${CurrentWordsSpansRef.current[0]?.offsetTop}px`
 
-            return;
         }
 
-        console.log(letterElement);
-        console.log(CurrentWordsSpansRef.current);
+        else {
+            console.log(letterElement);
+            console.log(CurrentWordsSpansRef.current);
 
-        caretElement.style.left = `${letterElement.offsetLeft + letterElement.offsetWidth - 2}px`
-        caretElement.style.top = `${letterElement.offsetTop}px`
+            //As soon as you type a letter, Caret should be on the right hand side of the letter.
+            caretElement.style.left = `${letterElement.offsetLeft + letterElement.offsetWidth - 2}px`
+            // SetTop(letterElement.offsetTop);
+            caretElement.style.top = `${letterElement.offsetTop}px`
+
+        }
+
+        SetTop(caretElement.offsetTop);
+
+
+
+
+        console.log("offset Top = ", `${caretElement.offsetTop}px`);
 
 
     }, [CurrentWordsSpansRef.current])
+
+
+    useEffect(() => {
+
+        if (Top > 60) {
+
+            SetMargin(prev => prev + 1)
+            // SetTop()
+        }
+    }, [Top])
+
+//     useLayoutEffect(() => {
+//   if (!caretRef.current || !CurrentWordsSpansRef.current) return;
+
+//   const idx = state.TypedWord.length - 1;
+//   const letter = CurrentWordsSpansRef.current[idx] ?? CurrentWordsSpansRef.current[0];
+
+//   if (!letter) return;
+
+//   const top = letter.offsetTop;
+//   const left = letter.offsetLeft + letter.offsetWidth - 2;
+
+//   caretRef.current.style.left = `${left}px`;
+//   caretRef.current.style.top = `${Math.min(top, 60)}px`;
+
+//   if (top > 60) {
+//     setMargin(m => m + 1);
+//   }
+// }, [state.TypedWord.length]);
+
+
+
+
+
+
+
+
 
 
 
@@ -942,6 +1001,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         caretRef,
         inputref,
         CurrentWordsSpansRef,
+        margin,
         HandleKeyDown,
         ChangeInput,
         Reset,

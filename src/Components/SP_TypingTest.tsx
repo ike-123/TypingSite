@@ -5,11 +5,11 @@ import { useTypingEnigne } from '../Hooks/useTypingEngine'
 
 
 
-const SP_TypingTest = ({engine}: {engine:ReturnType<typeof useTypingEnigne>}) => {
+const SP_TypingTest = ({ engine }: { engine: ReturnType<typeof useTypingEnigne> }) => {
 
     return (
         <>
-        
+
             <div className='main'>
 
                 {/* <div className='Multiplayer'>
@@ -25,9 +25,11 @@ const SP_TypingTest = ({engine}: {engine:ReturnType<typeof useTypingEnigne>}) =>
                 <div className="TypeTestContainer">
 
                     <div className='TextContainer'>
-                        <div className="QuoteText">
-
                             <div ref={engine.caretRef} className="caret" />
+
+
+                        <div className={`relative text-3xl text-[#8a8c8f]`} style={{ marginTop: engine.margin > 0 ? -(engine.margin * 39) : 0, }}>
+
 
                             {/* loop through all the words in the words array */}
                             {engine.state.words.map((word, wordIndex) => (

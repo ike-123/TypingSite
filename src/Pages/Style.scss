@@ -25,31 +25,41 @@
 
     
     .TextContainer{
-        padding: 20px;
+        // position: relative;
+        // padding: 20px;
         background-color:#1e293b;
-        border-radius: 20px 20px 0px 0px;
+        // border-radius: 20px 20px 0px 0px;
         border-style: solid;
         border-color: #334155;
-        border-width: 1px;
-        height: 150px;
-        width: 805px;
+        // border-width: 1px;
+        // height: 150px;
+        width: 305px;
         margin: auto;
-        .QuoteText{
-            font-size: 30px;
-            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-            color: #8a8c8f;
-            position: relative;
+        display: flex;
 
-            .caret {
-                position: absolute;
-                width: 2px;
-                height: 1.1em;
-                background-color: white;
-                animation: blink 1s step-start infinite;
-                transition: left 0.075s ease, top 0.075s linear;
-            }
+        position: relative;
 
-        }   
+        .caret {
+            position: absolute;
+            width: 2px;
+            height: 33px;
+            background-color: white;
+            animation: blink 1s step-start infinite;
+            transition: left 0.075s ease, top 0.075s linear;
+        }
+
+
+        // .QuoteText{
+        //     font-size: 30px;
+        //     font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        //     color: #8a8c8f;
+        //     position: relative;
+
+
+        // }   
+
+
+          
 
     }
 

@@ -69,7 +69,7 @@ const SinglePageTypingTest = () => {
 
                 {
                     Object.values(Modes).map((mode) => (
-                        <Button onClick={() => selectMode(mode.id)} className='bg-primary w-25' variant={mode.id === modeID ? "default" : "outline"}>{mode.id}</Button>
+                        <Button key={mode.id} onClick={() => selectMode(mode.id)} className='bg-primary w-25' variant={mode.id === modeID ? "default" : "outline"}>{mode.id}</Button>
                     ))
                 }
 
@@ -87,7 +87,7 @@ const SinglePageTypingTest = () => {
                 {
                     Object.values(Modes[modeID].allowedConfigs).map((config) => (
 
-                        <Button onClick={() => changeConfig(config)} className='bg-primary w-25' variant={configs.includes(config)? "default" : "outline"}>{config}</Button>
+                        <Button key={config} onClick={() => changeConfig(config)} className='bg-primary w-25' variant={configs.includes(config)? "default" : "outline"}>{config}</Button>
 
                     ))
                 }
