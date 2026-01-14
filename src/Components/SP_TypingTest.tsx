@@ -28,7 +28,8 @@ const SP_TypingTest = ({ engine }: { engine: ReturnType<typeof useTypingEnigne> 
 
 
                         {/* <div id='wordcontainer' className={`relative text-3xl text-[#8a8c8f]`} style={{ marginTop: engine.margin > 0 ? -(engine.margin * 39) : 0, }}> */}
-                        <div id='wordcontainer' className={`relative text-3xl text-[#8a8c8f]`} style={{ transform: `translateY(-${engine.lineoffset * engine.LINE_HEIGHT}px)` }}>
+                        {/* <div ref={engine.WordContainerRef}  id='wordcontainer' className={`relative text-3xl text-[#8a8c8f]`} style={{ transform: `translateY(-${engine.lineoffset * engine.LINE_HEIGHT}px)` }}> */}
+                        <div ref={engine.WordContainerRef}  id='wordcontainer' className={`relative text-3xl text-[#8a8c8f]`} >
 
 
                             <div ref={engine.caretRef} className="caret" />
@@ -38,7 +39,7 @@ const SP_TypingTest = ({ engine }: { engine: ReturnType<typeof useTypingEnigne> 
 
                                 //If CurrentWord is greater than WordIndex then user has alreadly typed the word and class will be "correct"
 
-                                <span className={wordIndex < engine.state.CurrentWordIndex ? (`${engine.state.AllWordMap.get(wordIndex)?.isCorrect ? "correct" : "incorrectword"}`) : ""} key={wordIndex}>
+                                <span id={wordIndex.toString()} className={wordIndex < engine.state.CurrentWordIndex ? (`${engine.state.AllWordMap.get(wordIndex)?.isCorrect ? "correct" : "incorrectword"}`) : ""} key={wordIndex}>
 
                                     <span>
                                         {/* split the word array to retrieve each letter and put in in a span */}

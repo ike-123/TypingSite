@@ -22,7 +22,7 @@ export interface TypingModeConfig {
 export interface State {
     words: string[],
     CurrentWordIndex: number,
-    AllWordMap: Map<number, { text: string, isCorrect: boolean }>
+    AllWordMap: Map<number, { text: string, isCorrect: boolean, OutsideTextContainer: boolean }>
     TypedWord: string,
     startTime: number,
     finishTime: number,
@@ -39,7 +39,7 @@ export interface State {
 
 
 export interface Action {
-    type: "InputChanged" | "SpacebarPressed" | "BackspacePressed" | "Reset" | "StartTest" | "FinishTest" | "Update_EverySecond" | "CurrentWordChange",
+    type: "InputChanged" | "SpacebarPressed" | "BackspacePressed" | "Reset" | "StartTest" | "FinishTest" | "Update_EverySecond" | "CurrentWordChange" | "UpdateAllwordMap"
     payload: any
 }
 
@@ -99,6 +99,10 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
     const TextContainerref = useRef<HTMLDivElement | null>(null);
 
+    const WordContainerRef = useRef<HTMLDivElement | null>(null);
+
+
+
 
     const blocked = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"];
 
@@ -107,7 +111,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
     const [lineoffset, setlineoffset] = useState<number>(0)
 
 
-    
+
 
     // let margin = 0;
 
@@ -171,7 +175,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
 
 
-        const { value, inputEventData, keyPressEvent, textForDisplay } = action.payload
+        const { value, inputEventData, keyPressEvent, textForDisplay, indexToChange } = action.payload
 
 
         switch (action.type) {
@@ -190,7 +194,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
                 //     return newMap;
                 // });
 
-                AllWordMap.set(CurrentWordIndex, { text: value, isCorrect: iscorrect });
+                AllWordMap.set(CurrentWordIndex, { text: value, isCorrect: iscorrect, OutsideTextContainer: false });
 
                 console.log(AllWordMap);
 
@@ -252,14 +256,14 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
                     if (candidate === state.words[CurrentWordIndex]) {
 
-                        AllWordMap.set(CurrentWordIndex, { text: candidate, isCorrect: true })
+                        AllWordMap.set(CurrentWordIndex, { text: candidate, isCorrect: true, OutsideTextContainer: false })
 
                         correctCount++;
 
                     }
                     else {
 
-                        AllWordMap.set(CurrentWordIndex, { text: candidate, isCorrect: false })
+                        AllWordMap.set(CurrentWordIndex, { text: candidate, isCorrect: false, OutsideTextContainer: false })
 
                         incorrectCount++;
 
@@ -329,8 +333,9 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
                         ...state,
                     };
 
+                    console.log("outsidecontainer ,",  AllWordMap.get(CurrentWordIndex - 1)?.OutsideTextContainer)
                 //if we haven't typed a character in the currentword & the previous word is incorrect
-                if (TypedWord.length == 0 && AllWordMap.get(CurrentWordIndex - 1)?.isCorrect == false) {
+                if (TypedWord.length == 0 && AllWordMap.get(CurrentWordIndex - 1)?.isCorrect == false && AllWordMap.get(CurrentWordIndex - 1)?.OutsideTextContainer == false) {
                     keyPressEvent.preventDefault();
 
                     // SetNewCurrenetWord((previous: any) => previous - 1)
@@ -454,6 +459,28 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
                 return CurrentModeLogic.OnCurrentWordChange ? CurrentModeLogic.OnCurrentWordChange(state) : state
 
 
+            case "UpdateAllwordMap":
+
+                // AllWordMap.set(indexToChange, {text: AllWordMap.get(indexToChange)?.text, isCorrect: AllWordMap.get(indexToChange)?.isCorrect, OutsideTextContainer: true})
+
+                // return CurrentModeLogic.OnCurrentWordChange ? CurrentModeLogic.OnCurrentWordChange(state) : state
+
+                const newMap = new Map(state.AllWordMap);
+
+                const existing = newMap.get(indexToChange);
+                if (!existing) return state;
+
+                newMap.set(indexToChange, {
+                    ...existing,
+                    OutsideTextContainer: true,
+                });
+
+                return {
+                    ...state,
+                    AllWordMap: newMap,
+                };
+
+
 
 
         }
@@ -507,17 +534,19 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         const letterElement = CurrentWordsSpansRef.current[state.TypedWord.length - 1];
 
 
-        let caretTop =  currentWordRect?.top - TextContainerRect.top
+        let caretTop = currentWordRect?.top - TextContainerRect.top
 
-        console.log("caret top = ", caretTop);
+        // console.log("caret top = ", caretTop);
 
 
         if (caretTop > MAX_CARET_Y) {
-        console.log("maxcarety = ", MAX_CARET_Y);
+            // console.log("maxcarety = ", MAX_CARET_Y);P
 
-            incrementScroll();
+            // incrementScroll();
+            Delete()
         }
-
+        //get a refernce to the wordcontainer and search through each span if it is above the text container then delete it 
+        //get all the words in the words array and check to see if it is above the textcontainer ref if it is then mark it as offscreen
         //create a new variable for words in the allwordsarray that stores whether it is offscreen. if it is marked with offscreen it cannot be rendered anymore.
 
 
@@ -572,8 +601,8 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
         }
         else {
-            console.log(letterElement);
-            console.log(CurrentWordsSpansRef.current);
+            // console.log(letterElement);
+            // console.log(CurrentWordsSpansRef.current);
 
             //As soon as you type a letter, Caret should be on the right hand side of the letter.
             caretElement.style.left = `${letterElement.offsetLeft + letterElement.offsetWidth - 2}px`
@@ -606,9 +635,65 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
     //change the dependecncy to change on keypress rather than typedword.length. This is because currently it doesn't track space bar presses
     //try and change the margin from code rather than in html
 
-    function incrementScroll(){
+    function incrementScroll() {
 
         setlineoffset(prev => prev + 1);
+    }
+
+
+    function Delete() {
+
+        // setlineoffset(prev => prev + 1);
+        const spans = WordContainerRef.current!.querySelectorAll("span");
+
+        const TextContainerRect = TextContainerref.current!.getBoundingClientRect();
+
+        // for (const span of spans) {
+
+        //     if (span.getBoundingClientRect().top - TextContainerRect?.top < 0) {
+
+        //         //span is above the Text Container.
+        //         span.remove();
+        //     }
+
+        //     else {
+        //         break;
+        //     }
+        // }
+
+        const SpanstoRemove: HTMLSpanElement[] = [];
+
+        //if the difference beteween the top of the textcontainer and the top of the span is 0 then it is on the
+        //top line and we will remove it
+        for (const span of spans) {
+            // console.log("spand = ", span, span.getBoundingClientRect().top - TextContainerRect?.top);
+
+            // console.log(span);
+
+            if (span.getBoundingClientRect().top - TextContainerRect?.top <= 1) {
+
+                //span is above the Text Container.
+                SpanstoRemove.push(span);
+            }
+
+            else {
+                // console.log("break = ", span);
+                // console.log("break = ", span.getBoundingClientRect().top - TextContainerRect?.top);
+
+                break;
+            }
+        }
+
+        SpanstoRemove.forEach(span => {
+            const WordIndex = parseInt(span.id,10);
+            dispatch({type:"UpdateAllwordMap", payload:{indexToChange:WordIndex}})
+            span.remove();
+        });
+
+
+
+
+
     }
 
     useEffect(() => {
@@ -1097,6 +1182,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         inputref,
         CurrentWordsSpansRef,
         margin,
+        WordContainerRef,
         TextContainerref,
         LINE_HEIGHT,
         lineoffset,
