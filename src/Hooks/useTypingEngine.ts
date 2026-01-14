@@ -97,14 +97,29 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
     const inputref = useRef<HTMLInputElement | null>(null);
 
+    const TextContainerref = useRef<HTMLDivElement | null>(null);
+
+
     const blocked = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"];
 
     const [margin, SetMargin] = useState<number>(0)
+
+    const [lineoffset, setlineoffset] = useState<number>(0)
+
+
+    
+
+    // let margin = 0;
 
     const [Top, SetTop] = useState(0);
 
 
     const punctuation = ["!",]
+
+
+    const LINE_HEIGHT = 39;
+    const TARGET_LINE = 1; // 0 = first line, 1 = second line
+    const MAX_CARET_Y = (TARGET_LINE) * LINE_HEIGHT;
 
 
 
@@ -186,10 +201,11 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
                 //get key input and make sure it's a valid character key
                 if (inputEventData && inputEventData.length === 1 && !/\s/.test(inputEventData)) {
-                    console.log("Typed character:", inputEventData);
 
-                    console.log("typedvalue ", value);
-                    console.log("currentword length ", state.words[CurrentWordIndex]);
+                    // console.log("Typed character:", inputEventData);
+
+                    // console.log("typedvalue ", value);
+                    // console.log("currentword length ", state.words[CurrentWordIndex]);
 
 
                     if (value.length > state.words[CurrentWordIndex].length) {
@@ -393,7 +409,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
                 const characterLength = CorrectlyTypedWordsArr.join(" ").length;
 
-                console.log("Character count = ", characterLength);
+                // console.log("Character count = ", characterLength);
 
                 const WordsTyped = characterLength / 5;
 
@@ -480,12 +496,30 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
     // Caret Position
     useEffect(() => {
 
-        if (!CurrentWordsSpansRef.current || !caretRef.current || !inputref.current) return;
-        console.log("yay")
+        if (!CurrentWordsSpansRef.current || !caretRef.current || !inputref.current || !TextContainerref.current) return;
+        // console.log("yay")
+
+        const TextContainerRect = TextContainerref.current.getBoundingClientRect();
+        const currentWordRect = CurrentWordsSpansRef.current[0]!.getBoundingClientRect();
 
         const caretElement = caretRef.current;
 
         const letterElement = CurrentWordsSpansRef.current[state.TypedWord.length - 1];
+
+
+        let caretTop =  currentWordRect?.top - TextContainerRect.top
+
+        console.log("caret top = ", caretTop);
+
+
+        if (caretTop > MAX_CARET_Y) {
+        console.log("maxcarety = ", MAX_CARET_Y);
+
+            incrementScroll();
+        }
+
+        //create a new variable for words in the allwordsarray that stores whether it is offscreen. if it is marked with offscreen it cannot be rendered anymore.
+
 
         //const inputelment = document.getElementById("input");
 
@@ -530,9 +564,13 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
             caretElement.style.left = `${(CurrentWordsSpansRef.current[0]?.offsetLeft ?? 0) - 2}px`
             // SetTop(CurrentWordsSpansRef.current[0]?.offsetTop!);
             caretElement.style.top = `${CurrentWordsSpansRef.current[0]?.offsetTop}px`
+            // caretTop = caretElement.offsetTop
+            SetTop(caretElement.offsetTop)
+            // console.log("changed")
+
+
 
         }
-
         else {
             console.log(letterElement);
             console.log(CurrentWordsSpansRef.current);
@@ -541,47 +579,104 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
             caretElement.style.left = `${letterElement.offsetLeft + letterElement.offsetWidth - 2}px`
             // SetTop(letterElement.offsetTop);
             caretElement.style.top = `${letterElement.offsetTop}px`
+            // caretTop = caretElement.offsetTop
+            SetTop(caretElement.offsetTop)
+
+            // console.log("changed")
 
         }
 
-        SetTop(caretElement.offsetTop);
+        // if (caretTop > 60) {
+        //     SetMargin(prev => prev + 1)
+
+        //     // margin++;
+
+        // }
+
+        // SetTop(caretElement.offsetTop);
 
 
 
 
-        console.log("offset Top = ", `${caretElement.offsetTop}px`);
+        // console.log("offset Top = ", `${caretElement.offsetTop}px`);
 
 
-    }, [CurrentWordsSpansRef.current])
+    }, [state.TypedWord.length])
 
+    //change the dependecncy to change on keypress rather than typedword.length. This is because currently it doesn't track space bar presses
+    //try and change the margin from code rather than in html
+
+    function incrementScroll(){
+
+        setlineoffset(prev => prev + 1);
+    }
 
     useEffect(() => {
+
+        console.log("TOP = ", Top);
 
         if (Top > 60) {
 
             SetMargin(prev => prev + 1)
-            // SetTop()
         }
     }, [Top])
 
-//     useLayoutEffect(() => {
-//   if (!caretRef.current || !CurrentWordsSpansRef.current) return;
+    // useEffect(() => {
 
-//   const idx = state.TypedWord.length - 1;
-//   const letter = CurrentWordsSpansRef.current[idx] ?? CurrentWordsSpansRef.current[0];
+    //     if (!CurrentWordsSpansRef.current || !caretRef.current || !inputref.current) return;
 
-//   if (!letter) return;
+    //     const caretElement = caretRef.current;
 
-//   const top = letter.offsetTop;
-//   const left = letter.offsetLeft + letter.offsetWidth - 2;
+    //     const letterElement = CurrentWordsSpansRef.current[state.TypedWord.length - 1];
 
-//   caretRef.current.style.left = `${left}px`;
-//   caretRef.current.style.top = `${Math.min(top, 60)}px`;
+    //     if (!letterElement) {
+    //         //if no letter has been typed then we are at the first letter in the word
+    //         //position caret before the first letter in the word
+    //         caretElement.style.left = `${(CurrentWordsSpansRef.current[0]?.offsetLeft ?? 0) - 2}px`
+    //         // SetTop(CurrentWordsSpansRef.current[0]?.offsetTop!);
+    //         caretElement.style.top = `${CurrentWordsSpansRef.current[0]?.offsetTop}px`
 
-//   if (top > 60) {
-//     setMargin(m => m + 1);
-//   }
-// }, [state.TypedWord.length]);
+    //         console.log("what")
+
+
+    //     }
+    //     else {
+    //         // console.log(letterElement);
+    //         // console.log(CurrentWordsSpansRef.current);
+
+    //         //As soon as you type a letter, Caret should be on the right hand side of the letter.
+    //         caretElement.style.left = `${letterElement.offsetLeft + letterElement.offsetWidth - 2}px`
+    //         // SetTop(letterElement.offsetTop);
+    //         caretElement.style.top = `${letterElement.offsetTop}px`
+    //         // caretTop = caretElement.offsetTop
+
+    //         console.log("what")
+
+
+    //     }
+
+    //     console.log("offset Top = ", `${letterElement?.offsetTop}px`);
+
+    // }, [margin])
+
+    //     useLayoutEffect(() => {
+    //   if (!caretRef.current || !CurrentWordsSpansRef.current) return;
+
+    //   const idx = state.TypedWord.length - 1;
+    //   const letter = CurrentWordsSpansRef.current[idx] ?? CurrentWordsSpansRef.current[0];
+
+    //   if (!letter) return;
+
+    //   const top = letter.offsetTop;
+    //   const left = letter.offsetLeft + letter.offsetWidth - 2;
+
+    //   caretRef.current.style.left = `${left}px`;
+    //   caretRef.current.style.top = `${Math.min(top, 60)}px`;
+
+    //   if (top > 60) {
+    //     setMargin(m => m + 1);
+    //   }
+    // }, [state.TypedWord.length]);
 
 
 
@@ -631,24 +726,24 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
     useEffect(() => {
 
-        if (state.status === "typing") {
+        // if (state.status === "typing") {
 
-            intervalRef.current = setInterval(() => {
+        //     intervalRef.current = setInterval(() => {
 
-                dispatch({ type: "Update_EverySecond", payload: {} })
+        //         dispatch({ type: "Update_EverySecond", payload: {} })
 
-            }, 1000);
-        }
+        //     }, 1000);
+        // }
 
-        if (state.status === "finished") {
+        // if (state.status === "finished") {
 
-            dispatch({ type: "FinishTest", payload: {} })
+        //     dispatch({ type: "FinishTest", payload: {} })
 
-        }
+        // }
 
-        return () => {
-            ClearTimer()
-        };
+        // return () => {
+        //     ClearTimer()
+        // };
 
     }, [state.status])
 
@@ -677,7 +772,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
     function ChangeInput(event: any) {
 
-        console.log("tstate = ", state.status);
+        // console.log("tstate = ", state.status);
 
         if (state.status === "notstarted") {
             dispatch({ type: "StartTest", payload: {} });
@@ -898,7 +993,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
                         NewSentence[currentIndexPosition] = WordToChange + punctuation;
 
-                        console.log(NewSentence[currentIndexPosition])
+                        // console.log(NewSentence[currentIndexPosition])
 
 
                         const RandomGeneratedIndex = Math.floor(Math.random() * (10 - 3 + 1)) + 3;
@@ -932,7 +1027,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
 
             if (config.includes("numbers")) {
-                console.log("numbers");
+                // console.log("numbers");
 
 
                 let currentIndexPosition = Math.floor(Math.random() * (6 - 3 + 1)) + 3;
@@ -1002,6 +1097,9 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         inputref,
         CurrentWordsSpansRef,
         margin,
+        TextContainerref,
+        LINE_HEIGHT,
+        lineoffset,
         HandleKeyDown,
         ChangeInput,
         Reset,

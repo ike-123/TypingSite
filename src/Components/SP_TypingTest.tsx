@@ -22,14 +22,16 @@ const SP_TypingTest = ({ engine }: { engine: ReturnType<typeof useTypingEnigne> 
 
                 {/* <h1 className='text-2xl font-bold mt-6 text-primary flex justify-center'>{engine.state.displayText}</h1> */}
 
-                <div className="TypeTestContainer">
+                <div className="TypeTestContainer bg-blue-500">
 
-                    <div className='TextContainer'>
+                    <div ref={engine.TextContainerref} className='TextContainer'>
+
+
+                        {/* <div id='wordcontainer' className={`relative text-3xl text-[#8a8c8f]`} style={{ marginTop: engine.margin > 0 ? -(engine.margin * 39) : 0, }}> */}
+                        <div id='wordcontainer' className={`relative text-3xl text-[#8a8c8f]`} style={{ transform: `translateY(-${engine.lineoffset * engine.LINE_HEIGHT}px)` }}>
+
+
                             <div ref={engine.caretRef} className="caret" />
-
-
-                        <div className={`relative text-3xl text-[#8a8c8f]`} style={{ marginTop: engine.margin > 0 ? -(engine.margin * 39) : 0, }}>
-
 
                             {/* loop through all the words in the words array */}
                             {engine.state.words.map((word, wordIndex) => (
@@ -57,17 +59,17 @@ const SP_TypingTest = ({ engine }: { engine: ReturnType<typeof useTypingEnigne> 
 
                                                     if (StoredWord.text.length > word.length) {
                                                         //get the letters that have been overtyped
-                                                        console.log(StoredWord.text.length);
+                                                        // console.log(StoredWord.text.length);
                                                         const Overtypedsection = StoredWord.text.slice(word.length, StoredWord.text.length);
 
                                                         engine.lettersforOverTypedSection = Overtypedsection.split("");
-                                                        console.log(engine.lettersforOverTypedSection);
+                                                        // console.log(engine.lettersforOverTypedSection);
 
                                                     }
-                                                    console.log(true);
+                                                    // console.log(true);
                                                 }
                                                 else {
-                                                    console.log(false);
+                                                    // console.log(false);
                                                 }
                                             }
 
