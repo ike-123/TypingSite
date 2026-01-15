@@ -333,7 +333,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
                         ...state,
                     };
 
-                    console.log("outsidecontainer ,",  AllWordMap.get(CurrentWordIndex - 1)?.OutsideTextContainer)
+                console.log("outsidecontainer ,", AllWordMap.get(CurrentWordIndex - 1)?.OutsideTextContainer)
                 //if we haven't typed a character in the currentword & the previous word is incorrect
                 if (TypedWord.length == 0 && AllWordMap.get(CurrentWordIndex - 1)?.isCorrect == false && AllWordMap.get(CurrentWordIndex - 1)?.OutsideTextContainer == false) {
                     keyPressEvent.preventDefault();
@@ -361,9 +361,10 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
             case "Reset":
 
                 ClearTimer();
+                ResetCaret();
 
                 return {
-                    words: getRandomWords(25),
+                    words: getRandomWords(50),
                     CurrentWordIndex: 0,
                     AllWordMap: new Map(),
                     TypedWord: "",
@@ -500,7 +501,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
     // }
 
     const [state, dispatch] = useReducer(reducer, {
-        words: getRandomWords(25),
+        words: getRandomWords(50),
         CurrentWordIndex: 0,
         AllWordMap: new Map(),
         TypedWord: "",
@@ -523,18 +524,19 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
     // Caret Position
     useEffect(() => {
 
-        if (!CurrentWordsSpansRef.current || !caretRef.current || !inputref.current || !TextContainerref.current) return;
+        if (!CurrentWordsSpansRef.current || CurrentWordsSpansRef.current.length === 0 || !caretRef.current || !inputref.current || !TextContainerref.current) return;
         // console.log("yay")
 
         const TextContainerRect = TextContainerref.current.getBoundingClientRect();
-        const currentWordRect = CurrentWordsSpansRef.current[0]!.getBoundingClientRect();
+
+        const currentWordRect = CurrentWordsSpansRef.current[0]?.getBoundingClientRect();
 
         const caretElement = caretRef.current;
 
         const letterElement = CurrentWordsSpansRef.current[state.TypedWord.length - 1];
 
 
-        let caretTop = currentWordRect?.top - TextContainerRect.top
+        let caretTop = currentWordRect!.top - TextContainerRect.top
 
         // console.log("caret top = ", caretTop);
 
@@ -596,8 +598,6 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
             // caretTop = caretElement.offsetTop
             SetTop(caretElement.offsetTop)
             // console.log("changed")
-
-
 
         }
         else {
@@ -685,8 +685,8 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         }
 
         SpanstoRemove.forEach(span => {
-            const WordIndex = parseInt(span.id,10);
-            dispatch({type:"UpdateAllwordMap", payload:{indexToChange:WordIndex}})
+            const WordIndex = parseInt(span.id, 10);
+            dispatch({ type: "UpdateAllwordMap", payload: { indexToChange: WordIndex } })
             span.remove();
         });
 
@@ -810,30 +810,34 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
     }, [mode])
 
     useEffect(() => {
+        if(state.status === "notstarted"){
+            ResetCaret();
+        }
 
-        // if (state.status === "typing") {
+        if (state.status === "typing") {
 
-        //     intervalRef.current = setInterval(() => {
+            intervalRef.current = setInterval(() => {
 
-        //         dispatch({ type: "Update_EverySecond", payload: {} })
+                dispatch({ type: "Update_EverySecond", payload: {} })
 
-        //     }, 1000);
-        // }
+            }, 1000);
+        }
 
-        // if (state.status === "finished") {
+        if (state.status === "finished") {
 
-        //     dispatch({ type: "FinishTest", payload: {} })
+            dispatch({ type: "FinishTest", payload: {} })
 
-        // }
+        }
 
-        // return () => {
-        //     ClearTimer()
-        // };
+        return () => {
+            ClearTimer()
+        };
 
     }, [state.status])
 
     //CurrentWord index Change
     useEffect(() => {
+        console.log("changeindex")
         dispatch({ type: "CurrentWordChange", payload: {} })
 
         // Modes[mode].ModeLogic.OnCurrentWordChange?.({ state, dispatch });
@@ -1165,11 +1169,24 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
     }
 
+    function ResetCaret() {
+        const caretElement = caretRef.current;
+
+        if (caretElement) {
+            console.log("exist");
+            caretElement.style.left = `${(CurrentWordsSpansRef.current[0]?.offsetLeft ?? 0) - 2}px`
+            // SetTop(CurrentWordsSpansRef.current[0]?.offsetTop!);
+            caretElement.style.top = `${CurrentWordsSpansRef.current[0]?.offsetTop}px`
+        }
+
+    }
+
 
     function Reset() {
 
         dispatch({ type: "Reset", payload: {} })
         ClearTimer()
+        ResetCaret()
 
 
     }

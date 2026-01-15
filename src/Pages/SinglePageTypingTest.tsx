@@ -94,12 +94,12 @@ const SinglePageTypingTest = () => {
             </div>
 
              <div>
-                {/* {
+                {
                     engine.state.status != "notstarted" ? 
                 <h1 className='text-2xl font-bold mt-5 text-primary flex justify-center'>{engine.state.displayText}</h1>
 
                     :""
-                } */}
+                }
             </div>
 
 
