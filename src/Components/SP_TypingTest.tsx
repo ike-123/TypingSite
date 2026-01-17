@@ -35,23 +35,23 @@ const SP_TypingTest = ({ engine }: { engine: ReturnType<typeof useTypingEnigne> 
                             <div ref={engine.caretRef} className="caret" />
 
                             {/* loop through all the words in the words array */}
-                            {engine.state.words.map((word, wordIndex) => (
+                            {engine.state.words.slice(engine.state.IndexToStartFrom).map((word, wordIndex) => (
 
                                 //If CurrentWord is greater than WordIndex then user has alreadly typed the word and class will be "correct"
 
-                                <span id={wordIndex.toString()} className={wordIndex < engine.state.CurrentWordIndex ? (`${engine.state.AllWordMap.get(wordIndex)?.isCorrect ? "correct" : "incorrectword"}`) : ""} key={wordIndex}>
+                                <span data-word-index={engine.state.IndexToStartFrom + wordIndex} className={`word ${(engine.state.IndexToStartFrom + wordIndex) < engine.state.CurrentWordIndex ? (`${engine.state.AllWordMap.get(wordIndex)?.isCorrect ? "correct" : "incorrectword"}`) : ""}`} key={engine.state.IndexToStartFrom + wordIndex}>
 
                                     <span>
                                         {/* split the word array to retrieve each letter and put in in a span */}
 
                                         {word.split("").map((character, letterindex) => {
 
-                                            const StoredWord = engine.state.AllWordMap.get(wordIndex);
+                                            const StoredWord = engine.state.AllWordMap.get(engine.state.IndexToStartFrom + wordIndex);
                                             engine.lettersforOverTypedSection = [];
-                                            const isCurrent = wordIndex === engine.state.CurrentWordIndex
+                                            const isCurrent = engine.state.IndexToStartFrom + wordIndex === engine.state.CurrentWordIndex
                                             engine.CurrentWordsSpansRef.current = [];
 
-
+                                            
                                             //we check to see if this is the last letter in the word as we want to check if the user has typed any other letters
                                             //  after which we will append after the word and highlight in red
                                             if (letterindex + 1 === word.length) {
@@ -93,14 +93,14 @@ const SP_TypingTest = ({ engine }: { engine: ReturnType<typeof useTypingEnigne> 
 
                                             //put each letter into a span and inside of the ref attribute add the current span into the currentwordsspanref array
                                             return (
-                                                <span ref={wordIndex === engine.state.CurrentWordIndex ? (element) => { if (element) engine.CurrentWordsSpansRef.current.push(element) } : null} className={charClass} key={letterindex}>{character}</span>
+                                                <span ref={engine.state.IndexToStartFrom + wordIndex === engine.state.CurrentWordIndex ? (element) => { if (element) engine.CurrentWordsSpansRef.current.push(element) } : null} className={charClass} key={letterindex}>{character}</span>
                                             )
 
                                         })}
 
                                         {/* if lettersforOverTypedSection exists then we have overtyped and we can append the extra values after the word */}
                                         {engine.lettersforOverTypedSection && engine.lettersforOverTypedSection.map((character, index) => (
-                                            <span ref={wordIndex === engine.state.CurrentWordIndex ? (element) => { if (element) engine.CurrentWordsSpansRef.current.push(element) } : null} className="incorrectOverType" key={index}>{character}</span>
+                                            <span ref={engine.state.IndexToStartFrom + wordIndex === engine.state.CurrentWordIndex ? (element) => { if (element) engine.CurrentWordsSpansRef.current.push(element) } : null} className="incorrectOverType" key={index}>{character}</span>
                                         ))}
 
 

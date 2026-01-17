@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState, useRef, useReducer } from 'react'
+import React, { useEffect, useState, useRef, useReducer, useMemo } from 'react'
 // import './Style.scss'
 import words from '../words.json'
 import { io, Socket } from 'socket.io-client'
@@ -36,6 +36,7 @@ export interface State {
     setintervalTimer: NodeJS.Timeout | undefined
     count: number,
     HighestIndexTyped: number
+    IndexToStartFrom: number
 }
 
 export interface InitialState {
@@ -55,13 +56,14 @@ export interface InitialState {
     setintervalTimer: NodeJS.Timeout | undefined
     count: number,
     HighestIndexTyped: number
+    IndexToStartFrom: number
 }
 
 
 
 
 export interface Action {
-    type: "InputChanged" | "SpacebarPressed" | "BackspacePressed" | "Reset" | "StartTest" | "FinishTest" | "Update_EverySecond" | "CurrentWordChange" | "UpdateAllwordMap" | "AddRandomWordToList"
+    type: "InputChanged" | "SpacebarPressed" | "BackspacePressed" | "Reset" | "StartTest" | "FinishTest" | "Update_EverySecond" | "CurrentWordChange" | "UpdateAllwordMap" | "AddRandomWordToList" | "INIT_WORDS"
     payload: any
 }
 
@@ -207,11 +209,13 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
         let HighestIndexTyped = state.HighestIndexTyped;
 
+        let IndexToStartFrom = state.IndexToStartFrom;
 
 
 
 
-        const { value, inputEventData, keyPressEvent, textForDisplay, indexToChange, newword } = action.payload
+
+        const { value, inputEventData, keyPressEvent, textForDisplay, indexToChange, newword, Init_Words, HighestIndexFoundOutOfBounds } = action.payload
 
 
         switch (action.type) {
@@ -320,7 +324,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
                         HighestIndexTyped = AllWordMap.size
 
                         // const newword = GenerateRandomWord();
-                        console.log("newword = ", newword)
+                        // console.log("newword = ", newword)
 
                         Words = [...state.words, newword];
 
@@ -410,6 +414,8 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
             case "Reset":
 
+                // I don't think it is OK to call this function here since we are updating side effects
+
                 return Init()
 
 
@@ -497,19 +503,38 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
                 // return CurrentModeLogic.OnCurrentWordChange ? CurrentModeLogic.OnCurrentWordChange(state) : state
 
+                console.log("test0")
+
                 const newMap = new Map(state.AllWordMap);
 
-                const existing = newMap.get(indexToChange);
+                console.log(HighestIndexFoundOutOfBounds);
+
+                //check if the HighestIndex we found exists in the newmap
+                //Should always return true
+                const existing = newMap.get(HighestIndexFoundOutOfBounds);
                 if (!existing) return state;
 
-                newMap.set(indexToChange, {
-                    ...existing,
-                    OutsideTextContainer: true,
-                });
+                console.log("test")
+                for (let i = 0; i <= HighestIndexFoundOutOfBounds; i++) {
+
+                    console.log("running");
+                    newMap.set(i, { ...existing, OutsideTextContainer: true })
+
+                }
+
+                IndexToStartFrom = HighestIndexFoundOutOfBounds + 1;
+
+                console.log(IndexToStartFrom);
+
+                // newMap.set(indexToChange, {
+                //     ...existing,
+                //     OutsideTextContainer: true,
+                // });
 
                 return {
                     ...state,
                     AllWordMap: newMap,
+                    IndexToStartFrom: IndexToStartFrom
                 };
 
             case "AddRandomWordToList":
@@ -521,11 +546,41 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
                     ...state,
                 }
 
+            case "INIT_WORDS":
+
+
+                return {
+                    ...state,
+                    words: Init_Words
+                }
+
+
+
 
 
 
 
         }
+    }
+
+    const Initialstate: State = {
+        words: [],
+        CurrentWordIndex: 0,
+        AllWordMap: new Map(),
+        TypedWord: "",
+        startTime: 0,
+        finishTime: 0,
+        correctCount: 0,
+        incorrectCount: 0,
+        TestFinished: false,
+        WPM: 0,
+        Accuracy: 0,
+        displayText: null,
+        status: "notstarted",
+        setintervalTimer: undefined,
+        count: 0,
+        HighestIndexTyped: 0,
+        IndexToStartFrom: 0
     }
 
     const InitialState: InitialState = {
@@ -543,9 +598,13 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         status: "notstarted",
         setintervalTimer: undefined,
         count: 0,
-        HighestIndexTyped: 0
+        HighestIndexTyped: 0,
+        IndexToStartFrom: 0
+
     }
 
+
+    // const initialWords = useMemo(() => getRandomWords(30), []);
 
     function Init() {
 
@@ -556,9 +615,16 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         }
     }
 
-    const [state, dispatch] = useReducer(reducer, InitialState, Init)
 
 
+    // const [state, dispatch] = useReducer(reducer, InitialState, Init)
+    const [state, dispatch] = useReducer(reducer, Initialstate)
+
+
+
+    useEffect(() => {
+        dispatch({ type: "INIT_WORDS", payload: { Init_Words: getRandomWords(30) } });
+    }, []);
 
     // Caret Position
     useEffect(() => {
@@ -580,12 +646,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         // console.log("caret top = ", caretTop);
 
 
-        if (caretTop > MAX_CARET_Y) {
-            // console.log("maxcarety = ", MAX_CARET_Y);P
 
-            // incrementScroll();
-            Delete()
-        }
         //get a refernce to the wordcontainer and search through each span if it is above the text container then delete it 
         //get all the words in the words array and check to see if it is above the textcontainer ref if it is then mark it as offscreen
         //create a new variable for words in the allwordsarray that stores whether it is offscreen. if it is marked with offscreen it cannot be rendered anymore.
@@ -627,6 +688,14 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         // console.log(CurrentWord);
 
 
+        if (caretTop > MAX_CARET_Y) {
+            // console.log("maxcarety = ", MAX_CARET_Y);P
+            // incrementScroll();
+            console.log("delete")
+            Delete()
+
+        }
+
         if (!letterElement) {
             //if no letter has been typed then we are at the first letter in the word
             //position caret before the first letter in the word
@@ -663,13 +732,10 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
         // SetTop(caretElement.offsetTop);
 
-
-
-
         // console.log("offset Top = ", `${caretElement.offsetTop}px`);
 
 
-    }, [state.TypedWord.length])
+    }, [state.TypedWord.length, state.IndexToStartFrom])
 
     //change the dependecncy to change on keypress rather than typedword.length. This is because currently it doesn't track space bar presses
     //try and change the margin from code rather than in html
@@ -683,7 +749,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
     function Delete() {
 
         // setlineoffset(prev => prev + 1);
-        const spans = WordContainerRef.current!.querySelectorAll("span");
+        const spans = WordContainerRef.current!.querySelectorAll<HTMLSpanElement>("span.word");
 
         const TextContainerRect = TextContainerref.current!.getBoundingClientRect();
 
@@ -723,11 +789,27 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
             }
         }
 
-        SpanstoRemove.forEach(span => {
-            const WordIndex = parseInt(span.id, 10);
-            dispatch({ type: "UpdateAllwordMap", payload: { indexToChange: WordIndex } })
-            span.remove();
-        });
+        console.log("start")
+        console.log(SpanstoRemove)
+
+        const IndexOfSpansToRemove = SpanstoRemove.map((span) => {
+            const Index = parseInt(span.dataset.wordIndex!, 10);
+            console.log("spanindex ", Index)
+            return Index;
+        })
+
+        const HighestIndexFoundOutOfBounds = Math.max(...IndexOfSpansToRemove)
+
+        console.log("highest ", HighestIndexFoundOutOfBounds);
+
+        dispatch({ type: "UpdateAllwordMap", payload: { HighestIndexFoundOutOfBounds } })
+
+
+        // SpanstoRemove.forEach(span => {
+        //     const WordIndex = parseInt(span.id, 10);
+        //     dispatch({ type: "UpdateAllwordMap", payload: { indexToChange: WordIndex } })
+        //     span?.remove();
+        // });
 
 
 
@@ -996,7 +1078,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
 
 
-            dispatch({ type: "SpacebarPressed", payload: { keyPressEvent: event, newword} })
+            dispatch({ type: "SpacebarPressed", payload: { keyPressEvent: event, newword } })
 
 
             // if (TypedWord.length > 0) {
@@ -1169,7 +1251,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
                 const randomArray = [...words].sort(() => 0.5 - Math.random());
                 let word = randomArray[0];
 
-                console.log(word)
+                // console.log(word)
 
                 // console.log(StartOfSentence.current);
                 if (StartOfSentence.current) {
@@ -1194,7 +1276,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
                         if (".?!;".includes(punctuation)) {
                             StartOfSentence.current = true;
 
-                           console.log("punctuation is ",word + punctuation ," Next word capital")
+                            // console.log("punctuation is ", word + punctuation, " Next word capital")
                         }
 
                         word = word + punctuation;
@@ -1314,10 +1396,10 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         let word = randomArray[0];
 
         if (StartOfSentence.current) {
-            console.log("yes");
+            // console.log("yes");
             word = Capitalize(word);
 
-            console.log(word);
+            // console.log(word);
             StartOfSentence.current = false;
             WordsSincePunctuation.current = 0;
             WordsSincePunctuation.current++;
@@ -1330,7 +1412,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
                 const punctuation = RandomlyGeneratePunctuation2();
 
                 if (".?!;".includes(punctuation)) {
-                    console.log("Next Word capital ", true)
+                    // console.log("Next Word capital ", true)
                     StartOfSentence.current = true;
                 }
 
