@@ -13,6 +13,8 @@ const SinglePageTypingTest = () => {
 
     const [modeID, SetMode] = useState<modeID>("word")
     const [configs, SetConfig] = useState<configID[]>([])
+    const [LengthDurationSetting, SetLengthDurationSetting] = useState<string>(Modes[modeID].LengthDurationSetting.defaultValue)
+
 
 
 
@@ -31,13 +33,14 @@ const SinglePageTypingTest = () => {
 
             // })
         })
+        SetLengthDurationSetting(Modes[id].LengthDurationSetting.defaultValue)
     }
 
     function changeConfig(config: configID) {
 
         //make sure that the config is inside of the allowed configs for the mode
 
-        if(Modes[modeID].allowedConfigs.includes(config) == false){
+        if (Modes[modeID].allowedConfigs.includes(config) == false) {
             return;
         }
 
@@ -48,9 +51,27 @@ const SinglePageTypingTest = () => {
         });
     }
 
+    function ChangeLengthDurationSetting(LengthDurationSetting: string) {
+
+        //make sure that the config is inside of the allowed configs for the mode
+
+        // if (Modes[modeID].allowedConfigs.includes(config) == false) {
+        //     return;
+        // }
+
+        SetLengthDurationSetting(LengthDurationSetting)
+
+        // if config is already inside of the config usestate then remove it if not add it
+
+        // SetConfig((prev) => {
+        //     return prev?.includes(config) ? prev?.filter(prevconfig => prevconfig !== config) : [...prev, config]
+        // });
+    }
+
     const engine = useTypingEnigne({
         mode: modeID,
-        config: configs
+        config: configs,
+        LengthDurationSetting: LengthDurationSetting
     })
 
     return (
@@ -63,17 +84,35 @@ const SinglePageTypingTest = () => {
             </Card> */}
 
 
-           
 
-            <div className='flex justify-center gap-5 m-10'>
+            <div className='flex justify-center'>
 
-                {
-                    Object.values(Modes).map((mode) => (
-                        <Button key={mode.id} onClick={() => selectMode(mode.id)} className='bg-primary w-25' variant={mode.id === modeID ? "default" : "outline"}>{mode.id}</Button>
-                    ))
-                }
+
+                <div className='flex justify-center gap-5 m-10'>
+
+                    {
+                        Object.values(Modes).map((mode) => (
+                            <Button key={mode.id} onClick={() => selectMode(mode.id)} className='bg-primary w-25' variant={mode.id === modeID ? "default" : "outline"}>{mode.id}</Button>
+                        ))
+                    }
+
+                </div>
+
+                <div className='flex r gap-5 m-10'>
+
+                    {
+                        Object.values(Modes[modeID].LengthDurationSetting.options).map((_LengthDurationSetting) => (
+
+                            <Button key={_LengthDurationSetting} onClick={() => ChangeLengthDurationSetting(_LengthDurationSetting)} className='bg-primary w-25' variant={_LengthDurationSetting === LengthDurationSetting ? "default" : "outline"}>{_LengthDurationSetting}</Button>
+
+                        ))
+                    }
+                </div>
+
 
             </div>
+
+
 
 
             {/* <div className='flex justify-center gap-5 m-10'>
@@ -87,18 +126,18 @@ const SinglePageTypingTest = () => {
                 {
                     Object.values(Modes[modeID].allowedConfigs).map((config) => (
 
-                        <Button key={config} onClick={() => changeConfig(config)} className='bg-primary w-25' variant={configs.includes(config)? "default" : "outline"}>{config}</Button>
+                        <Button key={config} onClick={() => changeConfig(config)} className='bg-primary w-25' variant={configs.includes(config) ? "default" : "outline"}>{config}</Button>
 
                     ))
                 }
             </div>
 
-             <div>
+            <div>
                 {
-                    engine.state.status != "notstarted" ? 
-                <h1 className='text-2xl font-bold mt-5 text-primary flex justify-center'>{engine.state.displayText}</h1>
+                    engine.state.status != "notstarted" ?
+                        <h1 className='text-2xl font-bold mt-5 text-primary flex justify-center'>{engine.state.displayText}</h1>
 
-                    :""
+                        : ""
                 }
             </div>
 

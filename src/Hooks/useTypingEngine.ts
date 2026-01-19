@@ -16,6 +16,7 @@ export interface TypingModeConfig {
 
     mode: modeID,
     config: string[],
+    LengthDurationSetting: string
 
 }
 
@@ -66,7 +67,7 @@ export interface InitialState {
 
 
 export interface Action {
-    type: "InputChanged" | "SpacebarPressed" | "BackspacePressed" | "Reset" | "StartTest" | "FinishTest" | "Update_EverySecond" | "CurrentWordChange" | "UpdateAllwordMap" | "AddRandomWordToList" | "INIT_WORDS" 
+    type: "InputChanged" | "SpacebarPressed" | "BackspacePressed" | "Reset" | "StartTest" | "FinishTest" | "Update_EverySecond" | "CurrentWordChange" | "UpdateAllwordMap" | "AddRandomWordToList" | "INIT_WORDS"
     payload: any
 }
 
@@ -85,7 +86,7 @@ const punctuation2 = [
     // { char: ")", weight: 1 },
 ];
 
-export function useTypingEnigne({ mode, config }: TypingModeConfig) {
+export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingModeConfig) {
 
 
     // const [words] = useState(() => getRandomWords(5));
@@ -132,6 +133,10 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
     const isFirstRender = useRef(true);
 
     const prevMode = useRef(mode);
+    const PrevConfig = useRef(config);
+    const PrevLengthDurationSetting = useRef(LengthDurationSetting);
+
+
 
     //make sure these are reset these when needed.
     let WordsSincePunctuationref = useRef(0);
@@ -220,7 +225,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
 
 
-        const { value, inputEventData, keyPressEvent, textForDisplay, indexToChange, newword, Init_Words, HighestIndexFoundOutOfBounds, CountUsed } = action.payload
+        const { value, inputEventData, keyPressEvent, textForDisplay, indexToChange, newword, Init_Words, HighestIndexFoundOutOfBounds, RemainingWords } = action.payload
 
 
         switch (action.type) {
@@ -332,9 +337,10 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
                         // console.log("newword = ", newword)
 
 
-                        console.log(RemainingWordsToGenerate);
                         if (RemainingWordsToGenerate > 0) {
                             RemainingWordsToGenerate--;
+                            console.log(RemainingWordsToGenerate);
+
                             Words = [...state.words, newword];
 
                         }
@@ -427,9 +433,9 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
             case "Reset":
 
-            // I don't think it is OK to call this function here since we are updating side effects
+                // I don't think it is OK to call this function here since we are updating side effects
 
-            // return Init()
+                return Init(Initialstate)
 
 
             case "StartTest":
@@ -561,14 +567,14 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
             case "INIT_WORDS":
 
-                const NewRemainingWords = RemainingWordsToGenerate - CountUsed;
-                console.log(NewRemainingWords);
+                // const NewRemainingWords = RemainingWordsToGenerate - CountUsed;
+                console.log(RemainingWords);
 
 
                 return {
                     ...state,
                     words: Init_Words,
-                    RemainingWordsToGenerate: NewRemainingWords
+                    RemainingWordsToGenerate: RemainingWords
                 }
 
             // case "UpdateRemainingWords":
@@ -602,54 +608,59 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         count: 0,
         HighestIndexTyped: 0,
         IndexToStartFrom: 0,
-        RemainingWordsToGenerate: 30
+        RemainingWordsToGenerate: 0
 
     }
 
-    const InitialState: InitialState = {
-        CurrentWordIndex: 0,
-        AllWordMap: new Map(),
-        TypedWord: "",
-        startTime: 0,
-        finishTime: 0,
-        correctCount: 0,
-        incorrectCount: 0,
-        TestFinished: false,
-        WPM: 0,
-        Accuracy: 0,
-        displayText: null,
-        status: "notstarted",
-        setintervalTimer: undefined,
-        count: 0,
-        HighestIndexTyped: 0,
-        IndexToStartFrom: 0,
-    }
+    // const InitialState: InitialState = {
+    //     CurrentWordIndex: 0,
+    //     AllWordMap: new Map(),
+    //     TypedWord: "",
+    //     startTime: 0,
+    //     finishTime: 0,
+    //     correctCount: 0,
+    //     incorrectCount: 0,
+    //     TestFinished: false,
+    //     WPM: 0,
+    //     Accuracy: 0,
+    //     displayText: null,
+    //     status: "notstarted",
+    //     setintervalTimer: undefined,
+    //     count: 0,
+    //     HighestIndexTyped: 0,
+    //     IndexToStartFrom: 0,
+    // }
 
 
     // const initialWords = useMemo(() => getRandomWords(30), []);
 
-    function Init() {
+    function Init(initialState:State) {
 
-        // console.log(mode);
+        const { words, RemainingWords } = getRandomWords(LengthDurationSetting);
+
         return {
-            ...InitialState,
-            words: getRandomWords(30)
+            ...initialState,
+            words: words,
+            RemainingWordsToGenerate:RemainingWords
+
         }
     }
 
 
 
-    // const [state, dispatch] = useReducer(reducer, InitialState, Init)
-    const [state, dispatch] = useReducer(reducer, Initialstate)
+    // const [state, dispatch] = useReducer(reducer, Initialstate)
+    
+    const [state, dispatch] = useReducer(reducer, Initialstate, Init)
 
 
 
-    useEffect(() => {
-        console.log("useeffect")
 
-        const { words, CountUsed } = getRandomWords(30);
-        dispatch({ type: "INIT_WORDS", payload: { Init_Words: words, CountUsed } });
-    }, []);
+    // useEffect(() => {
+    //     console.log("useeffect")
+
+    //     const { words, RemainingWords } = getRandomWords(LengthDurationSetting);
+    //     dispatch({ type: "INIT_WORDS", payload: { Init_Words: words, RemainingWords } });
+    // }, []);
 
     function InitialiseRemainingWordsToGenerate(): number {
 
@@ -958,13 +969,17 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
     useEffect(() => {
 
+        console.log("chagne")
         //Mode has changed
-        if (prevMode.current !== mode) {
+        if (mode !== prevMode.current || config !== PrevConfig.current || LengthDurationSetting !== PrevLengthDurationSetting.current) {
             Reset();
+            console.log("reset")
             prevMode.current = mode;
+            PrevConfig.current = config;
+            PrevLengthDurationSetting.current = LengthDurationSetting;
         }
 
-    }, [mode])
+    }, [mode, config, LengthDurationSetting])
 
     useEffect(() => {
 
@@ -974,7 +989,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         }
 
         if (state.status === "typing") {
-            
+
 
             intervalRef.current = setInterval(() => {
 
@@ -1211,7 +1226,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
 
 
 
-    function getRandomWords(amount: number) {
+    function getRandomWords(LengthDurationSetting: string) {
 
 
 
@@ -1225,8 +1240,11 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         let FinalWordArray: string[] = [];
         let WordsGenerated = 0;
 
+        let RemainingWords = 0;
+
         let isStartOfSentence = true;
         let WordsSincePunctuation = 0;
+
 
 
 
@@ -1241,13 +1259,19 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         }
         else {
 
+            //Word Mode
 
-            if (state.RemainingWordsToGenerate < 20) {
-                WordsGenerated = state.RemainingWordsToGenerate;
+            const WordsAmount = Number(LengthDurationSetting)
+
+
+            if (WordsAmount <= 20) {
+                WordsGenerated = WordsAmount;
+                RemainingWords = 0;
                 console.log("1");
             }
             else {
                 WordsGenerated = 20;
+                RemainingWords = WordsAmount - 20;
                 console.log("2");
             }
 
@@ -1257,6 +1281,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
             // if (config.includes("punctuation")) {
 
             for (let i = 0; i < WordsGenerated; i++) {
+
 
 
                 // const randomArray = [...words].sort(() => 0.5 - Math.random());
@@ -1308,17 +1333,18 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
                 // console.log(word)
 
                 // console.log(StartOfSentence.current);
-                if (StartOfSentence.current) {
+                if (isStartOfSentence) {
                     // console.log("heey");
                     word = Capitalize(word);
                     isStartOfSentence = false;
                     WordsSincePunctuation = 0;
                     WordsSincePunctuation++;
+                    console.log("true");
 
                 }
                 else {
 
-                    if (CanGeneratePunctuation()) {
+                    if (CanGeneratePunctuation(WordsSincePunctuation,isStartOfSentence)) {
 
 
                         const punctuation = RandomlyGeneratePunctuation2();
@@ -1376,7 +1402,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         StartOfSentence.current = isStartOfSentence;
         WordsSincePunctuationref.current = WordsSincePunctuation
 
-        return { words: FinalWordArray, CountUsed: WordsGenerated };
+        return { words: FinalWordArray, RemainingWords };
 
     }
 
@@ -1459,7 +1485,7 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         }
         else {
 
-            if (CanGeneratePunctuation()) {
+            if (CanGeneratePunctuation(WordsSincePunctuationref.current,StartOfSentence.current)) {
 
                 const punctuation = RandomlyGeneratePunctuation2();
 
@@ -1490,12 +1516,12 @@ export function useTypingEnigne({ mode, config }: TypingModeConfig) {
         return word[0].toUpperCase() + word.slice(1);
     }
 
-    function CanGeneratePunctuation() {
+    function CanGeneratePunctuation(WordsSincePunctuation:number, isStartOfSentence: boolean) {
 
-        if (WordsSincePunctuationref.current < 3)
+        if (WordsSincePunctuation < 3)
             return false
 
-        if (StartOfSentence.current)
+        if (isStartOfSentence)
             return false;
 
         return Math.random() < 0.25

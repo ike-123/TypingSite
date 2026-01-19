@@ -8,6 +8,9 @@ import { type Action } from "@/Hooks/useTypingEngine";
 
 export type modeID = "time" | "word" | "quote";
 
+export type modeSettingsID = "time" | "word" | "quote";
+
+
 export type configID = "punctuation" | "numbers" | "error";
 
 
@@ -16,6 +19,19 @@ export interface EngineContext {
     state: State;
     dispatch: React.Dispatch<Action>;
 }
+
+export interface LengthDurationSetting {
+    name:string
+    options:string[]
+    defaultValue: string
+    customOptions:boolean
+    MinAndMaxCustomValues?:{
+        min:number
+        max:number
+    }
+}
+
+
 
 // export interface ModeLogic {
 
@@ -34,6 +50,7 @@ export interface ModeLogic {
 export interface TypingModeConfig {
 
     id: modeID;
+    LengthDurationSetting:LengthDurationSetting;
     label: string;
     allowedConfigs: configID[];
     ModeLogic: ModeLogic;
@@ -46,6 +63,16 @@ export const Modes: Record<modeID, TypingModeConfig> = {
 
     time: {
         id: "time",
+        LengthDurationSetting:{
+            name:"Duration",
+            options:["5","15","30","60","120"],
+            defaultValue: "30",
+            customOptions:true,
+            MinAndMaxCustomValues:{
+                min:1,
+                max:1500
+            }
+        },
         label: "Complete the test before the timer runs out",
         allowedConfigs: ["punctuation", "numbers", "error"],
         ModeLogic: {
@@ -77,6 +104,16 @@ export const Modes: Record<modeID, TypingModeConfig> = {
     },
     word: {
         id: "word",
+         LengthDurationSetting:{
+            name:"Word Amount",
+            options:["10","25","50","100"],
+            defaultValue: "25",
+            customOptions:true,
+            MinAndMaxCustomValues:{
+                min:1,
+                max:1000
+            }
+        },
         label: "Complete the test before the timer runs out",
         allowedConfigs: ["punctuation", "numbers", "error"],
         ModeLogic: {
@@ -96,6 +133,12 @@ export const Modes: Record<modeID, TypingModeConfig> = {
     },
     quote: {
         id: "quote",
+        LengthDurationSetting:{
+            name:"Word Amount",
+            options:["short","medium","long"],
+            defaultValue: "medium",
+            customOptions:false,
+        },
         label: "Complete the test before the timer runs out",
         allowedConfigs: ["error"],
         ModeLogic: {
