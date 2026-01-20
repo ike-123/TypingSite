@@ -90,9 +90,9 @@ export const Modes: Record<modeID, TypingModeConfig> = {
 
             update_everysecond: ( state ) => {
 
-                const TextToDisplay = `${10-state.count}`
+                const TextToDisplay = `${state.totalTime-state.count}`
                 // console.log("displaytext = ", TextToDisplay);
-                const isFinished = state.count >= 10;
+                const isFinished = state.count >= state.totalTime;
 
                 return{
                     ...state,
@@ -142,7 +142,18 @@ export const Modes: Record<modeID, TypingModeConfig> = {
         label: "Complete the test before the timer runs out",
         allowedConfigs: ["error"],
         ModeLogic: {
-           
+            OnCurrentWordChange(state) {
+
+                const TextToDisplay = `${state.CurrentWordIndex}/${state.words.length}`
+                const isFinished = state.CurrentWordIndex > state.words.length - 1;
+
+                return{
+                    ...state,
+                    displayText:TextToDisplay,
+                    status: isFinished ? "finished" : state.status
+                }
+
+            },
         }
     }
 

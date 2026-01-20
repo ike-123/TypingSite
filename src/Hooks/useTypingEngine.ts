@@ -39,29 +39,32 @@ export interface State {
     HighestIndexTyped: number
     IndexToStartFrom: number
     RemainingWordsToGenerate: number
+    wordsSincePunctuation: number
+    isStartOfSentence: boolean
+    totalTime: number
 }
 
-export interface InitialState {
+// export interface InitialState {
 
-    CurrentWordIndex: number,
-    AllWordMap: Map<number, { text: string, isCorrect: boolean, OutsideTextContainer: boolean }>
-    TypedWord: string,
-    startTime: number,
-    finishTime: number,
-    correctCount: number,
-    incorrectCount: number,
-    TestFinished: boolean,
-    WPM: number,
-    Accuracy: number,
-    displayText: string | null,
-    status: Status,
-    setintervalTimer: NodeJS.Timeout | undefined
-    count: number,
-    HighestIndexTyped: number
-    IndexToStartFrom: number,
+//     CurrentWordIndex: number,
+//     AllWordMap: Map<number, { text: string, isCorrect: boolean, OutsideTextContainer: boolean }>
+//     TypedWord: string,
+//     startTime: number,
+//     finishTime: number,
+//     correctCount: number,
+//     incorrectCount: number,
+//     TestFinished: boolean,
+//     WPM: number,
+//     Accuracy: number,
+//     displayText: string | null,
+//     status: Status,
+//     setintervalTimer: NodeJS.Timeout | undefined
+//     count: number,
+//     HighestIndexTyped: number
+//     IndexToStartFrom: number,
 
 
-}
+// }
 
 
 
@@ -139,8 +142,10 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
 
     //make sure these are reset these when needed.
-    let WordsSincePunctuationref = useRef(0);
-    let StartOfSentence = useRef(true);
+    // let WordsSincePunctuationref = useRef(0);
+    // let StartOfSentence = useRef(true);
+
+    //Put this inside of reducer 
 
     // console.log(StartOfSentence.current)
 
@@ -153,6 +158,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
     const [margin, SetMargin] = useState<number>(0)
 
     const [lineoffset, setlineoffset] = useState<number>(0)
+
+    const [AmountOfWordsToGenerateOnStart, SetAmountOfWordsToGenerateOnStart] = useState(20);
 
 
 
@@ -225,7 +232,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
 
 
-        const { value, inputEventData, keyPressEvent, textForDisplay, indexToChange, newword, Init_Words, HighestIndexFoundOutOfBounds, RemainingWords } = action.payload
+        const { value, inputEventData, keyPressEvent, textForDisplay, indexToChange, word, Init_Words, HighestIndexFoundOutOfBounds, RemainingWords, wordsSincePunctuation, isStartOfSentence } = action.payload
 
 
         switch (action.type) {
@@ -336,12 +343,12 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                         // const newword = GenerateRandomWord();
                         // console.log("newword = ", newword)
 
-
-                        if (RemainingWordsToGenerate > 0) {
+                        console.log("what");
+                        if (RemainingWordsToGenerate > 0 || mode === "time") {
                             RemainingWordsToGenerate--;
-                            console.log(RemainingWordsToGenerate);
+                            // console.log(RemainingWordsToGenerate);
 
-                            Words = [...state.words, newword];
+                            Words = [...state.words, word];
 
                         }
 
@@ -395,7 +402,10 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                     finishTime: finishTime,
                     HighestIndexTyped: HighestIndexTyped,
                     words: Words,
-                    RemainingWordsToGenerate: RemainingWordsToGenerate
+                    RemainingWordsToGenerate: RemainingWordsToGenerate,
+                    wordsSincePunctuation: wordsSincePunctuation,
+                    isStartOfSentence: isStartOfSentence
+
                 }
 
 
@@ -568,13 +578,15 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
             case "INIT_WORDS":
 
                 // const NewRemainingWords = RemainingWordsToGenerate - CountUsed;
-                console.log(RemainingWords);
+                // console.log(RemainingWords);
 
 
                 return {
                     ...state,
                     words: Init_Words,
-                    RemainingWordsToGenerate: RemainingWords
+                    RemainingWordsToGenerate: RemainingWords,
+                    wordsSincePunctuation: wordsSincePunctuation,
+                    isStartOfSentence: isStartOfSentence
                 }
 
             // case "UpdateRemainingWords":
@@ -608,7 +620,10 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         count: 0,
         HighestIndexTyped: 0,
         IndexToStartFrom: 0,
-        RemainingWordsToGenerate: 0
+        RemainingWordsToGenerate: 0,
+        wordsSincePunctuation: 0,
+        isStartOfSentence: true,
+        totalTime: 0
 
     }
 
@@ -634,14 +649,17 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
     // const initialWords = useMemo(() => getRandomWords(30), []);
 
-    function Init(initialState:State) {
+    function Init(initialState: State) {
 
-        const { words, RemainingWords } = getRandomWords(LengthDurationSetting);
+        const { words, RemainingWords, wordsSincePunctuation, isStartOfSentence, totalTime } = getRandomWords(LengthDurationSetting);
 
         return {
             ...initialState,
             words: words,
-            RemainingWordsToGenerate:RemainingWords
+            RemainingWordsToGenerate: RemainingWords,
+            wordsSincePunctuation: wordsSincePunctuation,
+            isStartOfSentence: isStartOfSentence,
+            totalTime: totalTime
 
         }
     }
@@ -649,7 +667,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
 
     // const [state, dispatch] = useReducer(reducer, Initialstate)
-    
+
     const [state, dispatch] = useReducer(reducer, Initialstate, Init)
 
 
@@ -993,7 +1011,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
             intervalRef.current = setInterval(() => {
 
-                // dispatch({ type: "Update_EverySecond", payload: {} })
+                dispatch({ type: "Update_EverySecond", payload: {} })
 
             }, 1000);
         }
@@ -1122,11 +1140,11 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         if (event.code === "Space") {
             event.preventDefault();
 
-            const newword = GenerateRandomWord();
+            const { word, wordsSincePunctuation, isStartOfSentence } = GenerateRandomWord(state);
 
 
 
-            dispatch({ type: "SpacebarPressed", payload: { keyPressEvent: event, newword } })
+            dispatch({ type: "SpacebarPressed", payload: { keyPressEvent: event, word, wordsSincePunctuation, isStartOfSentence } })
 
 
             // if (TypedWord.length > 0) {
@@ -1243,7 +1261,10 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         let RemainingWords = 0;
 
         let isStartOfSentence = true;
-        let WordsSincePunctuation = 0;
+        let wordsSincePunctuation = 0;
+
+        const totalTime = Number(LengthDurationSetting)
+
 
 
 
@@ -1251,27 +1272,56 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         //If mode = quote
         if (mode == "quote") {
 
-            const randindex = Math.floor(Math.random() * quotes.length);
+            // const randindex = Math.floor(Math.random() * quotes.length);
 
-            console.log(quotes[randindex].text.split(""));
-            FinalWordArray = quotes[randindex].text.split(" ");
+            if (LengthDurationSetting === "short") {
+
+                const ShortQuotes = quotes.filter(quote => quote.length === "short")
+
+                const randindex = Math.floor(Math.random() * ShortQuotes.length);
+
+
+                FinalWordArray = ShortQuotes[randindex].text.split(" ");
+
+            }
+            if (LengthDurationSetting === "medium") {
+
+                const MediumQuotes = quotes.filter(quote => quote.length === "medium")
+
+                const randindex = Math.floor(Math.random() * MediumQuotes.length);
+
+                // console.log(quotes.filter(quote => quote.length === "medium")[randindex])
+
+                FinalWordArray = MediumQuotes[randindex].text.split(" ");
+
+            }
+            if (LengthDurationSetting === "long") {
+
+                const LongQuotes = quotes.filter(quote => quote.length === "long")
+
+                const randindex = Math.floor(Math.random() * LongQuotes.length);
+
+                FinalWordArray = LongQuotes[randindex].text.split(" ");
+
+            }
+            // console.log(quotes[randindex].text.split(""));
 
         }
-        else {
+        else if (mode == "word") {
 
             //Word Mode
 
             const WordsAmount = Number(LengthDurationSetting)
 
 
-            if (WordsAmount <= 20) {
+            if (WordsAmount <= AmountOfWordsToGenerateOnStart) {
                 WordsGenerated = WordsAmount;
                 RemainingWords = 0;
                 console.log("1");
             }
             else {
-                WordsGenerated = 20;
-                RemainingWords = WordsAmount - 20;
+                WordsGenerated = AmountOfWordsToGenerateOnStart;
+                RemainingWords = WordsAmount - AmountOfWordsToGenerateOnStart;
                 console.log("2");
             }
 
@@ -1326,46 +1376,74 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                 //     FinalWordArray.push(element)
                 // });
 
-
                 const randomArray = [...words].sort(() => 0.5 - Math.random());
                 let word = randomArray[0];
 
-                // console.log(word)
+                if (config.includes("punctuation")) {
 
-                // console.log(StartOfSentence.current);
-                if (isStartOfSentence) {
-                    // console.log("heey");
-                    word = Capitalize(word);
-                    isStartOfSentence = false;
-                    WordsSincePunctuation = 0;
-                    WordsSincePunctuation++;
-                    console.log("true");
+                    // console.log(word)
 
-                }
-                else {
+                    // console.log(StartOfSentence.current);
+                    if (isStartOfSentence) {
+                        // console.log("heey");
+                        word = Capitalize(word);
+                        isStartOfSentence = false;
+                        wordsSincePunctuation = 0;
+                        wordsSincePunctuation++;
+                        console.log("true");
 
-                    if (CanGeneratePunctuation(WordsSincePunctuation,isStartOfSentence)) {
-
-
-                        const punctuation = RandomlyGeneratePunctuation2();
-
-                        if (".?!;".includes(punctuation)) {
-                            isStartOfSentence = true;
-
-                            // console.log("punctuation is ", word + punctuation, " Next word capital")
-                        }
-
-                        word = word + punctuation;
-                        WordsSincePunctuation = 0;
                     }
-                    WordsSincePunctuation++;
+                    else {
 
+                        if (CanGeneratePunctuation(wordsSincePunctuation, isStartOfSentence)) {
+
+
+                            const punctuation = RandomlyGeneratePunctuation2();
+
+                            if (".?!;".includes(punctuation)) {
+                                isStartOfSentence = true;
+
+                                // console.log("punctuation is ", word + punctuation, " Next word capital")
+                            }
+
+                            word = word + punctuation;
+                            wordsSincePunctuation = 0;
+                        }
+                        wordsSincePunctuation++;
+
+                    }
                 }
 
                 FinalWordArray.push(word);
+            }
+
+            if (config.includes("numbers")) {
+
+                // The first Index in the final Words Array to put the number
+                let currentIndexPosition = Math.floor(Math.random() * 11);
+
+                while (currentIndexPosition < FinalWordArray.length - 1) {
+
+                    const RandomNumber = Math.floor(Math.random() * 1001).toString();
+
+                    console.log("Final = ", FinalWordArray[currentIndexPosition])
+
+                    if (/[.?!;]/.test(FinalWordArray[currentIndexPosition])) {
+
+                        FinalWordArray.splice(currentIndexPosition, 1, RandomNumber + ".");
+                    }
+                    else {
+                        FinalWordArray.splice(currentIndexPosition, 1, RandomNumber);
+
+                    }
+
+                    const RandomGeneratedIndex = Math.floor(Math.random() * 11);
+                    currentIndexPosition = currentIndexPosition + RandomGeneratedIndex;
+                }
 
 
             }
+
 
             // }
 
@@ -1376,22 +1454,92 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
 
 
+            // if (config.includes("numbers")) {
+            //     // console.log("numbers");
+
+
+            //     let currentIndexPosition = Math.floor(Math.random() * (6 - 3 + 1)) + 3;
+
+            //     while (currentIndexPosition < FinalWordArray.length - 1) {
+
+            //         const RandomNumber = Math.floor(Math.random() * 1001).toString();
+
+            //         FinalWordArray.splice(currentIndexPosition, 0, RandomNumber);
+
+            //         const RandomGeneratedIndex = Math.floor(Math.random() * (6 - 3 + 1)) + 3;
+            //         currentIndexPosition = currentIndexPosition + RandomGeneratedIndex;
+            //     }
+
+
+
+            // }
+        }
+        else if (mode == "time") {
+
+
+
+            for (let i = 0; i < AmountOfWordsToGenerateOnStart; i++) {
+
+                const randomisedArray = [...words].sort(() => 0.5 - Math.random());
+                let word = randomisedArray[0];
+
+                if (config.includes("punctuation")) {
+
+                    if (isStartOfSentence) {
+
+                        word = Capitalize(word);
+                        isStartOfSentence = false;
+                        wordsSincePunctuation = 0;
+                        wordsSincePunctuation++;
+
+                    }
+                    else {
+
+                        if (CanGeneratePunctuation(wordsSincePunctuation, isStartOfSentence)) {
+
+
+                            const punctuation = RandomlyGeneratePunctuation2();
+
+                            if (".?!;".includes(punctuation)) {
+                                isStartOfSentence = true;
+
+                                // console.log("punctuation is ", word + punctuation, " Next word capital")
+                            }
+
+                            word = word + punctuation;
+                            wordsSincePunctuation = 0;
+                        }
+                        wordsSincePunctuation++;
+
+                    }
+                }
+
+                FinalWordArray.push(word);
+            }
+
             if (config.includes("numbers")) {
-                // console.log("numbers");
 
-
-                let currentIndexPosition = Math.floor(Math.random() * (6 - 3 + 1)) + 3;
+                // The first Index in the final Words Array to put the number
+                let currentIndexPosition = Math.floor(Math.random() * 11);
 
                 while (currentIndexPosition < FinalWordArray.length - 1) {
 
                     const RandomNumber = Math.floor(Math.random() * 1001).toString();
 
-                    FinalWordArray.splice(currentIndexPosition, 0, RandomNumber);
+                    console.log("Final = ", FinalWordArray[currentIndexPosition])
 
-                    const RandomGeneratedIndex = Math.floor(Math.random() * (6 - 3 + 1)) + 3;
+                    if (/[.?!;]/.test(FinalWordArray[currentIndexPosition])) {
+
+                        FinalWordArray.splice(currentIndexPosition, 1, RandomNumber + ".");
+                    }
+                    else {
+                        FinalWordArray.splice(currentIndexPosition, 1, RandomNumber);
+
+                    }
+
+                    const RandomGeneratedIndex = Math.floor(Math.random() * 11);
                     currentIndexPosition = currentIndexPosition + RandomGeneratedIndex;
                 }
-
 
 
             }
@@ -1399,10 +1547,10 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
 
         // console.log(FinalWordArray)
-        StartOfSentence.current = isStartOfSentence;
-        WordsSincePunctuationref.current = WordsSincePunctuation
+        // StartOfSentence.current = isStartOfSentence;
+        // WordsSincePunctuationref.current = WordsSincePunctuation
 
-        return { words: FinalWordArray, RemainingWords };
+        return { words: FinalWordArray, RemainingWords, isStartOfSentence, wordsSincePunctuation, totalTime };
 
     }
 
@@ -1466,42 +1614,150 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
 
 
-    function GenerateRandomWord(): string {
+    function GenerateRandomWord(state: State) {
 
         // if (config.includes("punctuation")) {
 
-        const randomArray = [...words].sort(() => 0.5 - Math.random());
-        let word = randomArray[0];
+        let isStartOfSentence = state.isStartOfSentence;
+        let wordsSincePunctuation = state.wordsSincePunctuation;
 
-        if (StartOfSentence.current) {
-            // console.log("yes");
-            word = Capitalize(word);
+        const randomiseArray = [...words].sort(() => 0.5 - Math.random());
+        let word = randomiseArray[0];
 
-            // console.log(word);
-            StartOfSentence.current = false;
-            WordsSincePunctuationref.current = 0;
-            WordsSincePunctuationref.current++;
 
-        }
-        else {
+        if (mode == "word") {
 
-            if (CanGeneratePunctuation(WordsSincePunctuationref.current,StartOfSentence.current)) {
+            if (config.includes("punctuation")) {
 
-                const punctuation = RandomlyGeneratePunctuation2();
+                if (isStartOfSentence) {
+                    // console.log("yes");
+                    word = Capitalize(word);
 
-                if (".?!;".includes(punctuation)) {
-                    // console.log("Next Word capital ", true)
-                    StartOfSentence.current = true;
+                    // console.log(word);
+                    isStartOfSentence = false;
+                    wordsSincePunctuation = 0;
+                    wordsSincePunctuation++;
+
+                }
+                else {
+
+                    if (CanGeneratePunctuation(wordsSincePunctuation, isStartOfSentence)) {
+
+                        const punctuation = RandomlyGeneratePunctuation2();
+
+                        if (".?!;".includes(punctuation)) {
+                            // console.log("Next Word capital ", true)
+                            isStartOfSentence = true;
+                        }
+
+                        word = word + punctuation;
+                        wordsSincePunctuation = 0;
+                    }
+                    wordsSincePunctuation++;
+
                 }
 
-                word = word + punctuation;
-                WordsSincePunctuationref.current = 0;
+
             }
-            WordsSincePunctuationref.current++;
+
+            if (config.includes("numbers")) {
+
+                // The first Index in the final Words Array to put the number
+                let Should_Spawn_Number = Math.floor(Math.random() * 11);
+
+                console.log(Should_Spawn_Number);
+
+                if (Should_Spawn_Number === 0) {
+
+                    console.log("equal 0")
+
+                    const RandomNumber = Math.floor(Math.random() * 1001).toString();
+
+                    if (/[.?!;]/.test(word)) {
+
+                        word = RandomNumber + "."
+                    }
+                    else {
+                        word = RandomNumber
+                    }
+                }
+            }
+
+
+
 
         }
 
-        return word
+        else if (mode === "time") {
+
+            console.log("hey")
+            if (config.includes("punctuation")) {
+
+                if (isStartOfSentence) {
+                    // console.log("yes");
+                    word = Capitalize(word);
+
+                    // console.log(word);
+                    isStartOfSentence = false;
+                    wordsSincePunctuation = 0;
+                    wordsSincePunctuation++;
+
+                }
+                else {
+
+                    if (CanGeneratePunctuation(wordsSincePunctuation, isStartOfSentence)) {
+
+                        const punctuation = RandomlyGeneratePunctuation2();
+
+                        if (".?!;".includes(punctuation)) {
+                            // console.log("Next Word capital ", true)
+                            isStartOfSentence = true;
+                        }
+
+                        word = word + punctuation;
+                        wordsSincePunctuation = 0;
+                    }
+                    wordsSincePunctuation++;
+
+                }
+
+
+            }
+
+            if (config.includes("numbers")) {
+
+                // The first Index in the final Words Array to put the number
+                let Should_Spawn_Number = Math.floor(Math.random() * 11);
+
+                console.log(Should_Spawn_Number);
+
+                if (Should_Spawn_Number === 0) {
+
+                    console.log("equal 0")
+
+                    const RandomNumber = Math.floor(Math.random() * 1001).toString();
+
+                    if (/[.?!;]/.test(word)) {
+
+                        word = RandomNumber + "."
+                    }
+                    else {
+                        word = RandomNumber
+                    }
+                }
+            }
+
+        }
+
+
+
+
+
+
+
+
+
+        return { word, wordsSincePunctuation, isStartOfSentence }
         // }
         // else {
         //     const randomArray = [...words].sort(() => 0.5 - Math.random());
@@ -1516,7 +1772,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         return word[0].toUpperCase() + word.slice(1);
     }
 
-    function CanGeneratePunctuation(WordsSincePunctuation:number, isStartOfSentence: boolean) {
+    function CanGeneratePunctuation(WordsSincePunctuation: number, isStartOfSentence: boolean) {
 
         if (WordsSincePunctuation < 3)
             return false
