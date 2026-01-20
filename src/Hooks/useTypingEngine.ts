@@ -42,6 +42,7 @@ export interface State {
     wordsSincePunctuation: number
     isStartOfSentence: boolean
     totalTime: number
+    currentQuote: string[]
 }
 
 // export interface InitialState {
@@ -623,7 +624,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         RemainingWordsToGenerate: 0,
         wordsSincePunctuation: 0,
         isStartOfSentence: true,
-        totalTime: 0
+        totalTime: 0,
+        currentQuote: []
 
     }
 
@@ -651,7 +653,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
     function Init(initialState: State) {
 
-        const { words, RemainingWords, wordsSincePunctuation, isStartOfSentence, totalTime } = getRandomWords(LengthDurationSetting);
+        const { words, RemainingWords, wordsSincePunctuation, isStartOfSentence, totalTime, currentQuote } = getRandomWords(LengthDurationSetting);
 
         return {
             ...initialState,
@@ -659,8 +661,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
             RemainingWordsToGenerate: RemainingWords,
             wordsSincePunctuation: wordsSincePunctuation,
             isStartOfSentence: isStartOfSentence,
-            totalTime: totalTime
-
+            totalTime: totalTime,
+            currentQuote: currentQuote
         }
     }
 
@@ -1266,7 +1268,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         const totalTime = Number(LengthDurationSetting)
 
 
-
+        let SelectedQuote: string[] = []
 
 
         //If mode = quote
@@ -1280,8 +1282,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                 const randindex = Math.floor(Math.random() * ShortQuotes.length);
 
-
-                FinalWordArray = ShortQuotes[randindex].text.split(" ");
+                SelectedQuote = ShortQuotes[randindex].text.split(" ");
 
             }
             if (LengthDurationSetting === "medium") {
@@ -1290,9 +1291,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                 const randindex = Math.floor(Math.random() * MediumQuotes.length);
 
-                // console.log(quotes.filter(quote => quote.length === "medium")[randindex])
-
-                FinalWordArray = MediumQuotes[randindex].text.split(" ");
+                SelectedQuote = MediumQuotes[randindex].text.split(" ");
 
             }
             if (LengthDurationSetting === "long") {
@@ -1301,10 +1300,26 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                 const randindex = Math.floor(Math.random() * LongQuotes.length);
 
-                FinalWordArray = LongQuotes[randindex].text.split(" ");
+                SelectedQuote = LongQuotes[randindex].text.split(" ");
 
             }
-            // console.log(quotes[randindex].text.split(""));
+
+            const WordsAmount = SelectedQuote.length;
+
+            if (WordsAmount <= AmountOfWordsToGenerateOnStart) {
+
+                FinalWordArray = SelectedQuote;
+                RemainingWords = 0;
+
+            }
+            else {
+
+                FinalWordArray = SelectedQuote.slice(0, AmountOfWordsToGenerateOnStart)
+
+                RemainingWords = WordsAmount - AmountOfWordsToGenerateOnStart;
+
+            }
+
 
         }
         else if (mode == "word") {
@@ -1550,7 +1565,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         // StartOfSentence.current = isStartOfSentence;
         // WordsSincePunctuationref.current = WordsSincePunctuation
 
-        return { words: FinalWordArray, RemainingWords, isStartOfSentence, wordsSincePunctuation, totalTime };
+        return { words: FinalWordArray, RemainingWords, isStartOfSentence, wordsSincePunctuation, totalTime, currentQuote: SelectedQuote };
 
     }
 
@@ -1624,8 +1639,16 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         const randomiseArray = [...words].sort(() => 0.5 - Math.random());
         let word = randomiseArray[0];
 
+        if (mode == "quote") {
 
-        if (mode == "word") {
+            const NextIndexToGenerate = state.currentQuote.length - state.RemainingWordsToGenerate;
+
+            if (NextIndexToGenerate < state.currentQuote.length) {
+                word = state.currentQuote[NextIndexToGenerate];
+            }
+
+        }
+        else if (mode == "word") {
 
             if (config.includes("punctuation")) {
 
