@@ -39,7 +39,7 @@ const SP_TypingTest = ({ engine }: { engine: ReturnType<typeof useTypingEnigne> 
 
                                 //If CurrentWord is greater than WordIndex then user has alreadly typed the word and class will be "correct"
 
-                                <span data-word-index={engine.state.IndexToStartFrom + wordIndex} className={`word ${(engine.state.IndexToStartFrom + wordIndex) < engine.state.CurrentWordIndex ? (`${engine.state.AllWordMap.get(wordIndex)?.isCorrect ? "correct" : "incorrectword"}`) : ""}`} key={engine.state.IndexToStartFrom + wordIndex}>
+                                <span data-word-index={engine.state.IndexToStartFrom + wordIndex} className={`word ${(engine.state.IndexToStartFrom + wordIndex) < engine.state.CurrentWordIndex ? (`${engine.state.AllWordMap.get(engine.state.IndexToStartFrom+wordIndex)?.isCorrect ? "correct" : "incorrectword"}`) : ""}`} key={engine.state.IndexToStartFrom + wordIndex}>
 
                                     <span>
                                         {/* split the word array to retrieve each letter and put in in a span */}

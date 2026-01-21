@@ -106,7 +106,7 @@ export const Modes: Record<modeID, TypingModeConfig> = {
         id: "word",
          LengthDurationSetting:{
             name:"Word Amount",
-            options:["10","25","50","100"],
+            options:["10","25","50","100","500"],
             defaultValue: "25",
             customOptions:true,
             MinAndMaxCustomValues:{

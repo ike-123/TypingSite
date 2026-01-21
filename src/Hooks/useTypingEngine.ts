@@ -239,52 +239,58 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         switch (action.type) {
             case "InputChanged":
 
-                // Clear the refs array before moving to next word
-
-                //check if the word we typed is equal to the current word
-
-                TypedWord = value;
-                const iscorrect = value === state.words[CurrentWordIndex];
-
-                // setAllWordMap2(prev => {
-                //     const newMap = new Map(prev);
-                //     newMap.set(CurrentWord, { text: value, isCorrect: iscorrect });
-                //     return newMap;
-                // });
-
-                AllWordMap.set(CurrentWordIndex, { text: value, isCorrect: iscorrect, OutsideTextContainer: false });
-
-                // console.log(AllWordMap);
-
-                // const inputEvent = event.nativeEvent as InputEvent;
-                // const data = inputEvent.data;
-
-                //UPDATE CORRECT AND INCORRECT COUNTS
-
-                //get key input and make sure it's a valid character key
-                if (inputEventData && inputEventData.length === 1 && !/\s/.test(inputEventData)) {
-
-                    // console.log("Typed character:", inputEventData);
-
-                    // console.log("typedvalue ", value);
-                    // console.log("currentword length ", state.words[CurrentWordIndex]);
+                if (state.status === "typing") {
 
 
-                    if (value.length > state.words[CurrentWordIndex].length) {
-                        //we are over typing 
-                        // SetInCorrectCount((prev: number) => prev + 1);
-                        incorrectCount++;
 
-                    }
-                    else {
 
-                        //check the last character in the currently typed word and check if it is the same as the current words last character
-                        if (value[value.length - 1] === state.words[CurrentWordIndex][value.length - 1]) {
-                            correctCount++;
-                        }
-                        else {
+                    // Clear the refs array before moving to next word
+
+                    //check if the word we typed is equal to the current word
+
+                    TypedWord = value;
+                    const iscorrect = value === state.words[CurrentWordIndex];
+
+                    // setAllWordMap2(prev => {
+                    //     const newMap = new Map(prev);
+                    //     newMap.set(CurrentWord, { text: value, isCorrect: iscorrect });
+                    //     return newMap;
+                    // });
+
+                    AllWordMap.set(CurrentWordIndex, { text: value, isCorrect: iscorrect, OutsideTextContainer: false });
+
+                    console.log(AllWordMap);
+
+                    // const inputEvent = event.nativeEvent as InputEvent;
+                    // const data = inputEvent.data;
+
+                    //UPDATE CORRECT AND INCORRECT COUNTS
+
+                    //get key input and make sure it's a valid character key
+                    if (inputEventData && inputEventData.length === 1 && !/\s/.test(inputEventData)) {
+
+                        // console.log("Typed character:", inputEventData);
+
+                        // console.log("typedvalue ", value);
+                        // console.log("currentword length ", state.words[CurrentWordIndex]);
+
+
+                        if (value.length > state.words[CurrentWordIndex].length) {
+                            //we are over typing 
+                            // SetInCorrectCount((prev: number) => prev + 1);
                             incorrectCount++;
 
+                        }
+                        else {
+
+                            //check the last character in the currently typed word and check if it is the same as the current words last character
+                            if (value[value.length - 1] === state.words[CurrentWordIndex][value.length - 1]) {
+                                correctCount++;
+                            }
+                            else {
+                                incorrectCount++;
+
+                            }
                         }
                     }
                 }
