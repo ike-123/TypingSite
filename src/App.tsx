@@ -15,6 +15,7 @@ import Multiplayer from './Pages/Multiplayer';
 import Home2 from './Pages/Home2';
 import SinglePageTypingTest from './Pages/SinglePageTypingTest';
 import TestResults from './Components/TestResults';
+import TestResultsPage from './Components/TestResultsPage';
 
 
 

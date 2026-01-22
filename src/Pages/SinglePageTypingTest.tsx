@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/Components/ui/card'
 import SP_TypingTest from '@/Components/SP_TypingTest'
@@ -6,6 +6,15 @@ import { useTypingEnigne, type TypingModeConfig } from '@/Hooks/useTypingEngine'
 
 import { type modeID, Modes, type configID } from '@/utils/Typingmode'
 
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import TestResults from '@/Components/TestResults'
 
 
 const SinglePageTypingTest = () => {
@@ -15,7 +24,7 @@ const SinglePageTypingTest = () => {
     const [configs, SetConfig] = useState<configID[]>([])
     const [LengthDurationSetting, SetLengthDurationSetting] = useState<string>(Modes[modeID].LengthDurationSetting.defaultValue)
 
-
+    const [ShowResults, SetShowResults] = useState(false)
 
 
     function selectMode(id: modeID) {
@@ -73,6 +82,15 @@ const SinglePageTypingTest = () => {
         config: configs,
         LengthDurationSetting: LengthDurationSetting
     })
+
+    useEffect(()=>{
+        
+        if(engine.state.status === "finished"){
+            SetShowResults(true);
+        }
+
+        console.log(engine.state.WpmEverySecond);
+    },[engine.state.status])
 
     return (
         <div className='bg-background'>
@@ -143,6 +161,29 @@ const SinglePageTypingTest = () => {
 
 
             <SP_TypingTest engine={engine} ></SP_TypingTest>
+
+
+            <Dialog  open={ShowResults} onOpenChange={SetShowResults}>
+                
+                {/* <DialogContent className='w-full max-w-sm sm:max-w-full  bg-orange-300 '> */}
+                <DialogContent className='w-full  sm:max-w-full  '>
+{/* 
+                    <DialogHeader>
+                        <DialogTitle>Are you absolutely sure?</DialogTitle>
+                        <DialogDescription>
+                            This action cannot be undone. This will permanently delete your account
+                            and remove your data from our servers.
+                        </DialogDescription>
+
+
+                        <div className='h-10 w-150 bg-red-200'></div>
+                        <img src="https://www.bigfootdigital.co.uk/wp-content/uploads/2020/07/image-optimisation-scaled.jpg" alt="" />
+                    </DialogHeader> */}
+
+                        <TestResults state={engine.state} />
+
+                </DialogContent>
+            </Dialog>
 
         </div>
     )

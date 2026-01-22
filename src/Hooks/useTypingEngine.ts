@@ -10,6 +10,7 @@ import { Input } from '@/Components/ui/input'
 
 import { Modes, type modeID } from '@/utils/Typingmode'
 import { quotes } from '@/utils/Quotes'
+import type { TestResultData } from '@/Components/TestResults'
 
 
 export interface TypingModeConfig {
@@ -19,6 +20,8 @@ export interface TypingModeConfig {
     LengthDurationSetting: string
 
 }
+
+
 
 export interface State {
     words: string[],
@@ -43,6 +46,7 @@ export interface State {
     isStartOfSentence: boolean
     totalTime: number
     currentQuote: string[]
+    WpmEverySecond: TestResultData[]
 }
 
 // export interface InitialState {
@@ -228,6 +232,10 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         let IndexToStartFrom = state.IndexToStartFrom;
 
         let RemainingWordsToGenerate = state.RemainingWordsToGenerate;
+
+        let timeElapsed = 0;
+
+        let characterLength = 0;
 
 
 
@@ -476,7 +484,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                 finishTime = Date.now()
 
-                const timeElapsed = (finishTime - startTime) / 60000 //elapsed time in minutes
+                timeElapsed = (finishTime - startTime) / 60000 //elapsed time in minutes
 
                 var CorrectlyTypedWordsArr: string[] = new Array();
 
@@ -486,7 +494,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                     }
                 });
 
-                const characterLength = CorrectlyTypedWordsArr.join(" ").length;
+                characterLength = CorrectlyTypedWordsArr.join(" ").length;
 
                 // console.log("Character count = ", characterLength);
 
@@ -516,12 +524,54 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                 CurrentModeLogic = Modes[mode].ModeLogic
 
+                const NewCount = state.count + 1
+
+
+                const CurrentTime = Date.now()
+
+                timeElapsed = (CurrentTime - startTime) / 60000 //elapsed time in minutes
+
+                var CorrectlyTypedWordsArr: string[] = new Array();
+
+                AllWordMap.forEach((word: any) => {
+                    if (word.isCorrect) {
+                        CorrectlyTypedWordsArr.push(word.text);
+                    }
+                });
+
+                characterLength = CorrectlyTypedWordsArr.join(" ").length;
+
+                // console.log("Character count = ", characterLength);
+
+                const WordsTyped2 = characterLength / 5;
+
+                WPM = Math.round(WordsTyped2 / timeElapsed)
+
+                // const WpmEverySecond = state.WpmEverySecond;
+
+
+
+                // WpmEverySecond?.push({ time: NewCount.toString(), wpm: WPM })
+
+                const WpmEverySecond = [
+                    ...(state.WpmEverySecond ?? []),
+                    { time: NewCount.toString(), wpm: WPM }
+                ]
+
+
+                // console.log("add")
+
+
 
                 const stateWithIncrementedTimer = {
                     ...state,
-                    count: state.count + 1
+                    count: NewCount,
+                    WpmEverySecond: WpmEverySecond
 
                 }
+
+                // Accuracy = Math.round((correctCount / (correctCount + incorrectCount)) * 100)
+
 
                 return CurrentModeLogic.update_everysecond ? CurrentModeLogic.update_everysecond(stateWithIncrementedTimer) : stateWithIncrementedTimer
 
@@ -631,7 +681,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         wordsSincePunctuation: 0,
         isStartOfSentence: true,
         totalTime: 0,
-        currentQuote: []
+        currentQuote: [],
+        WpmEverySecond: []
 
     }
 

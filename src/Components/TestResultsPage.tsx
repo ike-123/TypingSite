@@ -34,13 +34,13 @@ export const description = "A line chart"
 //     { month: "June", desktop: 214 },
 // ]
 
-// const chartData = [
-//     { time: "1", wpm: 96 },
-//     { time: "2", wpm: 126 },
-//     { time: "3", wpm: 130 },
-//     { time: "4", wpm: 94 },
-//     { time: "5", wpm: 86 },
-// ]
+const chartData = [
+    { time: "1", wpm: 96 },
+    { time: "2", wpm: 126 },
+    { time: "3", wpm: 130 },
+    { time: "4", wpm: 94 },
+    { time: "5", wpm: 86 },
+]
 
 export interface TestResultData {
     time: string,
@@ -65,84 +65,91 @@ const chartConfig = {
 //   Results?: TestResultData[]
 // }
 
-type TestResultsProps = {
-  state: State
-}
+// type TestResultsProps = {
+//   state: State
+// }
 
 
-const TestResults = ({state}: TestResultsProps) => {
+const TestResultsPage = () => {
     return (
-        <div className=''>
-            <Card className='w-full m-auto flex flex-row gap-0'>
+        <div className='bg-background'>
 
-                <div className=' h-full w-full flex-1'>
+            <div className='w-100 h-100 bg-amber-200  mx-auto'> 
 
-                    {/* WPM */}
-                    <div className='flex flex-col items-center mt-2'>
 
-                        <h1 className='text-5xl font-bold text-primary'>
-                            {state.WPM}
-                        </h1>
-                        <h1 className='tex-3xl'>
-                            WPM
-                        </h1>
+                <Card className=' m-auto mt-20 flex flex-row gap-0'>
+
+                    <div className=' h-full w-full flex-1'>
+
+              
+                        <div className='flex flex-col items-center mt-2'>
+
+                            <h1 className='text-5xl font-bold text-primary'>
+                                100
+                            </h1>
+                            <h1 className='tex-3xl'>
+                                WPM
+                            </h1>
+                        </div>
+
+
+  
+                        <div className='flex flex-col items-center mt-8'>
+
+                            <h1 className='text-4xl font-bold text-primary'>
+                                95%
+                            </h1>
+                            <h1 className='tex-3xl'>
+                                Accuracy
+                            </h1>
+                        </div>
                     </div>
 
+                    <div className=' h-full w-full flex-5'>
+                        <div className=''>
 
-                    {/* Accuracy */}
-                    <div className='flex flex-col items-center mt-8'>
+                            <ChartContainer config={chartConfig}>
 
-                        <h1 className='text-4xl font-bold text-primary'>
-                            {state.Accuracy}
-                        </h1>
-                        <h1 className='tex-3xl'>
-                            Accuracy
-                        </h1>
-                    </div>
-                </div>
+                                <LineChart
+                                    accessibilityLayer
+                                    data={chartData}
+                                    margin={{
+                                        left: 12,
+                                        right: 12,
+                                    }}
+                                >
+                                    <CartesianGrid vertical={false} />
+                                    <XAxis
+                                        dataKey="time"
+                                        tickLine={false}
+                                        axisLine={false}
+                                        tickMargin={8}
+                                        tickFormatter={(value) => value.slice(0, 3)}
+                                    />
+                                    <ChartTooltip
+                                        cursor={false}
+                                        content={<ChartTooltipContent hideLabel />}
+                                    />
+                                    <Line
+                                        dataKey="wpm"
+                                        type="natural"
+                                        stroke="var(--color-wpm)"
+                                        strokeWidth={2}
+                                        dot={false}
+                                    />
+                                </LineChart>
 
-                <div className=' h-full w-full flex-5'>
-                    <div className=''>
+                            </ChartContainer>
+                        </div>
 
-                        <ChartContainer config={chartConfig}>
-
-                            <LineChart
-                                accessibilityLayer
-                                data={state.WpmEverySecond}
-                                margin={{
-                                    left: 12,
-                                    right: 12,
-                                }}
-                            >
-                                <CartesianGrid vertical={false} />
-                                <XAxis
-                                    dataKey="time"
-                                    tickLine={false}
-                                    axisLine={false}
-                                    tickMargin={8}
-                                    tickFormatter={(value) => value.slice(0, 3)}
-                                />
-                                <ChartTooltip
-                                    cursor={false}
-                                    content={<ChartTooltipContent hideLabel />}
-                                />
-                                <Line
-                                    dataKey="wpm"
-                                    type="natural"
-                                    stroke="var(--color-wpm)"
-                                    strokeWidth={2}
-                                    dot={false}
-                                />
-                            </LineChart>
-
-                        </ChartContainer>
                     </div>
 
-                </div>
+                </Card>
 
-            </Card>
+            </div>
 
             {/* <Card> */}
+
             {/* <CardHeader>
                     <CardTitle>Line Chart</CardTitle>
                     <CardDescription>January - June 2024</CardDescription>
@@ -151,7 +158,7 @@ const TestResults = ({state}: TestResultsProps) => {
             {/* <ChartContainer config={chartConfig}>
                 <LineChart
                     accessibilityLayer
-                    data={state.WpmEverySecond}
+                    data={chartData}
                     margin={{
                         left: 12,
                         right: 12,
@@ -194,4 +201,4 @@ const TestResults = ({state}: TestResultsProps) => {
     )
 }
 
-export default TestResults
+export default TestResultsPage
