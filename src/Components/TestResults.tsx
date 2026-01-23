@@ -80,7 +80,7 @@ const TestResults = ({state}: TestResultsProps) => {
                     {/* WPM */}
                     <div className='flex flex-col items-center mt-2'>
 
-                        <h1 className='text-5xl font-bold text-primary'>
+                        <h1 className='text-6xl font-bold text-primary'>
                             {state.WPM}
                         </h1>
                         <h1 className='tex-3xl'>
@@ -93,7 +93,9 @@ const TestResults = ({state}: TestResultsProps) => {
                     <div className='flex flex-col items-center mt-8'>
 
                         <h1 className='text-4xl font-bold text-primary'>
-                            {state.Accuracy}
+                            {/* Make this a slightly lighter colour than the WPM as i want the WPM to stand out more */}
+
+                            {state.Accuracy}%
                         </h1>
                         <h1 className='tex-3xl'>
                             Accuracy
@@ -121,6 +123,7 @@ const TestResults = ({state}: TestResultsProps) => {
                                     axisLine={false}
                                     tickMargin={8}
                                     tickFormatter={(value) => value.slice(0, 3)}
+                                    interval={"equidistantPreserveStart"}
                                 />
                                 <ChartTooltip
                                     cursor={false}

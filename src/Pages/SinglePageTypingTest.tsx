@@ -83,14 +83,14 @@ const SinglePageTypingTest = () => {
         LengthDurationSetting: LengthDurationSetting
     })
 
-    useEffect(()=>{
-        
-        if(engine.state.status === "finished"){
+    useEffect(() => {
+
+        if (engine.state.status === "finished") {
             SetShowResults(true);
         }
 
         console.log(engine.state.WpmEverySecond);
-    },[engine.state.status])
+    }, [engine.state.status])
 
     return (
         <div className='bg-background'>
@@ -101,7 +101,16 @@ const SinglePageTypingTest = () => {
 
             </Card> */}
 
+            <div>
+                <h1>CurrentWordIndex =   {engine.state.CurrentWordIndex}</h1>
 
+                <h1>WordsTyped =   {engine.state.wordsTyped}</h1>
+
+
+                
+               
+                
+                </div>
 
             <div className='flex justify-center'>
 
@@ -163,11 +172,11 @@ const SinglePageTypingTest = () => {
             <SP_TypingTest engine={engine} ></SP_TypingTest>
 
 
-            <Dialog  open={ShowResults} onOpenChange={SetShowResults}>
-                
+            <Dialog open={ShowResults} onOpenChange={SetShowResults}>
+
                 {/* <DialogContent className='w-full max-w-sm sm:max-w-full  bg-orange-300 '> */}
                 <DialogContent className='w-full  sm:max-w-full  '>
-{/* 
+                    {/* 
                     <DialogHeader>
                         <DialogTitle>Are you absolutely sure?</DialogTitle>
                         <DialogDescription>
@@ -180,7 +189,7 @@ const SinglePageTypingTest = () => {
                         <img src="https://www.bigfootdigital.co.uk/wp-content/uploads/2020/07/image-optimisation-scaled.jpg" alt="" />
                     </DialogHeader> */}
 
-                        <TestResults state={engine.state} />
+                    <TestResults state={engine.state} />
 
                 </DialogContent>
             </Dialog>

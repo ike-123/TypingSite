@@ -11,6 +11,7 @@ import { Input } from '@/Components/ui/input'
 import { Modes, type modeID } from '@/utils/Typingmode'
 import { quotes } from '@/utils/Quotes'
 import type { TestResultData } from '@/Components/TestResults'
+// import { count } from 'node:console'
 
 
 export interface TypingModeConfig {
@@ -47,6 +48,7 @@ export interface State {
     totalTime: number
     currentQuote: string[]
     WpmEverySecond: TestResultData[]
+    wordsTyped: number
 }
 
 // export interface InitialState {
@@ -321,6 +323,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
             case "SpacebarPressed":
 
+                const newMap0 = new Map(state.AllWordMap);
+
 
                 if (TypedWord.length > 0) {
 
@@ -331,16 +335,18 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                     const candidate = TypedWord.trim()
 
+
                     if (candidate === state.words[CurrentWordIndex]) {
 
-                        AllWordMap.set(CurrentWordIndex, { text: candidate, isCorrect: true, OutsideTextContainer: false })
+
+                        newMap0.set(CurrentWordIndex, { text: candidate, isCorrect: true, OutsideTextContainer: false })
 
                         correctCount++;
 
                     }
                     else {
 
-                        AllWordMap.set(CurrentWordIndex, { text: candidate, isCorrect: false, OutsideTextContainer: false })
+                        newMap0.set(CurrentWordIndex, { text: candidate, isCorrect: false, OutsideTextContainer: false })
 
                         incorrectCount++;
 
@@ -413,7 +419,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                     CurrentWordIndex: CurrentWordIndex,
                     correctCount: correctCount,
                     incorrectCount: incorrectCount,
-                    AllWordMap: AllWordMap,
+                    AllWordMap: newMap0,
                     finishTime: finishTime,
                     HighestIndexTyped: HighestIndexTyped,
                     words: Words,
@@ -488,7 +494,10 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                 var CorrectlyTypedWordsArr: string[] = new Array();
 
+                console.log("final word array")
+
                 AllWordMap.forEach((word: any) => {
+                    console.log(word.text)
                     if (word.isCorrect) {
                         CorrectlyTypedWordsArr.push(word.text);
                     }
@@ -530,6 +539,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                 const CurrentTime = Date.now()
 
                 timeElapsed = (CurrentTime - startTime) / 60000 //elapsed time in minutes
+                const timeElapsedsec = (CurrentTime - startTime) / 1000 //elapsed time in minutes
+
 
                 var CorrectlyTypedWordsArr: string[] = new Array();
 
@@ -545,7 +556,11 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                 const WordsTyped2 = characterLength / 5;
 
+
                 WPM = Math.round(WordsTyped2 / timeElapsed)
+
+                console.log(`Words Typed = ${WordsTyped2} divided by ${timeElapsedsec}secs = ${WPM} WPM `)
+
 
                 // const WpmEverySecond = state.WpmEverySecond;
 
@@ -566,7 +581,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                 const stateWithIncrementedTimer = {
                     ...state,
                     count: NewCount,
-                    WpmEverySecond: WpmEverySecond
+                    WpmEverySecond: WpmEverySecond,
+                    wordsTyped: WordsTyped2
 
                 }
 
@@ -589,9 +605,15 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                 // return CurrentModeLogic.OnCurrentWordChange ? CurrentModeLogic.OnCurrentWordChange(state) : state
 
-                console.log("test0")
 
                 const newMap = new Map(state.AllWordMap);
+                console.log("test0")
+
+                // //All words in new map
+                //   newMap.forEach((word: any) => {
+                //    console.log(word.text);
+                // });
+
 
                 console.log(HighestIndexFoundOutOfBounds);
 
@@ -600,11 +622,16 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                 const existing = newMap.get(HighestIndexFoundOutOfBounds);
                 if (!existing) return state;
 
+                //Get all the words before the highestIndexFoundOutOfbounds and outsideTextContainer to false.
+
                 console.log("test")
                 for (let i = 0; i <= HighestIndexFoundOutOfBounds; i++) {
 
-                    console.log("running");
-                    newMap.set(i, { ...existing, OutsideTextContainer: true })
+                    const WordInfo = newMap.get(i);
+
+                    if (!WordInfo) continue;
+
+                    newMap.set(i, { ...WordInfo, OutsideTextContainer: true })
 
                 }
 
@@ -682,7 +709,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         isStartOfSentence: true,
         totalTime: 0,
         currentQuote: [],
-        WpmEverySecond: []
+        WpmEverySecond: [],
+        wordsTyped: 0
 
     }
 
@@ -906,18 +934,18 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
             }
         }
 
-        console.log("start")
+        // console.log("start")
         console.log(SpanstoRemove)
 
         const IndexOfSpansToRemove = SpanstoRemove.map((span) => {
             const Index = parseInt(span.dataset.wordIndex!, 10);
-            console.log("spanindex ", Index)
+            // console.log("spanindex ", Index)
             return Index;
         })
 
         const HighestIndexFoundOutOfBounds = Math.max(...IndexOfSpansToRemove)
 
-        console.log("highest ", HighestIndexFoundOutOfBounds);
+        // console.log("highest ", HighestIndexFoundOutOfBounds);
 
         dispatch({ type: "UpdateAllwordMap", payload: { HighestIndexFoundOutOfBounds } })
 
@@ -1046,7 +1074,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
     useEffect(() => {
 
-        console.log("chagne")
+        // console.log("chagne")
         //Mode has changed
         if (mode !== prevMode.current || config !== PrevConfig.current || LengthDurationSetting !== PrevLengthDurationSetting.current) {
             Reset();
@@ -1066,7 +1094,6 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         }
 
         if (state.status === "typing") {
-
 
             intervalRef.current = setInterval(() => {
 
@@ -1090,7 +1117,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
     //CurrentWord index Change
     useEffect(() => {
 
-        console.log("changeindex")
+        // console.log("changeindex")
         dispatch({ type: "CurrentWordChange", payload: {} })
 
         // Modes[mode].ModeLogic.OnCurrentWordChange?.({ state, dispatch });
@@ -1307,7 +1334,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
 
 
-        console.log("getrandomwords");
+        // console.log("getrandomwords");
 
 
         //This should be set on initialisation not here
@@ -1389,12 +1416,12 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
             if (WordsAmount <= AmountOfWordsToGenerateOnStart) {
                 WordsGenerated = WordsAmount;
                 RemainingWords = 0;
-                console.log("1");
+                // console.log("1");
             }
             else {
                 WordsGenerated = AmountOfWordsToGenerateOnStart;
                 RemainingWords = WordsAmount - AmountOfWordsToGenerateOnStart;
-                console.log("2");
+                // console.log("2");
             }
 
             // dispatch({ type: "UpdateRemainingWords", payload: { RemainingWords: WordsGenerated } })
@@ -1876,7 +1903,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         ClearTimer()
         ResetCaret()
 
-        console.log("reset");
+        // console.log("reset");
 
         dispatch({ type: "Reset", payload: {} })
 
