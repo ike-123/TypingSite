@@ -249,6 +249,9 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         switch (action.type) {
             case "InputChanged":
 
+                const NewMap0 = new Map(state.AllWordMap);
+
+
                 if (state.status === "typing") {
 
 
@@ -259,7 +262,36 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                     //check if the word we typed is equal to the current word
 
                     TypedWord = value;
-                    const iscorrect = value === state.words[CurrentWordIndex];
+
+                    let iscorrect = false;
+
+                    if(TypedWord.length > state.words[CurrentWordIndex].length || TypedWord.length === 0 ){
+
+                        //overtyped so incorrect
+
+                        iscorrect = false;
+
+                        // console.log("1")
+
+                    }
+
+                    else{
+
+                        // console.log("2")
+
+                        const SliceOfCurrentWordTyped = state.words[CurrentWordIndex].slice(0,TypedWord.length)
+
+                        // console.log(SliceOfCurrentWordTyped)
+                        if(TypedWord === SliceOfCurrentWordTyped){
+
+                            iscorrect = true;
+                        }
+                        else{
+                            iscorrect = false;
+                        }
+                    }
+
+                    // = TypedWord === state.words[CurrentWordIndex];
 
                     // setAllWordMap2(prev => {
                     //     const newMap = new Map(prev);
@@ -267,9 +299,10 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                     //     return newMap;
                     // });
 
-                    AllWordMap.set(CurrentWordIndex, { text: value, isCorrect: iscorrect, OutsideTextContainer: false });
 
-                    console.log(AllWordMap);
+                    NewMap0.set(CurrentWordIndex, { text: value, isCorrect: iscorrect, OutsideTextContainer: false });
+
+                    console.log(NewMap0);
 
                     // const inputEvent = event.nativeEvent as InputEvent;
                     // const data = inputEvent.data;
@@ -313,7 +346,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                 return {
                     ...state,
                     TypedWord: TypedWord,
-                    AllWordMap: AllWordMap,
+                    AllWordMap: NewMap0,
                     correctCount: correctCount,
                     incorrectCount: incorrectCount,
                     startTime: startTime
