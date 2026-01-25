@@ -49,6 +49,8 @@ export interface State {
     currentQuote: string[]
     WpmEverySecond: TestResultData[]
     wordsTyped: number
+    TotalTime:number
+    isRedo:boolean
 }
 
 // export interface InitialState {
@@ -236,6 +238,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         let RemainingWordsToGenerate = state.RemainingWordsToGenerate;
 
         let timeElapsed = 0;
+
+        let  timeElapsedsecs = 0;
 
         let characterLength = 0;
 
@@ -497,8 +501,6 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
             case "Reset":
 
-                // I don't think it is OK to call this function here since we are updating side effects
-
                 return Init(Initialstate)
 
 
@@ -524,9 +526,12 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                 finishTime = Date.now()
 
                 timeElapsed = (finishTime - startTime) / 60000 //elapsed time in minutes
+                timeElapsedsecs = (finishTime - startTime) / 1000 //elapsed time in minutes
+
 
                 var CorrectlyTypedWordsArr: string[] = new Array();
 
+                console.log("words :", state.words);
                 console.log("final word array")
 
                 AllWordMap.forEach((word: any) => {
@@ -558,6 +563,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                     correctCount: correctCount,
                     incorrectCount: incorrectCount,
                     TestFinished: TestFinished,
+                    TotalTime: timeElapsedsecs
 
                 }
 
@@ -743,7 +749,9 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         totalTime: 0,
         currentQuote: [],
         WpmEverySecond: [],
-        wordsTyped: 0
+        wordsTyped: 0,
+        TotalTime:0,
+        isRedo:false
 
     }
 
@@ -1386,6 +1394,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
 
         let SelectedQuote: string[] = []
+
 
 
         //If mode = quote

@@ -17,6 +17,7 @@ import {
 import TestResults from '@/Components/TestResults'
 
 
+
 const SinglePageTypingTest = () => {
     //store the mode itself instead of the modeid
 
@@ -189,7 +190,7 @@ const SinglePageTypingTest = () => {
                         <img src="https://www.bigfootdigital.co.uk/wp-content/uploads/2020/07/image-optimisation-scaled.jpg" alt="" />
                     </DialogHeader> */}
 
-                    <TestResults state={engine.state} />
+                    <TestResults modeConfig={{mode:modeID,configs,LengthDurationSetting}} state={engine.state} />
 
                 </DialogContent>
             </Dialog>

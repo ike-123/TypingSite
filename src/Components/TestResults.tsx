@@ -2,6 +2,8 @@
 import React from 'react'
 
 import { TrendingUp } from "lucide-react"
+import { Button } from '@/components/ui/button'
+
 import { CartesianGrid, Label, Line, LineChart, XAxis, YAxis } from "recharts"
 
 import {
@@ -14,6 +16,7 @@ import {
 } from "@/components/ui/card"
 
 
+
 import {
     ChartContainer,
     ChartTooltip,
@@ -21,6 +24,7 @@ import {
     type ChartConfig,
 } from "@/components/ui/chart"
 import type { State } from '@/Hooks/useTypingEngine'
+import type { configID, modeID } from '@/utils/Typingmode'
 
 
 export const description = "A line chart"
@@ -65,12 +69,21 @@ const chartConfig = {
 //   Results?: TestResultData[]
 // }
 
+
+export interface ModeConfigResults {
+
+    mode: modeID,
+    configs: configID[],
+    LengthDurationSetting: string
+}
+
 type TestResultsProps = {
     state: State
+    modeConfig: ModeConfigResults
 }
 
 
-const TestResults = ({ state }: TestResultsProps) => {
+const TestResults = ({ state, modeConfig }: TestResultsProps) => {
     return (
         <div className=''>
             <Card className='w-full m-auto flex flex-row gap-0'>
@@ -164,9 +177,13 @@ const TestResults = ({ state }: TestResultsProps) => {
 
                             <h2 className='font-bold text-xl'>Test Configuration</h2>
 
-                            <p>Time 30</p>
-                            <p>Punctuation</p>
-                            <p>Numbers</p>
+                            <p>{modeConfig.mode} {modeConfig.LengthDurationSetting}</p>
+
+                            {
+                                modeConfig.configs.map((config) => (
+                                    <p>{config}</p>
+                                ))
+                            }
 
                         </div>
 
@@ -176,7 +193,7 @@ const TestResults = ({ state }: TestResultsProps) => {
 
                             <h2 className='font-bold text-xl'>Duration</h2>
 
-                            <p>5s</p>
+                            <p>{state.TotalTime}s</p>
 
                         </div>
 
@@ -185,12 +202,16 @@ const TestResults = ({ state }: TestResultsProps) => {
 
                             <h2 className='font-bold text-xl'>Characters</h2>
 
-                            <p>126/41</p>
+                            <p>{state.correctCount}/{state.incorrectCount}</p>
 
                         </div>
 
+                    </div>
 
+                    <div className='flex justify-center gap-15'>
 
+                        <Button className='w-20 h-12'></Button>
+                        <Button variant={"outline"} className='w-20 h-12'></Button>
 
                     </div>
 
