@@ -2,7 +2,7 @@
 import React from 'react'
 
 import { TrendingUp } from "lucide-react"
-import { CartesianGrid, Line, LineChart, XAxis } from "recharts"
+import { CartesianGrid, Label, Line, LineChart, XAxis, YAxis } from "recharts"
 
 import {
     Card,
@@ -66,11 +66,11 @@ const chartConfig = {
 // }
 
 type TestResultsProps = {
-  state: State
+    state: State
 }
 
 
-const TestResults = ({state}: TestResultsProps) => {
+const TestResults = ({ state }: TestResultsProps) => {
     return (
         <div className=''>
             <Card className='w-full m-auto flex flex-row gap-0'>
@@ -104,11 +104,11 @@ const TestResults = ({state}: TestResultsProps) => {
                 </div>
 
                 <div className=' h-full w-full flex-5'>
-                    <div className=''>
+                    <div className='h-60'>
 
-                        <ChartContainer config={chartConfig}>
+                        <ChartContainer className='h-full w-full' config={chartConfig}>
 
-                            <LineChart
+                            <LineChart className=''
                                 accessibilityLayer
                                 data={state.WpmEverySecond}
                                 margin={{
@@ -116,7 +116,7 @@ const TestResults = ({state}: TestResultsProps) => {
                                     right: 12,
                                 }}
                             >
-                                <CartesianGrid vertical={false} />
+                                <CartesianGrid vertical={true} />
                                 <XAxis
                                     dataKey="time"
                                     tickLine={false}
@@ -124,7 +124,24 @@ const TestResults = ({state}: TestResultsProps) => {
                                     tickMargin={8}
                                     tickFormatter={(value) => value.slice(0, 3)}
                                     interval={"equidistantPreserveStart"}
-                                />
+
+
+                                >
+
+                                    <Label position={"bottom"} value={"time"} offset={0} />
+
+                                </XAxis>
+
+                                <YAxis tickLine={false} axisLine={false} >
+
+                                    <Label position={"left"} value={"WPM"} angle={-45} offset={-20} />
+
+                                </YAxis>
+
+
+
+
+
                                 <ChartTooltip
                                     cursor={false}
                                     content={<ChartTooltipContent hideLabel />}
@@ -139,6 +156,42 @@ const TestResults = ({state}: TestResultsProps) => {
                             </LineChart>
 
                         </ChartContainer>
+                    </div>
+
+                    <div className='h-50 flex justify-around pt-10'>
+
+                        <div className='flex-col text-center'>
+
+                            <h2 className='font-bold text-xl'>Test Configuration</h2>
+
+                            <p>Time 30</p>
+                            <p>Punctuation</p>
+                            <p>Numbers</p>
+
+                        </div>
+
+
+                        <div className='flex-col text-center'>
+
+
+                            <h2 className='font-bold text-xl'>Duration</h2>
+
+                            <p>5s</p>
+
+                        </div>
+
+                        <div className='flex-col text-center'>
+
+
+                            <h2 className='font-bold text-xl'>Characters</h2>
+
+                            <p>126/41</p>
+
+                        </div>
+
+
+
+
                     </div>
 
                 </div>
