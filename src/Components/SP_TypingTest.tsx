@@ -42,9 +42,11 @@ const SP_TypingTest = ({ engine }: { engine: ReturnType<typeof useTypingEnigne> 
                                 <span data-word-index={engine.state.IndexToStartFrom + wordIndex} className={`word ${(engine.state.IndexToStartFrom + wordIndex) < engine.state.CurrentWordIndex ? (`${engine.state.AllWordMap.get(engine.state.IndexToStartFrom+wordIndex)?.isCorrect ? "correct" : "incorrectword"}`) : ""}`} key={engine.state.IndexToStartFrom + wordIndex}>
 
                                     <span>
-                                        {/* split the word array to retrieve each letter and put in in a span */}
+                                        {/* split the word array to retrieve each letter and put it in a span */}
 
                                         {word.split("").map((character, letterindex) => {
+
+                                            // console.log("Character ", character)
 
                                             const StoredWord = engine.state.AllWordMap.get(engine.state.IndexToStartFrom + wordIndex);
                                             engine.lettersforOverTypedSection = [];

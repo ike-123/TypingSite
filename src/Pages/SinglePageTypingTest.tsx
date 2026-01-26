@@ -96,11 +96,24 @@ const SinglePageTypingTest = () => {
     return (
         <div className='bg-background'>
 
-            {/* <Card>
+
+
+               {engine.state.isRedo ? 
+            <h1>Redo=true</h1>
+            :
+            <h1>Redo=false</h1>
+
+               
+            }
+
+            <Card>
                 <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam non volutpat quam. Nullam vitae eleifend dui, sed dictum neque. Duis posuere arcu sapien, ut efficitur elit tempus eget. Sed sed dolor in enim bibendum rutrum. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce condimentum metus lorem, in fringilla urna vulputate in. Fusce ac nibh a urna tempor ullamcorper. Vivamus posuere hendrerit urna, eu aliquet ipsum elementum ac</div>
                 <Button onClick={engine.Reset} className='bg-primary w-25 m-auto'>Reset</Button>
+                <Button onClick={engine.Redo} className='bg-primary w-25 m-auto'>Redo</Button>
 
-            </Card> */}
+                
+
+            </Card>
 
             <div>
                 <h1>CurrentWordIndex =   {engine.state.CurrentWordIndex}</h1>

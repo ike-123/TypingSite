@@ -49,8 +49,10 @@ export interface State {
     currentQuote: string[]
     WpmEverySecond: TestResultData[]
     wordsTyped: number
-    TotalTime:number
-    isRedo:boolean
+    TotalTime: number
+    wordsAmount: number
+    isRedo: boolean
+    PreviousWords: string[]
 }
 
 // export interface InitialState {
@@ -79,7 +81,7 @@ export interface State {
 
 
 export interface Action {
-    type: "InputChanged" | "SpacebarPressed" | "BackspacePressed" | "Reset" | "StartTest" | "FinishTest" | "Update_EverySecond" | "CurrentWordChange" | "UpdateAllwordMap" | "AddRandomWordToList" | "INIT_WORDS"
+    type: "InputChanged" | "SpacebarPressed" | "BackspacePressed" | "Reset" | "RedoTest" | "StartTest" | "FinishTest" | "Update_EverySecond" | "CurrentWordChange" | "UpdateAllwordMap" | "AddRandomWordToList" | "INIT_WORDS"
     payload: any
 }
 
@@ -239,7 +241,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
         let timeElapsed = 0;
 
-        let  timeElapsedsecs = 0;
+        let timeElapsedsecs = 0;
 
         let characterLength = 0;
 
@@ -269,7 +271,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                     let iscorrect = false;
 
-                    if(TypedWord.length > state.words[CurrentWordIndex].length || TypedWord.length === 0 ){
+                    if (TypedWord.length > state.words[CurrentWordIndex].length || TypedWord.length === 0) {
 
                         //overtyped so incorrect
 
@@ -279,18 +281,18 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                     }
 
-                    else{
+                    else {
 
                         // console.log("2")
 
-                        const SliceOfCurrentWordTyped = state.words[CurrentWordIndex].slice(0,TypedWord.length)
+                        const SliceOfCurrentWordTyped = state.words[CurrentWordIndex].slice(0, TypedWord.length)
 
                         // console.log(SliceOfCurrentWordTyped)
-                        if(TypedWord === SliceOfCurrentWordTyped){
+                        if (TypedWord === SliceOfCurrentWordTyped) {
 
                             iscorrect = true;
                         }
-                        else{
+                        else {
                             iscorrect = false;
                         }
                     }
@@ -306,7 +308,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                     NewMap0.set(CurrentWordIndex, { text: value, isCorrect: iscorrect, OutsideTextContainer: false });
 
-                    console.log(NewMap0);
+                    // console.log(NewMap0);
 
                     // const inputEvent = event.nativeEvent as InputEvent;
                     // const data = inputEvent.data;
@@ -362,6 +364,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                 const newMap0 = new Map(state.AllWordMap);
 
+                console.log(state.words);
 
                 if (TypedWord.length > 0) {
 
@@ -395,13 +398,22 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
 
                     if (AllWordMap.size > HighestIndexTyped) {
+                        //Only when the allwordmap size is greater than highest index typed can we generate a new word
                         // console.log("previous = ", HighestIndexTyped, " and current = ", AllWordMap.size);
                         HighestIndexTyped = AllWordMap.size
 
                         // const newword = GenerateRandomWord();
                         // console.log("newword = ", newword)
 
-                        console.log("what");
+                        // const NextIndex = state.words.length - state.RemainingWordsToGenerate;
+
+                        // if (state.isRedo && state.RemainingWordsToGenerate > 0) {
+
+                        //     RemainingWordsToGenerate--;
+
+                        // }
+
+                        // console.log("what");
                         if (RemainingWordsToGenerate > 0 || mode === "time") {
                             RemainingWordsToGenerate--;
                             // console.log(RemainingWordsToGenerate);
@@ -504,6 +516,10 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                 return Init(Initialstate)
 
 
+            case "RedoTest":
+                return RedoTest(state)
+
+
             case "StartTest":
 
                 status = "typing";
@@ -598,7 +614,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                 WPM = Math.round(WordsTyped2 / timeElapsed)
 
-                console.log(`Words Typed = ${WordsTyped2} divided by ${timeElapsedsec}secs = ${WPM} WPM `)
+                // console.log(`Words Typed = ${WordsTyped2} divided by ${timeElapsedsec}secs = ${WPM} WPM `)
 
 
                 // const WpmEverySecond = state.WpmEverySecond;
@@ -646,7 +662,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
 
                 const newMap = new Map(state.AllWordMap);
-                console.log("test0")
+                // console.log("test0")
 
                 // //All words in new map
                 //   newMap.forEach((word: any) => {
@@ -663,7 +679,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                 //Get all the words before the highestIndexFoundOutOfbounds and outsideTextContainer to false.
 
-                console.log("test")
+                // console.log("test")
                 for (let i = 0; i <= HighestIndexFoundOutOfBounds; i++) {
 
                     const WordInfo = newMap.get(i);
@@ -676,7 +692,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                 IndexToStartFrom = HighestIndexFoundOutOfBounds + 1;
 
-                console.log(IndexToStartFrom);
+                // console.log(IndexToStartFrom);
 
                 // newMap.set(indexToChange, {
                 //     ...existing,
@@ -750,8 +766,10 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         currentQuote: [],
         WpmEverySecond: [],
         wordsTyped: 0,
-        TotalTime:0,
-        isRedo:false
+        wordsAmount: 0,
+        TotalTime: 0,
+        isRedo: false,
+        PreviousWords: []
 
     }
 
@@ -779,7 +797,11 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
     function Init(initialState: State) {
 
-        const { words, RemainingWords, wordsSincePunctuation, isStartOfSentence, totalTime, currentQuote } = getRandomWords(LengthDurationSetting);
+        console.log("init")
+
+        const { words, RemainingWords, wordsSincePunctuation, isStartOfSentence, totalTime, currentQuote, WordsAmount } = getRandomWords(LengthDurationSetting);
+
+        console.log(words);
 
         return {
             ...initialState,
@@ -788,9 +810,43 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
             wordsSincePunctuation: wordsSincePunctuation,
             isStartOfSentence: isStartOfSentence,
             totalTime: totalTime,
-            currentQuote: currentQuote
+            currentQuote: currentQuote,
+            wordsAmount: WordsAmount
         }
     }
+
+    function RedoTest(state: State) {
+
+        const PrevWords = state.words;
+
+        const State1 = {
+            ...Initialstate,
+            isRedo: true,
+            PreviousWords: PrevWords,
+        }
+
+        const { words, RemainingWords, wordsSincePunctuation, isStartOfSentence, totalTime, currentQuote, WordsAmount } = getRandomWords(LengthDurationSetting, State1);
+
+        console.log(words);
+
+        console.log("remaining words = ", RemainingWords)
+
+        console.log("words Amount = ", WordsAmount)
+
+
+
+        return {
+            ...State1,
+            words: words,
+            RemainingWordsToGenerate: RemainingWords,
+            wordsSincePunctuation: wordsSincePunctuation,
+            isStartOfSentence: isStartOfSentence,
+            totalTime: totalTime,
+            currentQuote: currentQuote,
+            wordsAmount: WordsAmount
+        }
+    }
+
 
 
 
@@ -1371,7 +1427,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
 
 
-    function getRandomWords(LengthDurationSetting: string) {
+    function getRandomWords(LengthDurationSetting: string, state?: State) {
 
 
 
@@ -1391,9 +1447,19 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         let wordsSincePunctuation = 0;
 
         const totalTime = Number(LengthDurationSetting)
-
+        const WordsAmount = Number(LengthDurationSetting)
+        // console.log("wordsamount = ", WordsAmount)
 
         let SelectedQuote: string[] = []
+
+
+        //if redo then we get the stored words array and display only the first (amountofwordstogenerateatstart) length of the array.
+        // if there are words remaining we calculate the remaining words left to generate and store it in the usereducer
+        // Inside of the getrandomword function check to see if we are in redo and check to see if there are any remaining words to generate
+        //If we are in quote mode then we just generate the same text again
+
+
+
 
 
 
@@ -1452,7 +1518,31 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
             //Word Mode
 
-            const WordsAmount = Number(LengthDurationSetting)
+
+            if (state && state.isRedo) {
+
+                //if redo then we get the stored words array and display only the first (amountofwordstogenerateatstart) length of the array.
+
+                const PreviousWordsAmount = state.PreviousWords.length;
+
+                if (PreviousWordsAmount <= AmountOfWordsToGenerateOnStart) {
+
+                    FinalWordArray = state.PreviousWords;
+                    // RemainingWords = 0;
+
+                    RemainingWords = WordsAmount - AmountOfWordsToGenerateOnStart;
+
+
+                }
+                else {
+
+                    FinalWordArray = state.PreviousWords.slice(0, AmountOfWordsToGenerateOnStart);
+                    RemainingWords = WordsAmount - AmountOfWordsToGenerateOnStart;
+
+                }
+
+                return { words: FinalWordArray, RemainingWords, isStartOfSentence, wordsSincePunctuation, totalTime, currentQuote: SelectedQuote, WordsAmount };
+            }
 
 
             if (WordsAmount <= AmountOfWordsToGenerateOnStart) {
@@ -1691,7 +1781,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         // StartOfSentence.current = isStartOfSentence;
         // WordsSincePunctuationref.current = WordsSincePunctuation
 
-        return { words: FinalWordArray, RemainingWords, isStartOfSentence, wordsSincePunctuation, totalTime, currentQuote: SelectedQuote };
+        return { words: FinalWordArray, RemainingWords, isStartOfSentence, wordsSincePunctuation, totalTime, currentQuote: SelectedQuote, WordsAmount };
 
     }
 
@@ -1775,6 +1865,29 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
         }
         else if (mode == "word") {
+
+            console.log("hey");
+
+            if (state.isRedo) {
+
+                const NextIndexToGenerate = state.wordsAmount - state.RemainingWordsToGenerate;
+
+                console.log("words amount = ", state.wordsAmount)
+                console.log("remainingwordstogenerate = ", state.RemainingWordsToGenerate)
+
+                console.log("Next = ", NextIndexToGenerate)
+
+                if (NextIndexToGenerate < state.PreviousWords.length) {
+                    word = state.PreviousWords[NextIndexToGenerate];
+                    
+                    console.log(state.PreviousWords)
+                    console.log(word)
+
+                    return { word, wordsSincePunctuation, isStartOfSentence }
+
+
+                }
+            }
 
             if (config.includes("punctuation")) {
 
@@ -1951,6 +2064,13 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
     }
 
+    function Redo() {
+        ClearTimer()
+        ResetCaret()
+
+        dispatch({ type: "RedoTest", payload: {} })
+    }
+
 
     return {
 
@@ -1966,6 +2086,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         HandleKeyDown,
         ChangeInput,
         Reset,
+        Redo,
         lettersforOverTypedSection,
 
 
