@@ -818,11 +818,13 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
     function RedoTest(state: State) {
 
         const PrevWords = state.words;
+        const PrevQuote = state.currentQuote;
 
         const State1 = {
             ...Initialstate,
             isRedo: true,
             PreviousWords: PrevWords,
+            currentQuote: PrevQuote
         }
 
         const { words, RemainingWords, wordsSincePunctuation, isStartOfSentence, totalTime, currentQuote, WordsAmount } = getRandomWords(LengthDurationSetting, State1);
@@ -1466,6 +1468,30 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         //If mode = quote
         if (mode == "quote") {
 
+            if (state && state.isRedo) {
+
+                //if redo then we get the stored words array and display only the first (amountofwordstogenerateatstart) length of the array.
+
+                const CurrentQuote = state.currentQuote
+                const WordsAmount = CurrentQuote.length;
+
+                if (WordsAmount <= AmountOfWordsToGenerateOnStart) {
+
+                    FinalWordArray = CurrentQuote;
+                    RemainingWords = 0;
+
+                }
+                else {
+
+                    FinalWordArray = CurrentQuote.slice(0, AmountOfWordsToGenerateOnStart)
+
+                    RemainingWords = WordsAmount - AmountOfWordsToGenerateOnStart;
+
+                }
+
+                return { words: FinalWordArray, RemainingWords, isStartOfSentence, wordsSincePunctuation, totalTime, currentQuote: CurrentQuote, WordsAmount };
+            }
+
             // const randindex = Math.floor(Math.random() * quotes.length);
 
             if (LengthDurationSetting === "short") {
@@ -1708,6 +1734,31 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         else if (mode == "time") {
 
 
+            if (state && state.isRedo) {
+
+                //if redo then we get the stored words array and display only the first (amountofwordstogenerateatstart) length of the array.
+
+                const PreviousWordsAmount = state.PreviousWords.length;
+
+                if (PreviousWordsAmount <= AmountOfWordsToGenerateOnStart) {
+
+                    FinalWordArray = state.PreviousWords;
+                    // RemainingWords = 0;
+
+                    RemainingWords = WordsAmount - AmountOfWordsToGenerateOnStart;
+
+
+                }
+                else {
+
+                    FinalWordArray = state.PreviousWords.slice(0, AmountOfWordsToGenerateOnStart);
+                    RemainingWords = WordsAmount - AmountOfWordsToGenerateOnStart;
+
+                }
+
+                return { words: FinalWordArray, RemainingWords, isStartOfSentence, wordsSincePunctuation, totalTime, currentQuote: SelectedQuote, WordsAmount };
+            }
+
 
             for (let i = 0; i < AmountOfWordsToGenerateOnStart; i++) {
 
@@ -1879,7 +1930,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                 if (NextIndexToGenerate < state.PreviousWords.length) {
                     word = state.PreviousWords[NextIndexToGenerate];
-                    
+
                     console.log(state.PreviousWords)
                     console.log(word)
 
@@ -1951,6 +2002,28 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         }
 
         else if (mode === "time") {
+
+            if (state.isRedo) {
+
+                const NextIndexToGenerate = state.wordsAmount - state.RemainingWordsToGenerate;
+
+                console.log("words amount = ", state.wordsAmount)
+                console.log("remainingwordstogenerate = ", state.RemainingWordsToGenerate)
+
+                console.log("Next = ", NextIndexToGenerate)
+
+                if (NextIndexToGenerate < state.PreviousWords.length) {
+                    word = state.PreviousWords[NextIndexToGenerate];
+
+                    console.log(state.PreviousWords)
+                    console.log(word)
+
+                    return { word, wordsSincePunctuation, isStartOfSentence }
+
+
+                }
+            }
+
 
             console.log("hey")
             if (config.includes("punctuation")) {

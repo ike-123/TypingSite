@@ -89,6 +89,9 @@ const SinglePageTypingTest = () => {
         if (engine.state.status === "finished") {
             SetShowResults(true);
         }
+        if(engine.state.status === "notstarted"){
+            SetShowResults(false)
+        }
 
         console.log(engine.state.WpmEverySecond);
     }, [engine.state.status])
@@ -203,7 +206,7 @@ const SinglePageTypingTest = () => {
                         <img src="https://www.bigfootdigital.co.uk/wp-content/uploads/2020/07/image-optimisation-scaled.jpg" alt="" />
                     </DialogHeader> */}
 
-                    <TestResults modeConfig={{mode:modeID,configs,LengthDurationSetting}} state={engine.state} />
+                    <TestResults modeConfig={{mode:modeID,configs,LengthDurationSetting}} state={engine.state} NextTestFunction={engine.Reset} RedoTestFunction={engine.Redo} />
 
                 </DialogContent>
             </Dialog>

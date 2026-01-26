@@ -80,10 +80,12 @@ export interface ModeConfigResults {
 type TestResultsProps = {
     state: State
     modeConfig: ModeConfigResults
+    NextTestFunction:any
+    RedoTestFunction:any
 }
 
 
-const TestResults = ({ state, modeConfig }: TestResultsProps) => {
+const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: TestResultsProps) => {
     return (
         <div className=''>
             <Card className='w-full m-auto flex flex-row gap-0'>
@@ -210,8 +212,8 @@ const TestResults = ({ state, modeConfig }: TestResultsProps) => {
 
                     <div className='flex justify-center gap-15'>
 
-                        <Button className='w-20 h-12'></Button>
-                        <Button variant={"outline"} className='w-20 h-12'></Button>
+                        <Button className='w-20 h-12' onClick={NextTestFunction}></Button>
+                        <Button variant={"outline"} onClick={RedoTestFunction} className='w-20 h-12'></Button>
 
                     </div>
 
