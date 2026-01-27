@@ -522,10 +522,9 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
             case "StartTest":
 
+            
                 status = "typing";
                 startTime = Date.now();
-
-                CurrentModeLogic = Modes[mode].ModeLogic
 
                 const updatedState = {
                     ...state,
@@ -533,7 +532,9 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                     startTime: startTime
                 }
 
-                return CurrentModeLogic.update_everysecond ? CurrentModeLogic.update_everysecond(updatedState) : updatedState
+                CurrentModeLogic = Modes[mode].ModeLogic
+
+                return CurrentModeLogic.TestStart ? CurrentModeLogic.TestStart(updatedState) : updatedState
 
             case "FinishTest":
 

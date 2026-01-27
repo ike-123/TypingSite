@@ -163,9 +163,13 @@ const SinglePageTypingTest = () => {
 
                     ))
                 }
-            </div>
+            </div>  
+
+
+                <h1>{engine.state.status}</h1>
 
             <div>
+                
                 {
                     engine.state.status != "notstarted" ?
                         <h1 className='text-2xl font-bold mt-5 text-primary flex justify-center'>{engine.state.displayText}</h1>

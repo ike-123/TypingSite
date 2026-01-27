@@ -100,7 +100,7 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
                             <h1 className='text-6xl font-bold text-primary'>
                                 {state.WPM}
                             </h1>
-                            <h1 className='tex-3xl'>
+                            <h1 className=''>
                                 WPM
                             </h1>
                         </div>
@@ -114,7 +114,7 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
 
                                 {state.Accuracy}%
                             </h1>
-                            <h1 className='tex-3xl'>
+                            <h1 className=''>
                                 Accuracy
                             </h1>
                         </div>
@@ -180,13 +180,13 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
 
                             <div className='flex-col text-center'>
 
-                                <h2 className='font-bold text-xl'>Test Configuration</h2>
+                                <h2 className='text-primary font-medium'>Test Configuration</h2>
 
-                                <p>{modeConfig.mode} {modeConfig.LengthDurationSetting}</p>
+                                <p className='text-xl font-bold'>{modeConfig.mode} {modeConfig.LengthDurationSetting}</p>
 
                                 {
                                     modeConfig.configs.map((config) => (
-                                        <p>{config}</p>
+                                        <p className='text-xl font-bold '>{config}</p>
                                     ))
                                 }
 
@@ -196,18 +196,18 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
                             <div className='flex-col text-center'>
 
 
-                                <h2 className='font-bold text-xl'>Duration</h2>
+                                <h2 className='text-primary font-medium'>Duration</h2>
 
-                                <p>{state.TotalTime}s</p>
+                                <p className='text-xl font-bold '>{state.TotalTime}s</p>
 
                             </div>
 
                             <div className='flex-col text-center'>
 
 
-                                <h2 className='font-bold text-xl'>Characters</h2>
+                                <h2 className='text-primary font-medium'>Characters</h2>
 
-                                <p>{state.correctCount}/{state.incorrectCount}</p>
+                                <p className='text-xl font-bold'>{state.correctCount}/{state.incorrectCount}</p>
 
                             </div>
 

@@ -77,21 +77,18 @@ export const Modes: Record<modeID, TypingModeConfig> = {
         allowedConfigs: ["punctuation", "numbers", "error"],
         ModeLogic: {
               TestStart: ( state ) => {
-                const TextToDisplay = `${10-state.count}`
-                // console.log("displaytext = ", TextToDisplay);
-                const isFinished = state.count >= 10;
+
+                const TextToDisplay = `${state.totalTime-state.count}`
 
                 return{
                     ...state,
                     displayText:TextToDisplay,
-                    status: isFinished ? "finished" : state.status
                 }
             },
 
             update_everysecond: ( state ) => {
 
                 const TextToDisplay = `${state.totalTime-state.count}`
-                // console.log("displaytext = ", TextToDisplay);
                 const isFinished = state.count >= state.totalTime;
 
                 return{
@@ -117,6 +114,17 @@ export const Modes: Record<modeID, TypingModeConfig> = {
         label: "Complete the test before the timer runs out",
         allowedConfigs: ["punctuation", "numbers", "error"],
         ModeLogic: {
+
+            TestStart: ( state ) => {
+
+                const TextToDisplay = `${state.CurrentWordIndex}/${state.words.length}`
+
+                return{
+                    ...state,
+                    displayText:TextToDisplay,
+                }
+            },
+            
             OnCurrentWordChange(state) {
 
                 const TextToDisplay = `${state.CurrentWordIndex}/${state.words.length}`
@@ -142,6 +150,16 @@ export const Modes: Record<modeID, TypingModeConfig> = {
         label: "Complete the test before the timer runs out",
         allowedConfigs: ["error"],
         ModeLogic: {
+
+            TestStart: ( state ) => {
+
+                const TextToDisplay = `${state.CurrentWordIndex}/${state.words.length}`
+
+                return{
+                    ...state,
+                    displayText:TextToDisplay,
+                }
+            },
             OnCurrentWordChange(state) {
 
                 const TextToDisplay = `${state.CurrentWordIndex}/${state.words.length}`
