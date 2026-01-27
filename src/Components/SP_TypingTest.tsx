@@ -125,7 +125,9 @@ const SP_TypingTest = ({ engine }: { engine: ReturnType<typeof useTypingEnigne> 
 
                     </div>
 
-                    <div>
+                    
+
+                    {/* <div>
                         <h1 className='wordsPerMinute'> {engine.state.TestFinished ? (engine.state.WPM) + " WPM" : ""} </h1>
 
                         <h1 className='wordsPerMinute'> {"Accuracy: " + (engine.state.Accuracy) + "%"} </h1>
@@ -134,9 +136,7 @@ const SP_TypingTest = ({ engine }: { engine: ReturnType<typeof useTypingEnigne> 
 
                         <h1 className='wordsPerMinute'> {(engine.state.incorrectCount) + " Incorrect"} </h1>
 
-
-
-                    </div>
+                    </div> */}
 
 
                 </div>

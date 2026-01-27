@@ -89,7 +89,7 @@ const SinglePageTypingTest = () => {
         if (engine.state.status === "finished") {
             SetShowResults(true);
         }
-        if(engine.state.status === "notstarted"){
+        if (engine.state.status === "notstarted") {
             SetShowResults(false)
         }
 
@@ -101,33 +101,22 @@ const SinglePageTypingTest = () => {
 
 
 
-               {engine.state.isRedo ? 
-            <h1>Redo=true</h1>
-            :
-            <h1>Redo=false</h1>
+            {engine.state.isRedo ?
+                <h1 className='text-red-400'>Redo=true</h1>
+                :
+                ""
 
-               
+
             }
 
-            <Card>
+            {/* <Card>
                 <div>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam non volutpat quam. Nullam vitae eleifend dui, sed dictum neque. Duis posuere arcu sapien, ut efficitur elit tempus eget. Sed sed dolor in enim bibendum rutrum. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Fusce condimentum metus lorem, in fringilla urna vulputate in. Fusce ac nibh a urna tempor ullamcorper. Vivamus posuere hendrerit urna, eu aliquet ipsum elementum ac</div>
                 <Button onClick={engine.Reset} className='bg-primary w-25 m-auto'>Reset</Button>
                 <Button onClick={engine.Redo} className='bg-primary w-25 m-auto'>Redo</Button>
 
                 
 
-            </Card>
-
-            <div>
-                <h1>CurrentWordIndex =   {engine.state.CurrentWordIndex}</h1>
-
-                <h1>WordsTyped =   {engine.state.wordsTyped}</h1>
-
-
-                
-               
-                
-                </div>
+            </Card> */}
 
             <div className='flex justify-center'>
 
@@ -206,7 +195,7 @@ const SinglePageTypingTest = () => {
                         <img src="https://www.bigfootdigital.co.uk/wp-content/uploads/2020/07/image-optimisation-scaled.jpg" alt="" />
                     </DialogHeader> */}
 
-                    <TestResults modeConfig={{mode:modeID,configs,LengthDurationSetting}} state={engine.state} NextTestFunction={engine.Reset} RedoTestFunction={engine.Redo} />
+                    <TestResults modeConfig={{ mode: modeID, configs, LengthDurationSetting }} state={engine.state} NextTestFunction={engine.Reset} RedoTestFunction={engine.Redo} />
 
                 </DialogContent>
             </Dialog>
