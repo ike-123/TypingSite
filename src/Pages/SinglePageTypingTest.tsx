@@ -166,7 +166,7 @@ const SinglePageTypingTest = () => {
             </div>  
 
 
-                <h1>{engine.state.status}</h1>
+
 
             <div>
                 

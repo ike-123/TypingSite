@@ -543,7 +543,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                 finishTime = Date.now()
 
                 timeElapsed = (finishTime - startTime) / 60000 //elapsed time in minutes
-                timeElapsedsecs = (finishTime - startTime) / 1000 //elapsed time in minutes
+                
+                timeElapsedsecs = parseFloat(((finishTime - startTime) / 1000).toFixed(1)) //elapsed time in minutes to 1 dp
 
 
                 var CorrectlyTypedWordsArr: string[] = new Array();
