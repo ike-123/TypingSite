@@ -53,6 +53,7 @@ export interface State {
     wordsAmount: number
     isRedo: boolean
     PreviousWords: string[]
+    errors: number[]
 }
 
 // export interface InitialState {
@@ -245,6 +246,9 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
         let characterLength = 0;
 
+        let errors = state.errors;
+
+
 
 
 
@@ -259,6 +263,10 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
 
                 if (state.status === "typing") {
+
+                    const CurrentTime = Date.now()
+
+                    timeElapsed = (CurrentTime - startTime) / 1000
 
 
 
@@ -328,6 +336,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                             //we are over typing 
                             // SetInCorrectCount((prev: number) => prev + 1);
                             incorrectCount++;
+                            errors = [...state.errors, timeElapsed]
 
                         }
                         else {
@@ -338,7 +347,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                             }
                             else {
                                 incorrectCount++;
-
+                                errors = [...state.errors, timeElapsed]
                             }
                         }
                     }
@@ -355,7 +364,9 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                     AllWordMap: NewMap0,
                     correctCount: correctCount,
                     incorrectCount: incorrectCount,
+                    errors: errors,
                     startTime: startTime
+
                 }
 
 
@@ -366,7 +377,13 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                 console.log(state.words);
 
+
                 if (TypedWord.length > 0) {
+
+                    const CurrentTime = Date.now()
+
+                    timeElapsed = (CurrentTime - startTime) / 1000
+
 
 
                     // const PreviousAllWordMapLength = AllWordMap.size;
@@ -389,6 +406,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                         newMap0.set(CurrentWordIndex, { text: candidate, isCorrect: false, OutsideTextContainer: false })
 
                         incorrectCount++;
+                        errors = [...state.errors, timeElapsed]
+
 
                     }
 
@@ -474,7 +493,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                     words: Words,
                     RemainingWordsToGenerate: RemainingWordsToGenerate,
                     wordsSincePunctuation: wordsSincePunctuation,
-                    isStartOfSentence: isStartOfSentence
+                    isStartOfSentence: isStartOfSentence,
+                    errors: errors
 
                 }
 
@@ -522,7 +542,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
             case "StartTest":
 
-            
+
                 status = "typing";
                 startTime = Date.now();
 
@@ -543,14 +563,16 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                 finishTime = Date.now()
 
                 timeElapsed = (finishTime - startTime) / 60000 //elapsed time in minutes
-                
+
                 timeElapsedsecs = parseFloat(((finishTime - startTime) / 1000).toFixed(1)) //elapsed time in minutes to 1 dp
 
+                console.log(errors);
 
                 var CorrectlyTypedWordsArr: string[] = new Array();
 
-                console.log("words :", state.words);
-                console.log("final word array")
+                // console.log("words :", state.words);
+                // console.log("final word array")
+                console.log(state.WpmEverySecond)
 
                 AllWordMap.forEach((word: any) => {
                     console.log(word.text)
@@ -627,7 +649,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                 const WpmEverySecond = [
                     ...(state.WpmEverySecond ?? []),
-                    { time: NewCount.toString(), wpm: WPM }
+                    { time: NewCount, wpm: WPM }
                 ]
 
 
@@ -771,8 +793,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         wordsAmount: 0,
         TotalTime: 0,
         isRedo: false,
-        PreviousWords: []
-
+        PreviousWords: [],
+        errors: []
     }
 
     // const InitialState: InitialState = {

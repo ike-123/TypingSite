@@ -4,7 +4,7 @@ import React from 'react'
 import { ArrowBigRight, RotateCcw, TrendingUp } from "lucide-react"
 import { Button } from '@/components/ui/button'
 
-import { CartesianGrid, Label, Line, LineChart, XAxis, YAxis } from "recharts"
+import { CartesianGrid, Label, Line, LineChart, XAxis, YAxis, ReferenceDot, Scatter } from "recharts"
 
 import {
     Card,
@@ -47,8 +47,12 @@ export const description = "A line chart"
 // ]
 
 export interface TestResultData {
-    time: string,
+    time: number,
     wpm: number
+}
+
+export interface ErrorData {
+    time: number,
 }
 
 // const chartConfig = {
@@ -84,8 +88,100 @@ type TestResultsProps = {
     RedoTestFunction: any
 }
 
+// let _mistakePoints:TestResultData | null[] = [];
+
+// let _mistakePoints: ({ time: number, wpm: number } | null)[] = [];
+
+
+
+
+
+// const mistakePoints = mistakes
+//     .map((time) => {
+//         const y = interpolateY(wpmData, time)
+//         if (y == null) return null
+
+//         return {
+//             time,
+//             wpm: y,
+//         }
+//     })
+//     .filter(Boolean)
+
+
 
 const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: TestResultsProps) => {
+
+
+    function interpolateY(data: TestResultData[], targetTime: number) {
+
+        // find the two surrounding points
+        for (let i = 0; i < data.length - 1; i++) {
+            const p1 = data[i]
+            const p2 = data[i + 1]
+
+            if (targetTime >= p1.time && targetTime <= p2.time) {
+                const ratio =
+                    (targetTime - p1.time) / (p2.time - p1.time)
+
+                return p1.wpm + ratio * (p2.wpm - p1.wpm)
+            }
+        }
+
+        return null // outside range
+    }
+
+
+    const _mistakePoints = state.errors.map((time) => {
+
+
+        const y = interpolateY(state.WpmEverySecond, time)
+        if (y == null) return null
+
+        console.log("time ", time, " wpm ", y);
+
+        return {
+            time,
+            wpm: y,
+        }
+    }).filter(Boolean)
+
+
+
+    function generateTicks(min: number, max: number, maxTicks = 30) {
+        const range = max - min + 1
+
+        // If small enough, show everything
+        if (range <= maxTicks) {
+            return Array.from({ length: range }, (_, i) => min + i)
+        }
+
+        // Otherwise downsample with equal spacing
+        const step = Math.ceil(range / maxTicks)
+
+        const ticks = []
+        for (let t = min; t <= max; t += step) {
+            ticks.push(t)
+        }
+
+        return ticks
+    }
+
+    // const minTime = Math.floor(state.WpmEverySecond[0].time)
+    // const maxTime = Math.ceil(state.WpmEverySecond[state.WpmEverySecond.length - 1].time)
+
+
+    const minTime = 1
+    const maxTime = state.WpmEverySecond.length
+
+    const data = [
+        { time: 2, wpm: 40 },
+        { time: 3, wpm: 50 },
+
+    ];
+
+
+
     return (
         <div className=''>
             <Card className='flex'>
@@ -137,12 +233,14 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
                                     <CartesianGrid vertical={true} />
                                     <XAxis
                                         dataKey="time"
+                                        type='number'
+                                        domain={['dataMin', 'dataMax']}
                                         tickLine={false}
                                         axisLine={false}
                                         tickMargin={8}
-                                        tickFormatter={(value) => value.slice(0, 3)}
-                                        interval={"equidistantPreserveStart"}
-
+                                        // tickCount={30}
+                                        ticks={generateTicks(minTime, maxTime, 30)}
+                                    // interval={"equidistantPreserveStart"}
 
                                     >
 
@@ -150,13 +248,11 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
 
                                     </XAxis>
 
-                                    <YAxis tickLine={false} axisLine={false} >
+                                    <YAxis dataKey="wpm" tickLine={false} axisLine={false} >
 
                                         <Label position={"left"} value={"WPM"} angle={-45} offset={-20} />
 
                                     </YAxis>
-
-
 
 
 
@@ -171,6 +267,81 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
                                         strokeWidth={2}
                                         dot={false}
                                     />
+
+
+
+                                    {/* {
+                                        _mistakePoints = state.errors.map((time) => {
+
+
+                                            const y = interpolateY(state.WpmEverySecond, time)
+                                            if (y == null) return null
+
+                                            return {
+                                                time,
+                                                wpm: y,
+                                            }
+
+                                            // console.log(error)
+                                            //   return <ReferenceDot x={error} y={10} radius={5} />
+                                        }
+
+
+                                        )
+                                    } */}
+
+                                    {/* {
+
+
+                                        console.log("mistake", _mistakePoints)
+                                    } */}
+                                    {/* <Scatter
+                                        data={data}
+                                        fill="red"
+                                    /> */}
+
+
+                                    {/* {state.errors.map((t) => {
+                                        const y = interpolateY(state.WpmEverySecond, t)
+                                        if (y == null) return null
+
+                                        return (
+                                            <ReferenceDot
+                                                key={t}
+                                                x={t}
+                                                y={y}
+                                                r={4}
+                                                fill="red"
+                                                stroke="white"
+                                            />
+                                        )
+                                    })} */}
+
+                                    {/* <ReferenceDot x={3.5} y={80} r={5} fill='red' /> */}
+
+
+                                    {state.errors.map((time, id) => {
+
+                                        if (time < 1) {
+                                            time = 1
+                                        }
+                                        if (time > state.count) {
+                                            // console.log(state.count)
+                                            time = state.count
+                                        }
+                                        console.log(time)
+                                        return (
+                                            <ReferenceDot
+                                                key={id}
+                                                x={time}
+                                                y={0}
+                                                r={3}
+                                                fill="red"
+                                                stroke="black"
+                                            />
+                                        )
+                                    })}
+
                                 </LineChart>
 
                             </ChartContainer>
