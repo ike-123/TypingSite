@@ -23,6 +23,13 @@ import {
     ChartTooltipContent,
     type ChartConfig,
 } from "@/components/ui/chart"
+
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
+
 import type { State } from '@/Hooks/useTypingEngine'
 import type { configID, modeID } from '@/utils/Typingmode'
 
@@ -378,7 +385,18 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
 
                                 <h2 className='text-primary font-medium'>Characters</h2>
 
-                                <p className='text-xl font-bold'>{state.correctCount}/{state.incorrectCount}</p>
+                                <Tooltip>
+                                    <TooltipTrigger>
+                                        <p className='text-xl font-bold'>{state.correctCount} / <span className='text-red-400'>{state.incorrectCount}</span></p>
+                                    </TooltipTrigger>
+                                    <TooltipContent side='bottom' className='text-base'>
+
+                                        { state.correctCount === 1 ? <p>{state.correctCount} character typed correctly</p> :  <p>{state.correctCount} characters typed correctly</p> }
+                                        { state.incorrectCount === 1 ? <p>{state.incorrectCount} character typed incorrectly</p> :  <p>{state.incorrectCount} characters typed incorrectly</p> }
+
+                                    </TooltipContent>
+                                </Tooltip>
+
 
                             </div>
 
@@ -390,17 +408,20 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
 
                 </div>
 
-                <div className='mt-10 flex justify-center gap-15'>
+                <div className='mt-10 flex justify-center gap-10'>
 
                     <Button className='w-20 h-12' onClick={NextTestFunction}>
 
-                        <ArrowBigRight className='size-8'></ArrowBigRight>
+                        {/* <ArrowBigRight className='size-8'></ArrowBigRight> */}
+                        <span className='font-bold text-xl'>Next</span>
 
                     </Button>
 
                     <Button variant={"outline"} onClick={RedoTestFunction} className='w-20 h-12'>
 
-                        <RotateCcw className='size-7'></RotateCcw>
+                        {/* <RotateCcw className='size-7'></RotateCcw> */}
+                        <span className='font-bold text-xl'>Retry</span>
+
                     </Button>
 
                 </div>
