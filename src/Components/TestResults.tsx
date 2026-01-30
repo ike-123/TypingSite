@@ -229,12 +229,14 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
 
                             <ChartContainer className='h-full w-full' config={chartConfig}>
 
-                                <LineChart className=''
+                                <LineChart
                                     accessibilityLayer
                                     data={state.WpmEverySecond}
                                     margin={{
                                         left: 12,
                                         right: 12,
+                                        bottom: 16,
+                                        top: 10
                                     }}
                                 >
                                     <CartesianGrid vertical={true} />
@@ -248,10 +250,9 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
                                         // tickCount={30}
                                         ticks={generateTicks(minTime, maxTime, 30)}
                                     // interval={"equidistantPreserveStart"}
-
                                     >
 
-                                        <Label position={"bottom"} value={"time"} offset={0} />
+                                        <Label position={"bottom"} value={"Time (s)"} offset={5} />
 
                                     </XAxis>
 
@@ -260,8 +261,6 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
                                         <Label position={"left"} value={"WPM"} angle={-45} offset={-20} />
 
                                     </YAxis>
-
-
 
                                     <ChartTooltip
                                         cursor={false}
@@ -391,8 +390,8 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
                                     </TooltipTrigger>
                                     <TooltipContent side='bottom' className='text-base'>
 
-                                        { state.correctCount === 1 ? <p>{state.correctCount} character typed correctly</p> :  <p>{state.correctCount} characters typed correctly</p> }
-                                        { state.incorrectCount === 1 ? <p>{state.incorrectCount} character typed incorrectly</p> :  <p>{state.incorrectCount} characters typed incorrectly</p> }
+                                        {state.correctCount === 1 ? <p>{state.correctCount} character typed correctly</p> : <p>{state.correctCount} characters typed correctly</p>}
+                                        {state.incorrectCount === 1 ? <p>{state.incorrectCount} character typed incorrectly</p> : <p>{state.incorrectCount} characters typed incorrectly</p>}
 
                                     </TooltipContent>
                                 </Tooltip>

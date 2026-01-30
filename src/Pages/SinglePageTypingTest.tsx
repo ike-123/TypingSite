@@ -185,7 +185,7 @@ const SinglePageTypingTest = () => {
             <Dialog open={ShowResults} onOpenChange={SetShowResults}>
 
                 {/* <DialogContent className='w-full max-w-sm sm:max-w-full  bg-orange-300 '> */}
-                <DialogContent className='w-full  sm:max-w-full  '>
+                <DialogContent className=' max-w-7xl   '>
                     {/* 
                     <DialogHeader>
                         <DialogTitle>Are you absolutely sure?</DialogTitle>
