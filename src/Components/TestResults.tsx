@@ -193,9 +193,9 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
         <div className=''>
             <Card className='flex'>
 
-                <div className='w-full m-auto flex flex-row gap-0'>
+                <div className='w-full m-auto flex flex-col sm:flex-row gap-0'>
 
-                    <div className=' h-full w-full flex-1'>
+                    <div className=' h-full w-full flex flex-row justify-center gap-20 sm:flex-col sm:gap-9 flex-1'>
 
                         {/* WPM */}
                         <div className='flex flex-col items-center mt-2'>
@@ -210,9 +210,9 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
 
 
                         {/* Accuracy */}
-                        <div className='flex flex-col items-center mt-8'>
+                        <div className='flex flex-col justify-between items-center'>
 
-                            <h1 className='text-4xl font-bold text-primary'>
+                            <h1 className='text-4xl font-bold text-primary m-auto'>
                                 {/* Make this a slightly lighter colour than the WPM as i want the WPM to stand out more */}
 
                                 {state.Accuracy}%

@@ -13,8 +13,10 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
+    DialogPortal
 } from "@/components/ui/dialog"
 import TestResults from '@/Components/TestResults'
+import { DialogOverlay } from '@radix-ui/react-dialog'
 
 
 
@@ -163,13 +165,13 @@ const SinglePageTypingTest = () => {
 
                     ))
                 }
-            </div>  
+            </div>
 
 
 
 
             <div>
-                
+
                 {
                     engine.state.status != "notstarted" ?
                         <h1 className='text-2xl font-bold mt-5 text-primary flex justify-center'>{engine.state.displayText}</h1>
@@ -182,27 +184,33 @@ const SinglePageTypingTest = () => {
             <SP_TypingTest engine={engine} ></SP_TypingTest>
 
 
+
+
             <Dialog open={ShowResults} onOpenChange={SetShowResults}>
 
-                {/* <DialogContent className='w-full max-w-sm sm:max-w-full  bg-orange-300 '> */}
-                <DialogContent className=' max-w-7xl   '>
-                    {/* 
-                    <DialogHeader>
-                        <DialogTitle>Are you absolutely sure?</DialogTitle>
-                        <DialogDescription>
-                            This action cannot be undone. This will permanently delete your account
-                            and remove your data from our servers.
-                        </DialogDescription>
+                <DialogPortal>
+
+                    {/* <DialogOverlay className="fixed inset-0 bg-white/50 p-10" /> */}
 
 
-                        <div className='h-10 w-150 bg-red-200'></div>
-                        <img src="https://www.bigfootdigital.co.uk/wp-content/uploads/2020/07/image-optimisation-scaled.jpg" alt="" />
-                    </DialogHeader> */}
 
-                    <TestResults modeConfig={{ mode: modeID, configs, LengthDurationSetting }} state={engine.state} NextTestFunction={engine.Reset} RedoTestFunction={engine.Redo} />
 
-                </DialogContent>
+
+
+                    {/* <DialogContent className='w-full max-w-sm sm:max-w-full  bg-orange-300 '> */}
+                    <DialogContent className=' max-w-7xl md:w-11/12 lg:w-10/12 xl:w-8/12'>
+
+                        <TestResults modeConfig={{ mode: modeID, configs, LengthDurationSetting }} state={engine.state} NextTestFunction={engine.Reset} RedoTestFunction={engine.Redo} />
+
+                    </DialogContent>
+
+
+
+                </DialogPortal>
+
             </Dialog>
+
+
 
         </div>
     )
