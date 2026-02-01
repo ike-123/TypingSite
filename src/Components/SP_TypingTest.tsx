@@ -24,12 +24,12 @@ const SP_TypingTest = ({ engine }: { engine: ReturnType<typeof useTypingEnigne> 
 
                 <div className="TypeTestContainer">
 
-                    <div ref={engine.TextContainerref} className='TextContainer'>
+                    <div ref={engine.TextContainerref} className='TextContainer relative'>
 
 
                         {/* <div id='wordcontainer' className={`relative text-3xl text-[#8a8c8f]`} style={{ marginTop: engine.margin > 0 ? -(engine.margin * 39) : 0, }}> */}
                         {/* <div ref={engine.WordContainerRef}  id='wordcontainer' className={`relative text-3xl text-[#8a8c8f]`} style={{ transform: `translateY(-${engine.lineoffset * engine.LINE_HEIGHT}px)` }}> */}
-                        <div ref={engine.WordContainerRef}  id='wordcontainer' className={`relative text-3xl text-[#8a8c8f]`} >
+                        <div ref={engine.WordContainerRef} id='wordcontainer' className={`relative text-3xl text-[#8a8c8f]`} >
 
 
                             <div ref={engine.caretRef} className="caret" />
@@ -39,7 +39,7 @@ const SP_TypingTest = ({ engine }: { engine: ReturnType<typeof useTypingEnigne> 
 
                                 //If CurrentWord is greater than WordIndex then user has alreadly typed the word and class will be "correct"
 
-                                <span data-word-index={engine.state.IndexToStartFrom + wordIndex} className={`word ${(engine.state.IndexToStartFrom + wordIndex) < engine.state.CurrentWordIndex ? (`${engine.state.AllWordMap.get(engine.state.IndexToStartFrom+wordIndex)?.isCorrect ? "correct" : "incorrectword"}`) : ""}`} key={engine.state.IndexToStartFrom + wordIndex}>
+                                <span data-word-index={engine.state.IndexToStartFrom + wordIndex} className={`word ${(engine.state.IndexToStartFrom + wordIndex) < engine.state.CurrentWordIndex ? (`${engine.state.AllWordMap.get(engine.state.IndexToStartFrom + wordIndex)?.isCorrect ? "correct" : "incorrectword"}`) : ""}`} key={engine.state.IndexToStartFrom + wordIndex}>
 
                                     <span>
                                         {/* split the word array to retrieve each letter and put it in a span */}
@@ -53,7 +53,7 @@ const SP_TypingTest = ({ engine }: { engine: ReturnType<typeof useTypingEnigne> 
                                             const isCurrent = engine.state.IndexToStartFrom + wordIndex === engine.state.CurrentWordIndex
                                             engine.CurrentWordsSpansRef.current = [];
 
-                                            
+
                                             //we check to see if this is the last letter in the word as we want to check if the user has typed any other letters
                                             //  after which we will append after the word and highlight in red
                                             if (letterindex + 1 === word.length) {
@@ -116,16 +116,19 @@ const SP_TypingTest = ({ engine }: { engine: ReturnType<typeof useTypingEnigne> 
 
                         </div>
 
+
+                        {/* <div className=''> */}
+
+                        <input className= {`w-full h-[115px] m-auto absolute outline-none bg-red-500 ${engine.focus? "opacity-0" : "opacity-30"}`} ref={engine.inputref} id="input" type="text" autoComplete='off' autoFocus value={engine.state.TypedWord} onFocus={()=>{console.log("setting focus true"); engine.SetFocus(true)}} onBlur={()=>{console.log("setting focus false");engine.SetFocus(false)}} onKeyDown={engine.HandleKeyDown} onChange={engine.ChangeInput} />
+
+                        {/* </div> */}
+
                     </div>
 
 
-                    <div className='TextInput'>
 
-                        <input ref={engine.inputref} id="input" type="text" autoComplete='off' autoFocus value={engine.state.TypedWord} onKeyDown={engine.HandleKeyDown} onChange={engine.ChangeInput} />
 
-                    </div>
 
-                    
 
                     {/* <div>
                         <h1 className='wordsPerMinute'> {engine.state.TestFinished ? (engine.state.WPM) + " WPM" : ""} </h1>

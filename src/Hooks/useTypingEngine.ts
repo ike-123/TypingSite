@@ -141,6 +141,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
     const inputref = useRef<HTMLInputElement | null>(null);
 
+    const [focus, SetFocus] = useState(true);
+
     const TextContainerref = useRef<HTMLDivElement | null>(null);
 
     const WordContainerRef = useRef<HTMLDivElement | null>(null);
@@ -1213,6 +1215,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
         if (state.status === "notstarted") {
 
+            inputref.current?.focus()
             ResetCaret();
         }
 
@@ -2155,7 +2158,17 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         ClearTimer()
         ResetCaret()
 
-        // console.log("reset");
+        console.log(inputref.current);
+
+
+
+            console.log("click");
+            inputref.current?.focus();
+
+
+        // inputref.current?.focus
+
+        console.log("reset");
 
         dispatch({ type: "Reset", payload: {} })
 
@@ -2164,6 +2177,10 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
     function Redo() {
         ClearTimer()
         ResetCaret()
+
+        inputref.current?.focus()
+
+
 
         dispatch({ type: "RedoTest", payload: {} })
     }
@@ -2180,6 +2197,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         TextContainerref,
         LINE_HEIGHT,
         lineoffset,
+        focus,
+        SetFocus,
         HandleKeyDown,
         ChangeInput,
         Reset,

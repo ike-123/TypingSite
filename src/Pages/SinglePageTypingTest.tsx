@@ -93,6 +93,9 @@ const SinglePageTypingTest = () => {
         }
         if (engine.state.status === "notstarted") {
             SetShowResults(false)
+            console.log('hey')
+            // engine.inputref.current?.focus()
+
         }
 
         console.log(engine.state.WpmEverySecond);
@@ -198,7 +201,10 @@ const SinglePageTypingTest = () => {
 
 
                     {/* <DialogContent className='w-full max-w-sm sm:max-w-full  bg-orange-300 '> */}
-                    <DialogContent className=' max-w-7xl md:w-11/12 lg:w-10/12 xl:w-8/12'>
+                    <DialogContent onCloseAutoFocus={(e) => {
+                        e.preventDefault() // 🚨 stop Radix from deciding focus
+                        engine.inputref.current?.focus()
+                    }} className=' max-w-7xl md:w-11/12 lg:w-10/12 xl:w-8/12'>
 
                         <TestResults modeConfig={{ mode: modeID, configs, LengthDurationSetting }} state={engine.state} NextTestFunction={engine.Reset} RedoTestFunction={engine.Redo} />
 
