@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/Components/ui/card'
 import SP_TypingTest from '@/Components/SP_TypingTest'
@@ -24,7 +24,13 @@ const SinglePageTypingTest = () => {
     //store the mode itself instead of the modeid
 
     const [modeID, SetMode] = useState<modeID>("word")
-    const [configs, SetConfig] = useState<configID[]>([])
+
+    const SelectedConfigs = useRef<configID[]>([]);
+
+    // const [configs, SetConfig] = useState<configID[]>([])
+
+    const [Allowedconfigs, SetAllowedConfigs] = useState<configID[]>([])
+
     const [LengthDurationSetting, SetLengthDurationSetting] = useState<string>(Modes[modeID].LengthDurationSetting.defaultValue)
 
     const [ShowResults, SetShowResults] = useState(false)
@@ -33,18 +39,19 @@ const SinglePageTypingTest = () => {
     function selectMode(id: modeID) {
 
         SetMode(id);
-        SetConfig((prev) => {
+        // SetConfig((prev) => {
 
-            //Search through the previous configs. Only return the configs that are present in the new mode
+        //     //Search through the previous configs. Only return the configs that are present in the new mode
 
-            return prev?.filter(config => Modes[id].allowedConfigs.includes(config))
+        //     return prev?.filter(config => Modes[id].allowedConfigs.includes(config))
 
-            //    return prev?.map((previousConfig)=>{
+        // })
 
-            // Modes[id].allowedConfigs.includes(previousConfig) ? "" : prev.filter(config => Modes[id].allowedConfigs.includes(config))
 
-            // })
-        })
+        SetAllowedConfigs(() => {
+            return SelectedConfigs.current?.filter(config => Modes[id].allowedConfigs.includes(config))
+        });
+
         SetLengthDurationSetting(Modes[id].LengthDurationSetting.defaultValue)
     }
 
@@ -58,9 +65,31 @@ const SinglePageTypingTest = () => {
 
         // if config is already inside of the config usestate then remove it if not add it
 
-        SetConfig((prev) => {
-            return prev?.includes(config) ? prev?.filter(prevconfig => prevconfig !== config) : [...prev, config]
+        // SetConfig((prev) => {
+        //     return prev?.includes(config) ? prev?.filter(prevconfig => prevconfig !== config) : [...prev, config]
+        // });
+
+        //    SetUsableConfigs((prev) => {
+        //     return configs?.includes(config) ? prev?.filter(prevconfig => prevconfig !== config) : [...prev, config]
+        // });
+
+
+
+
+
+        // Add the config into the selected config array
+
+        SelectedConfigs.current = SelectedConfigs.current.includes(config) ? SelectedConfigs.current?.filter(prevconfig => prevconfig !== config) : [...SelectedConfigs.current, config]
+
+
+
+        // Call SetAllowedConfigs and check to see if each config inside selectedconfigs is allowed for this specific mode
+
+        SetAllowedConfigs(() => {
+            return SelectedConfigs.current?.filter(config => Modes[modeID].allowedConfigs.includes(config))
         });
+
+
     }
 
     function ChangeLengthDurationSetting(LengthDurationSetting: string) {
@@ -82,7 +111,7 @@ const SinglePageTypingTest = () => {
 
     const engine = useTypingEnigne({
         mode: modeID,
-        config: configs,
+        config: Allowedconfigs,
         LengthDurationSetting: LengthDurationSetting
     })
 
@@ -164,7 +193,7 @@ const SinglePageTypingTest = () => {
                 {
                     Object.values(Modes[modeID].allowedConfigs).map((config) => (
 
-                        <Button key={config} onClick={() => changeConfig(config)} className='bg-primary w-25' variant={configs.includes(config) ? "default" : "outline"}>{config}</Button>
+                        <Button key={config} onClick={() => changeConfig(config)} className='bg-primary w-25' variant={Allowedconfigs.includes(config) ? "default" : "outline"}>{config}</Button>
 
                     ))
                 }
@@ -206,7 +235,7 @@ const SinglePageTypingTest = () => {
                         engine.inputref.current?.focus()
                     }} className=' max-w-7xl md:w-11/12 lg:w-10/12 xl:w-8/12'>
 
-                        <TestResults modeConfig={{ mode: modeID, configs, LengthDurationSetting }} state={engine.state} NextTestFunction={engine.Reset} RedoTestFunction={engine.Redo} />
+                        <TestResults modeConfig={{ mode: modeID, configs: Allowedconfigs, LengthDurationSetting }} state={engine.state} NextTestFunction={engine.Reset} RedoTestFunction={engine.Redo} />
 
                     </DialogContent>
 
