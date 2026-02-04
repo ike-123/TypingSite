@@ -20,18 +20,53 @@ import { DialogOverlay } from '@radix-ui/react-dialog'
 
 
 
+interface SoloTestConfigs {
+
+    ModeID: modeID,
+    SelectedConfigs: configID[],
+    LengthDurationSetting: {
+        word: string | null,
+        time: string | null,
+        quote: string | null
+    }
+}
+
 const SinglePageTypingTest = () => {
     //store the mode itself instead of the modeid
 
-    const [modeID, SetMode] = useState<modeID>("word")
+    const [modeID, SetMode] = useState<modeID>(() => {
 
-    const SelectedConfigs = useRef<configID[]>([]);
+        const item = localStorage.getItem("SoloTestConfigs");
 
-    // const [configs, SetConfig] = useState<configID[]>([])
+        // console.log("yes mode id = ", JSON.parse(item!).ModeID )
+        return item ? JSON.parse(item).ModeID : "word"
+
+    })
+
+    // const SelectedConfigs = useRef<configID[]>([]);
+    const [Selectedconfigs, SetConfig] = useState<configID[]>(() => {
+
+        const item = localStorage.getItem("SoloTestConfigs");
+
+        return item ? JSON.parse(item).SelectedConfigs : []
+
+    })
+
 
     const [Allowedconfigs, SetAllowedConfigs] = useState<configID[]>([])
 
-    const [LengthDurationSetting, SetLengthDurationSetting] = useState<string>(Modes[modeID].LengthDurationSetting.defaultValue)
+
+
+    const [LengthDurationSetting, SetLengthDurationSetting] = useState<string>(() => {
+
+        const item = localStorage.getItem("SoloTestConfigs");
+
+        console.log("modeid " , JSON.parse(item!).LengthDurationSetting[modeID]);
+
+        return item ? JSON.parse(item).LengthDurationSetting[modeID] : Modes[modeID].LengthDurationSetting.defaultValue
+
+    }
+    )
 
     const [ShowResults, SetShowResults] = useState(false)
 
@@ -39,6 +74,10 @@ const SinglePageTypingTest = () => {
     function selectMode(id: modeID) {
 
         SetMode(id);
+
+
+
+
         // SetConfig((prev) => {
 
         //     //Search through the previous configs. Only return the configs that are present in the new mode
@@ -48,9 +87,9 @@ const SinglePageTypingTest = () => {
         // })
 
 
-        SetAllowedConfigs(() => {
-            return SelectedConfigs.current?.filter(config => Modes[id].allowedConfigs.includes(config))
-        });
+        // SetAllowedConfigs(() => {
+        //     return SelectedConfigs.current?.filter(config => Modes[id].allowedConfigs.includes(config))
+        // });
 
         SetLengthDurationSetting(Modes[id].LengthDurationSetting.defaultValue)
     }
@@ -75,19 +114,21 @@ const SinglePageTypingTest = () => {
 
 
 
-
-
         // Add the config into the selected config array
 
-        SelectedConfigs.current = SelectedConfigs.current.includes(config) ? SelectedConfigs.current?.filter(prevconfig => prevconfig !== config) : [...SelectedConfigs.current, config]
+        // SelectedConfigs.current = SelectedConfigs.current.includes(config) ? SelectedConfigs.current?.filter(prevconfig => prevconfig !== config) : [...SelectedConfigs.current, config]
 
+
+        SetConfig((prev) => {
+            return prev?.includes(config) ? prev?.filter(prevconfig => prevconfig !== config) : [...prev, config]
+        });
 
 
         // Call SetAllowedConfigs and check to see if each config inside selectedconfigs is allowed for this specific mode
 
-        SetAllowedConfigs(() => {
-            return SelectedConfigs.current?.filter(config => Modes[modeID].allowedConfigs.includes(config))
-        });
+        // SetAllowedConfigs(() => {
+        //     return SelectedConfigs.current?.filter(config => Modes[modeID].allowedConfigs.includes(config))
+        // });
 
 
     }
@@ -115,6 +156,69 @@ const SinglePageTypingTest = () => {
         LengthDurationSetting: LengthDurationSetting
     })
 
+
+    useEffect(() => {
+
+        // Call SetAllowedConfigs and check to see if each config inside selectedconfigs is allowed for this specific mode
+
+        SetAllowedConfigs(() => {
+            return Selectedconfigs.filter(config => Modes[modeID].allowedConfigs.includes(config))
+        });
+
+        const stored = localStorage.getItem("SoloTestConfigs")
+        const UserConfig: SoloTestConfigs = stored ? JSON.parse(stored) : null
+        console.log(UserConfig)
+        // console.log("Heyeeeee");
+
+        if (UserConfig) {
+
+            console.log("yes")
+
+            // const LengthDurationSettingWord = 
+
+            const word_LengthDurationSetting = UserConfig.LengthDurationSetting.word
+            const time_LengthDurationSetting = UserConfig.LengthDurationSetting.time
+            const quote_LengthDurationSetting = UserConfig.LengthDurationSetting.quote
+
+            console.log(time_LengthDurationSetting);
+
+            const Settings: SoloTestConfigs = {
+                ModeID: modeID,
+                SelectedConfigs: Selectedconfigs,
+                LengthDurationSetting: {
+                    word: word_LengthDurationSetting,
+                    time: time_LengthDurationSetting,
+                    quote: quote_LengthDurationSetting
+                }
+            }
+
+            //If there is solotestconfig inside of localstorage
+            Settings.LengthDurationSetting[Modes[modeID].id] = LengthDurationSetting;
+
+            localStorage.setItem("SoloTestConfigs", JSON.stringify(Settings))
+
+
+        }
+        else {
+
+            console.log("none")
+            //this is if there is no solotestconfig inside of localstorage 
+            const Settings: SoloTestConfigs = {
+                ModeID: modeID,
+                SelectedConfigs: Selectedconfigs,
+                LengthDurationSetting: {
+                    word: Modes["word"].LengthDurationSetting.defaultValue,
+                    time: Modes["time"].LengthDurationSetting.defaultValue,
+                    quote: Modes["quote"].LengthDurationSetting.defaultValue,
+                }
+            }
+
+            localStorage.setItem("SoloTestConfigs", JSON.stringify(Settings))
+
+        }
+
+    }, [Selectedconfigs, modeID, LengthDurationSetting])
+
     useEffect(() => {
 
         if (engine.state.status === "finished") {
@@ -122,12 +226,11 @@ const SinglePageTypingTest = () => {
         }
         if (engine.state.status === "notstarted") {
             SetShowResults(false)
-            console.log('hey')
+            // console.log('hey')
             // engine.inputref.current?.focus()
-
         }
 
-        console.log(engine.state.WpmEverySecond);
+        // console.log(engine.state.WpmEverySecond);
     }, [engine.state.status])
 
     return (

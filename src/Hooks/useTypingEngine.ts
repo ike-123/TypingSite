@@ -568,7 +568,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                 timeElapsedsecs = parseFloat(((finishTime - startTime) / 1000).toFixed(1)) //elapsed time in minutes to 1 dp
 
-                console.log(errors);
+                // console.log(errors);
 
                 var CorrectlyTypedWordsArr: string[] = new Array();
 
@@ -577,7 +577,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                 console.log(state.WpmEverySecond)
 
                 AllWordMap.forEach((word: any) => {
-                    console.log(word.text)
+                    // console.log(word.text)
                     if (word.isCorrect) {
                         CorrectlyTypedWordsArr.push(word.text);
                     }
@@ -823,11 +823,11 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
     function Init(initialState: State) {
 
-        console.log("init")
+        // console.log("init")
 
         const { words, RemainingWords, wordsSincePunctuation, isStartOfSentence, totalTime, currentQuote, WordsAmount } = getRandomWords(LengthDurationSetting);
 
-        console.log(words);
+        // console.log(words);
 
         return {
             ...initialState,
@@ -855,11 +855,11 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
         const { words, RemainingWords, wordsSincePunctuation, isStartOfSentence, totalTime, currentQuote, WordsAmount } = getRandomWords(LengthDurationSetting, State1);
 
-        console.log(words);
+        // console.log(words);
 
-        console.log("remaining words = ", RemainingWords)
+        // console.log("remaining words = ", RemainingWords)
 
-        console.log("words Amount = ", WordsAmount)
+        // console.log("words Amount = ", WordsAmount)
 
 
 
@@ -961,7 +961,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         if (caretTop > MAX_CARET_Y) {
             // console.log("maxcarety = ", MAX_CARET_Y);P
             // incrementScroll();
-            console.log("delete")
+            // console.log("delete")
             Delete()
 
         }
@@ -1060,7 +1060,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         }
 
         // console.log("start")
-        console.log(SpanstoRemove)
+        // console.log(SpanstoRemove)
 
         const IndexOfSpansToRemove = SpanstoRemove.map((span) => {
             const Index = parseInt(span.dataset.wordIndex!, 10);
@@ -1203,7 +1203,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         //Mode has changed
         if (mode !== prevMode.current || config !== PrevConfig.current || LengthDurationSetting !== PrevLengthDurationSetting.current) {
             Reset();
-            console.log("reset")
+            // console.log("reset")
             prevMode.current = mode;
             PrevConfig.current = config;
             PrevLengthDurationSetting.current = LengthDurationSetting;
@@ -1710,7 +1710,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                     const RandomNumber = Math.floor(Math.random() * 1001).toString();
 
-                    console.log("Final = ", FinalWordArray[currentIndexPosition])
+                    // console.log("Final = ", FinalWordArray[currentIndexPosition])
 
                     if (/[.?!;]/.test(FinalWordArray[currentIndexPosition])) {
 
@@ -1835,7 +1835,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                     const RandomNumber = Math.floor(Math.random() * 1001).toString();
 
-                    console.log("Final = ", FinalWordArray[currentIndexPosition])
+                    // console.log("Final = ", FinalWordArray[currentIndexPosition])
 
                     if (/[.?!;]/.test(FinalWordArray[currentIndexPosition])) {
 
@@ -1944,16 +1944,16 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         }
         else if (mode == "word") {
 
-            console.log("hey");
+            // console.log("hey");
 
             if (state.isRedo) {
 
                 const NextIndexToGenerate = state.wordsAmount - state.RemainingWordsToGenerate;
 
-                console.log("words amount = ", state.wordsAmount)
-                console.log("remainingwordstogenerate = ", state.RemainingWordsToGenerate)
+                // console.log("words amount = ", state.wordsAmount)
+                // console.log("remainingwordstogenerate = ", state.RemainingWordsToGenerate)
 
-                console.log("Next = ", NextIndexToGenerate)
+                // console.log("Next = ", NextIndexToGenerate)
 
                 if (NextIndexToGenerate < state.PreviousWords.length) {
                     word = state.PreviousWords[NextIndexToGenerate];
@@ -2005,11 +2005,11 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                 // The first Index in the final Words Array to put the number
                 let Should_Spawn_Number = Math.floor(Math.random() * 11);
 
-                console.log(Should_Spawn_Number);
+                // console.log(Should_Spawn_Number);
 
                 if (Should_Spawn_Number === 0) {
 
-                    console.log("equal 0")
+                    // console.log("equal 0")
 
                     const RandomNumber = Math.floor(Math.random() * 1001).toString();
 
@@ -2034,10 +2034,10 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                 const NextIndexToGenerate = state.wordsAmount - state.RemainingWordsToGenerate;
 
-                console.log("words amount = ", state.wordsAmount)
-                console.log("remainingwordstogenerate = ", state.RemainingWordsToGenerate)
+                // console.log("words amount = ", state.wordsAmount)
+                // console.log("remainingwordstogenerate = ", state.RemainingWordsToGenerate)
 
-                console.log("Next = ", NextIndexToGenerate)
+                // console.log("Next = ", NextIndexToGenerate)
 
                 if (NextIndexToGenerate < state.PreviousWords.length) {
                     word = state.PreviousWords[NextIndexToGenerate];
@@ -2052,7 +2052,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
             }
 
 
-            console.log("hey")
+            // console.log("hey")
             if (config.includes("punctuation")) {
 
                 if (isStartOfSentence) {
@@ -2091,7 +2091,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                 // The first Index in the final Words Array to put the number
                 let Should_Spawn_Number = Math.floor(Math.random() * 11);
 
-                console.log(Should_Spawn_Number);
+                // console.log(Should_Spawn_Number);
 
                 if (Should_Spawn_Number === 0) {
 
@@ -2158,17 +2158,17 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         ClearTimer()
         ResetCaret()
 
-        console.log(inputref.current);
+        // console.log(inputref.current);
 
 
 
-            console.log("click");
+            // console.log("click");
             inputref.current?.focus();
 
 
         // inputref.current?.focus
 
-        console.log("reset");
+        // console.log("reset");
 
         dispatch({ type: "Reset", payload: {} })
 
