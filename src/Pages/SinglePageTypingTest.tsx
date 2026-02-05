@@ -57,11 +57,12 @@ const SinglePageTypingTest = () => {
 
 
 
+    //This is the original value
     const [LengthDurationSetting, SetLengthDurationSetting] = useState<string>(() => {
 
         const item = localStorage.getItem("SoloTestConfigs");
 
-        console.log("modeid " , JSON.parse(item!).LengthDurationSetting[modeID]);
+        // console.log("modeid " , JSON.parse(item!).LengthDurationSetting[modeID]);
 
         return item ? JSON.parse(item).LengthDurationSetting[modeID] : Modes[modeID].LengthDurationSetting.defaultValue
 
@@ -92,6 +93,22 @@ const SinglePageTypingTest = () => {
         // });
 
         SetLengthDurationSetting(Modes[id].LengthDurationSetting.defaultValue)
+
+        const stored = localStorage.getItem("SoloTestConfigs")
+        const UserConfig: SoloTestConfigs = stored ? JSON.parse(stored) : null
+
+        if(UserConfig){
+
+            console.log("id ", id);
+
+            //const news = UserConfig.LengthDurationSetting[Modes[modeID].id]
+            console.log("exists, ", UserConfig.LengthDurationSetting[Modes[id].id]! )
+            
+            SetLengthDurationSetting(UserConfig.LengthDurationSetting[Modes[id].id]!)
+
+        }
+
+        // Settings.LengthDurationSetting[Modes[modeID].id] = LengthDurationSetting;
     }
 
     function changeConfig(config: configID) {
@@ -176,6 +193,8 @@ const SinglePageTypingTest = () => {
 
             // const LengthDurationSettingWord = 
 
+            //This code needs to change depneding on whether we are a changing the config list or the modeid
+
             const word_LengthDurationSetting = UserConfig.LengthDurationSetting.word
             const time_LengthDurationSetting = UserConfig.LengthDurationSetting.time
             const quote_LengthDurationSetting = UserConfig.LengthDurationSetting.quote
@@ -193,6 +212,10 @@ const SinglePageTypingTest = () => {
             }
 
             //If there is solotestconfig inside of localstorage
+            console.log("LDS = ", LengthDurationSetting)
+
+            // I think this only makes sense to do in when changing the lengthdurationsetting 
+            //When we change the mode this breaks and sets
             Settings.LengthDurationSetting[Modes[modeID].id] = LengthDurationSetting;
 
             localStorage.setItem("SoloTestConfigs", JSON.stringify(Settings))
