@@ -896,6 +896,27 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
         return 40;
     }
+
+    function MoveCaretToEnd(event: any) {
+
+
+        // if (!inputref.current) return;
+
+        // inputref.current.selectionStart = inputref.current.value.length;
+        // inputref.current.selectionEnd = inputref.current.value.length
+
+        // requestAnimationFrame(() => {
+        //     if (!inputref.current) return;
+
+        //     inputref.current.selectionStart = inputref.current.value.length;
+        //     inputref.current.selectionEnd = inputref.current.value.length
+        // });
+
+        console.log("clicked");
+        inputref.current?.focus()
+
+
+    }
     // Caret Position
     useEffect(() => {
 
@@ -926,8 +947,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
         const input = inputref.current;
 
-        //  inputref.current.selectionStart = inputref.current.value.length;
-        //  inputref.current.selectionEnd = inputref.current.value.length
+        inputref.current.selectionStart = inputref.current.value.length;
+        inputref.current.selectionEnd = inputref.current.value.length
 
 
         input.addEventListener("keydown", (e: any) => {
@@ -2162,8 +2183,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
 
 
-            // console.log("click");
-            inputref.current?.focus();
+        // console.log("click");
+        inputref.current?.focus();
 
 
         // inputref.current?.focus
@@ -2204,6 +2225,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         Reset,
         Redo,
         lettersforOverTypedSection,
+        MoveCaretToEnd
 
 
     }

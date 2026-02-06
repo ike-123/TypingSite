@@ -257,7 +257,7 @@ const SinglePageTypingTest = () => {
     }, [engine.state.status])
 
     return (
-        <div className='bg-background'>
+        <div className='bg-background max-w-7xl flex flex-col items-center m-auto'>
 
 
 
@@ -277,6 +277,14 @@ const SinglePageTypingTest = () => {
                 
 
             </Card> */}
+
+            <div className='flex justify-center gap-3'>
+
+                <Button variant={"outline"}>Solo</Button>
+                <Button variant={"outline"}>Multiplayer</Button>
+                <Button variant={"outline"}>Games</Button>
+
+            </div>
 
             <div className='flex justify-center'>
 

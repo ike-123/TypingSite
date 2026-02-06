@@ -23,10 +23,10 @@
 
 .TypeTestContainer{
 
-        max-width: 1000px;
-        margin:auto;
-        padding-left: 30px;
-        padding-right: 30px;
+        // max-width: 1000px;
+        // margin:auto;
+        // padding-left: 30px;
+        // padding-right: 30px;
 
 
     
@@ -38,8 +38,8 @@
         padding-right: 3px;
 
         // border-radius: 20px 20px 0px 0px;
-        border-style: solid;
-        border-color: #334155;
+        // border-style: dotted;
+        // border-color: white;
         // border-width: 1px;
         height: 115px;
         // width: 305px;
@@ -54,8 +54,8 @@
             width: 2px;
             height: 33px;
             background-color: white;
-            animation: blink 1s step-start infinite;
-            transition: left 0.075s ease, top 0.075s linear;
+            // animation: blink 1s step-start infinite;
+            transition: left 0.1s linear, top 0.1s linear;
         }
 
 
