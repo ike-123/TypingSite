@@ -7,8 +7,8 @@ import {app} from "./socket";
 
 
 app.use(cors({
-    // origin: 'http://localhost:5173', // Replace with your frontend URL
-    origin: "*",
+    origin: 'http://localhost:5173/Multiplayer', // Replace with your frontend URL
+    // origin: "*",
     credentials: true
 }));
 
@@ -19,7 +19,7 @@ app.use('/api',AuthRouter)
 
 server.listen(port,'0.0.0.0',()=>{
 
-    console.log("Server Started on Port: ", port)
+    console.log("Server started on Port: ", port)
 
 })
 

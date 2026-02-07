@@ -1,0 +1,177 @@
+
+
+
+
+.wordsPerMinute{
+    font-size: 50px;
+    color: whitesmoke;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    margin: auto;
+    text-align: center;
+    margin-bottom: 50px;
+
+}
+
+.TypeTestContainer{
+
+    
+    .TextContainer{
+        padding: 20px;
+        background-color:#1e293b;
+        border-radius: 20px 20px 0px 0px;
+        border-style: solid;
+        border-color: #334155;
+        border-width: 1px;
+        height: 150px;
+        width: 805px;
+        margin: auto;
+        .QuoteText{
+            font-size: 30px;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            color: #8a8c8f;
+            position: relative;
+
+            .caret {
+                position: absolute;
+                width: 2px;
+                height: 1.1em;
+                background-color: white;
+                animation: blink 1s step-start infinite;
+                transition: left 0.075s ease, top 0.075s linear;
+            }
+
+        }   
+
+    }
+
+    .TextInput{
+
+        
+        
+        input{
+            background-color:#1e293b;
+            width: 838px;
+            height: 50px;
+            margin: auto;
+            padding-left: 5px;
+            display: block;
+            opacity: 0;
+            border-radius: 0px 0px 20px 20px;
+            border-style: solid;
+            border-width: 1px;
+            border-color: #334155;
+
+             outline: none;
+             font-size: 30px;
+             color: #c5e1e3;
+        }
+  
+ 
+
+
+        
+
+    }
+}
+
+
+.correct{
+    color: #e4e9f4;
+}
+.incorrect{
+    color: rgb(255, 60, 60);
+}
+.Highlighted{
+    background-color:#c5cde33d;
+    border-radius: 2px;
+}
+
+.Multiplayer{
+
+    .RaceTrack{
+
+        background-color: #376783;
+        height: 350px;
+        width: 1000px;
+        margin: auto;
+        border-radius: 10px;
+        position: relative;
+
+       
+
+        .PlayerSection{
+
+            
+            height: 70px;
+            border-width: 1px;
+            border-style: solid;
+            border-radius: 10px;
+            display: flex;
+            align-items:end;
+            justify-content: center;
+            padding-bottom: 4px;
+            padding-left: 4px;
+            position: relative;
+
+            
+            .FinshedText{
+                color: #b5c4c5;
+                position: absolute;
+                display: flex;
+                align-self: center;
+                font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+                font-size: 25px;
+
+            }
+
+            
+            .playerAvatar{
+           
+              
+                display: flex;
+               
+                width: 60px;
+            
+                transition: left 150ms linear;
+                img{
+                   width: 60px;
+                
+                }
+
+                
+                .wpm{
+                    font-size: 25px;
+                    color: rgb(244, 231, 208);
+                }
+            }
+            .WPM{
+                position: absolute;
+                right: 0;
+                color: wheat;
+                font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+
+            }
+
+        }
+
+    }
+
+     .finished{
+        background-color: green;
+            
+            
+        }
+
+       
+
+    .notfinished{
+        background-color:#0E3044;
+
+    }
+
+    .waitingtext{
+        
+        color: rgb(237, 229, 213);
+        text-align: center;
+    }
+}

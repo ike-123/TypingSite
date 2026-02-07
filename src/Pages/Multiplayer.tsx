@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react'
-import './Style.scss'
+import './StylesOG.scss'
 import words from '../words.json'
 import { io, Socket } from 'socket.io-client'
+import { NavLink } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 type PlayerState = { id: string; progressIndex: number; wpm: number; finished: boolean; finishtime: String };
 
@@ -91,10 +93,8 @@ const Multiplayer = () => {
 
 
         console.log("currentword ", CurrentWordsSpansRef.current.length);
-
         console.log("typedword ", TypedWord.length);
         console.log(CurrentWord);
-
 
 
 
@@ -200,8 +200,6 @@ const Multiplayer = () => {
 
             }
 
-
-
         }
     }
 
@@ -212,6 +210,42 @@ const Multiplayer = () => {
         <>
 
             <div className='main'>
+
+
+                <div className='flex justify-center gap-3'>
+
+                <NavLink to={"/"} >
+
+                    {({ isActive }) => (
+
+                        <Button variant={isActive ? "default" : "outline"}>Solo</Button>
+
+                    )}
+
+                </NavLink>
+
+                  <NavLink to={"/Multiplayer"} >
+
+                    {({ isActive }) => (
+
+                        <Button variant={isActive ? "default" : "outline"}>Multiplayer</Button>
+
+                    )}
+
+                </NavLink>
+
+
+                  <NavLink to={"/Games"} >
+
+                    {({ isActive }) => (
+
+                        <Button variant={isActive ? "default" : "outline"}>Games</Button>
+
+                    )}
+
+                </NavLink>
+
+            </div>
 
                 <div className='Multiplayer'>
 

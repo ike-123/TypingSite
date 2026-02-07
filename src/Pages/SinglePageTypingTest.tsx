@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog"
 import TestResults from '@/Components/TestResults'
 import { DialogOverlay } from '@radix-ui/react-dialog'
+import { NavLink } from 'react-router-dom'
 
 
 
@@ -97,13 +98,13 @@ const SinglePageTypingTest = () => {
         const stored = localStorage.getItem("SoloTestConfigs")
         const UserConfig: SoloTestConfigs = stored ? JSON.parse(stored) : null
 
-        if(UserConfig){
+        if (UserConfig) {
 
             console.log("id ", id);
 
             //const news = UserConfig.LengthDurationSetting[Modes[modeID].id]
-            console.log("exists, ", UserConfig.LengthDurationSetting[Modes[id].id]! )
-            
+            console.log("exists, ", UserConfig.LengthDurationSetting[Modes[id].id]!)
+
             SetLengthDurationSetting(UserConfig.LengthDurationSetting[Modes[id].id]!)
 
         }
@@ -280,9 +281,36 @@ const SinglePageTypingTest = () => {
 
             <div className='flex justify-center gap-3'>
 
-                <Button variant={"outline"}>Solo</Button>
-                <Button variant={"outline"}>Multiplayer</Button>
-                <Button variant={"outline"}>Games</Button>
+                <NavLink to={"/"} >
+
+                    {({ isActive }) => (
+
+                        <Button variant={isActive ? "default" : "outline"}>Solo</Button>
+
+                    )}
+
+                </NavLink>
+
+                  <NavLink to={"/Multiplayer"} >
+
+                    {({ isActive }) => (
+
+                        <Button variant={isActive ? "default" : "outline"}>Multiplayer</Button>
+
+                    )}
+
+                </NavLink>
+
+
+                  <NavLink to={"/Games"} >
+
+                    {({ isActive }) => (
+
+                        <Button variant={isActive ? "default" : "outline"}>Games</Button>
+
+                    )}
+
+                </NavLink>
 
             </div>
 

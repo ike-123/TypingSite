@@ -42,14 +42,12 @@ const router = createBrowserRouter([
     {
       path:"/",
       element:<SinglePageTypingTest/>
+    },
+    {
+      path:"/Multiplayer",
+      element: <Multiplayer/>
     }
   ]
-  
-},
-
-{
-  path: "/Multiplayer",
-  element: <div>Hello Multiplayer</div>,
   
 },
 ]);
