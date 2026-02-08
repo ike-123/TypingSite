@@ -4,6 +4,9 @@ import words from '../words.json'
 import { io, Socket } from 'socket.io-client'
 import { NavLink } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { useTypingEnigne2 } from '@/Hooks/useTypingEngine2';
+import SP_TypingTest from '@/Components/SP_TypingTest';
+import type { configID, modeID } from '@/utils/Typingmode';
 
 type PlayerState = { id: string; progressIndex: number; wpm: number; finished: boolean; finishtime: String };
 
@@ -22,7 +25,7 @@ function connectSocket() {
 }
 const Multiplayer = () => {
 
-
+    console.log(1);
     const [TypedWord, setTypedWord] = useState<string>("")
 
     const [CurrentWord, SetNewCurrenetWord] = useState(0)
@@ -52,68 +55,83 @@ const Multiplayer = () => {
 
     const blocked = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"];
 
+    const [modeID, SetMode] = useState<modeID>("quote");
 
+    const [configs, SetConfigs] = useState<configID[]>([]);
 
-    useEffect(() => {
-
-        if (!CurrentWordsSpansRef.current || !caretRef.current || !inputref.current) return;
-
-        const caretElement = caretRef.current;
-
-        const letterElement = CurrentWordsSpansRef.current[TypedWord.length - 1];
-
-        //const inputelment = document.getElementById("input");
-
-        const input = inputref.current;
-
-        //  inputref.current.selectionStart = inputref.current.value.length;
-        //  inputref.current.selectionEnd = inputref.current.value.length
-
-
-        input.addEventListener("keydown", (e) => {
-
-            if (blocked.includes(e.key)) {
-                e.preventDefault();
-            }
-        })
-
-        input.addEventListener("paste", (e) => {
-            e.preventDefault();
-        });
-
-        // // Prevent copying
-        // input.addEventListener("copy", (e) => {
-        // e.preventDefault();
-        // });
-
-        // // Prevent cutting
-        // input.addEventListener("cut", (e) => {
-        // e.preventDefault();
-        // });
-
-
-        console.log("currentword ", CurrentWordsSpansRef.current.length);
-        console.log("typedword ", TypedWord.length);
-        console.log(CurrentWord);
+     const [LengthDurationSetting, SetLengthDurationSetting] = useState<string>("");
 
 
 
-        if (!letterElement) {
-            console.log(CurrentWordsSpansRef.current);
-            caretElement.style.left = `${(CurrentWordsSpansRef.current[0]?.offsetLeft ?? 0) - 2}px`
-            caretElement.style.top = `${CurrentWordsSpansRef.current[0]?.offsetTop}px`
-
-            return;
-        }
-
-        console.log(letterElement);
 
 
-        caretElement.style.left = `${letterElement.offsetLeft + letterElement.offsetWidth - 2}px`
-        caretElement.style.top = `${letterElement.offsetTop}px`
+    // useEffect(() => {
+
+    //     if (!CurrentWordsSpansRef.current || !caretRef.current || !inputref.current) return;
+
+    //     const caretElement = caretRef.current;
+
+    //     const letterElement = CurrentWordsSpansRef.current[TypedWord.length - 1];
+
+    //     //const inputelment = document.getElementById("input");
+
+    //     const input = inputref.current;
+
+    //     //  inputref.current.selectionStart = inputref.current.value.length;
+    //     //  inputref.current.selectionEnd = inputref.current.value.length
 
 
-    }, [CurrentWordsSpansRef.current])
+    //     input.addEventListener("keydown", (e) => {
+
+    //         if (blocked.includes(e.key)) {
+    //             e.preventDefault();
+    //         }
+    //     })
+
+    //     input.addEventListener("paste", (e) => {
+    //         e.preventDefault();
+    //     });
+
+    //     // // Prevent copying
+    //     // input.addEventListener("copy", (e) => {
+    //     // e.preventDefault();
+    //     // });
+
+    //     // // Prevent cutting
+    //     // input.addEventListener("cut", (e) => {
+    //     // e.preventDefault();
+    //     // });
+
+
+    //     console.log("currentword ", CurrentWordsSpansRef.current.length);
+    //     console.log("typedword ", TypedWord.length);
+    //     console.log(CurrentWord);
+
+
+
+    //     if (!letterElement) {
+    //         console.log(CurrentWordsSpansRef.current);
+    //         caretElement.style.left = `${(CurrentWordsSpansRef.current[0]?.offsetLeft ?? 0) - 2}px`
+    //         caretElement.style.top = `${CurrentWordsSpansRef.current[0]?.offsetTop}px`
+
+    //         return;
+    //     }
+
+    //     console.log(letterElement);
+
+
+    //     caretElement.style.left = `${letterElement.offsetLeft + letterElement.offsetWidth - 2}px`
+    //     caretElement.style.top = `${letterElement.offsetTop}px`
+
+
+    // }, [CurrentWordsSpansRef.current])
+
+
+
+
+
+
+
 
 
 
@@ -124,7 +142,7 @@ const Multiplayer = () => {
 
     useEffect(() => {
 
-        const socket = io("192.168.1.239:3001")
+        const socket = io("http://localhost:3001")
 
         socketRef.current = socket;
 
@@ -159,6 +177,15 @@ const Multiplayer = () => {
 
 
     }, [])
+
+    console.log("Running Again")
+
+    const engine = useTypingEnigne2({
+        mode: modeID,
+        config: configs,
+        LengthDurationSetting: LengthDurationSetting,
+        providedText: words
+    })
 
 
 
@@ -214,38 +241,38 @@ const Multiplayer = () => {
 
                 <div className='flex justify-center gap-3'>
 
-                <NavLink to={"/"} >
+                    <NavLink to={"/"} >
 
-                    {({ isActive }) => (
+                        {({ isActive }) => (
 
-                        <Button variant={isActive ? "default" : "outline"}>Solo</Button>
+                            <Button variant={isActive ? "default" : "outline"}>Solo</Button>
 
-                    )}
+                        )}
 
-                </NavLink>
+                    </NavLink>
 
-                  <NavLink to={"/Multiplayer"} >
+                    <NavLink to={"/Multiplayer"} >
 
-                    {({ isActive }) => (
+                        {({ isActive }) => (
 
-                        <Button variant={isActive ? "default" : "outline"}>Multiplayer</Button>
+                            <Button variant={isActive ? "default" : "outline"}>Multiplayer</Button>
 
-                    )}
+                        )}
 
-                </NavLink>
+                    </NavLink>
 
 
-                  <NavLink to={"/Games"} >
+                    <NavLink to={"/Games"} >
 
-                    {({ isActive }) => (
+                        {({ isActive }) => (
 
-                        <Button variant={isActive ? "default" : "outline"}>Games</Button>
+                            <Button variant={isActive ? "default" : "outline"}>Games</Button>
 
-                    )}
+                        )}
 
-                </NavLink>
+                    </NavLink>
 
-            </div>
+                </div>
 
                 <div className='Multiplayer'>
 
@@ -394,6 +421,10 @@ const Multiplayer = () => {
 
 
                 </div>
+
+
+
+                <SP_TypingTest engine={engine} ></SP_TypingTest>
 
 
             </div>

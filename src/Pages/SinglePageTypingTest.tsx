@@ -175,6 +175,7 @@ const SinglePageTypingTest = () => {
     })
 
 
+
     useEffect(() => {
 
         // Call SetAllowedConfigs and check to see if each config inside selectedconfigs is allowed for this specific mode
