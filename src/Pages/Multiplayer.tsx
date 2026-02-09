@@ -11,18 +11,19 @@ import type { configID, modeID } from '@/utils/Typingmode';
 type PlayerState = { id: string; progressIndex: number; wpm: number; finished: boolean; finishtime: String };
 
 
-function getRandomWords(amount: number) {
-    const randomArray = [...words].sort(() => 0.5 - Math.random());
-    return randomArray.slice(0, amount)
-}
+// function getRandomWords(amount: number) {
+//     const randomArray = [...words].sort(() => 0.5 - Math.random());
+//     return randomArray.slice(0, amount)
+// }
 
-function connectSocket() {
+// function connectSocket() {
 
-    const socket = io("http://localhost:3001")
-    socket.on('connect', () => {
-        console.log("you connected with ", socket.id)
-    })
-}
+//     const socket = io("http://localhost:3001")
+//     socket.on('connect', () => {
+//         console.log("you connected with ", socket.id)
+//     })
+// }
+
 const Multiplayer = () => {
 
     console.log(1);
@@ -47,19 +48,19 @@ const Multiplayer = () => {
     const [PlayersInServer, SetPlayersInServer] = useState(0);
 
 
-    const caretRef = useRef<HTMLDivElement | null>(null);
+    // const caretRef = useRef<HTMLDivElement | null>(null);
 
-    const CurrentWordsSpansRef = useRef<(HTMLSpanElement | null)[]>([]);
+    // const CurrentWordsSpansRef = useRef<(HTMLSpanElement | null)[]>([]);
 
-    const inputref = useRef<HTMLInputElement | null>(null);
+    // const inputref = useRef<HTMLInputElement | null>(null);
 
-    const blocked = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"];
+    // const blocked = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"];
 
     const [modeID, SetMode] = useState<modeID>("quote");
 
     const [configs, SetConfigs] = useState<configID[]>([]);
 
-     const [LengthDurationSetting, SetLengthDurationSetting] = useState<string>("");
+    const [LengthDurationSetting, SetLengthDurationSetting] = useState<string>("");
 
 
 
@@ -137,10 +138,19 @@ const Multiplayer = () => {
 
     // const [lettersforOverTypedSection,setOverTypeSection] = useState<string[] | null>([]);
 
-    let lettersforOverTypedSection: string[] = [];
+    // let lettersforOverTypedSection: string[] = [];
+
+    let engine = useTypingEnigne2({
+        mode: modeID,
+        config: configs,
+        LengthDurationSetting: LengthDurationSetting,
+        providedText: words
+    })
 
 
     useEffect(() => {
+
+        console.log("hey")
 
         const socket = io("http://localhost:3001")
 
@@ -150,11 +160,18 @@ const Multiplayer = () => {
             setCountdown(n);
         })
         socket.on("setWords", ({ words }) => {
+
+            console.log("words coming")
+
             setWords(words);
+            engine.Reset()
+
         })
         socket.on("start", ({ words, startAt }) => {
 
             setWords(words)
+            engine.Reset()
+
             setStartAt(startAt)
             SetNewCurrenetWord(0);
             setTypedWord("");
@@ -178,14 +195,7 @@ const Multiplayer = () => {
 
     }, [])
 
-    console.log("Running Again")
-
-    const engine = useTypingEnigne2({
-        mode: modeID,
-        config: configs,
-        LengthDurationSetting: LengthDurationSetting,
-        providedText: words
-    })
+    // console.log("Running Again")
 
 
 
@@ -230,13 +240,29 @@ const Multiplayer = () => {
         }
     }
 
+    useEffect(() => {
+
+
+        if (status != "waiting" && status != "countdown") {
+
+            setprogressPercent(engine.state.CurrentWordIndex / words.length * 100)
+
+            const elapsedMs = Date.now() - (startAt ?? 0);
+            const totalChars = words.slice(0, engine.state.CurrentWordIndex).join(" ").length;
+
+            socketRef.current?.emit("wordDone", { nextIndex:engine.state.CurrentWordIndex , elapsedMs, totalChars });
+        }
+
+
+    }, [engine.state.CurrentWordIndex])
+
 
 
     return (
 
         <>
 
-            <div className='main'>
+            <div className='main bg-background max-w-7xl flex flex-col items-center m-auto'>
 
 
                 <div className='flex justify-center gap-3'>
@@ -274,7 +300,7 @@ const Multiplayer = () => {
 
                 </div>
 
-                <div className='Multiplayer'>
+                <div className='Multiplayer mb-10'>
 
                     {countdown !== null && <h1 className='infotext'>Game starts in {countdown}</h1>}
                     {status === "waiting" ? <h1 className='infotext'>Waiting For more Players</h1> : ""}
@@ -334,93 +360,6 @@ const Multiplayer = () => {
                     </div>
                 </div>
 
-                <div className="TypeTestContainer">
-
-                    <div className='TextContainer'>
-                        <div className="QuoteText">
-
-                            <div ref={caretRef} className="caret" />
-
-
-                            {/* loop through all the words in the words array */}
-                            {words.map((word, wordIndex) => (
-
-                                //If CurrentWord is greater than WordIndex then user has alreadly typed the word and class will be "correct"
-
-                                <span className={`${CurrentWord > wordIndex ? "correct" : ""} ${wordIndex === CurrentWord ? "CurrentWord" : ""}`} key={wordIndex}>
-
-                                    <span>
-                                        {/* split the word array to retrieve each letter and put in in a span */}
-
-                                        {word.split("").map((character, letterindex) => {
-
-                                            lettersforOverTypedSection = [];
-                                            const isCurrent = CurrentWord === wordIndex
-                                            CurrentWordsSpansRef.current = [];
-
-
-                                            if (isCurrent) {
-                                                //this is the last letter in the word and we want to check if the user has typed any other letters after which we will append after the word and highlight in red
-                                                if (isCurrent && letterindex + 1 === word.length) {
-
-
-                                                    if (TypedWord.length > word.length) {
-                                                        //get the letters that have been overtyped
-
-                                                        const Overtypedsection = TypedWord.slice(word.length, TypedWord.length);
-
-                                                        lettersforOverTypedSection = Overtypedsection.split("");
-                                                        console.log(lettersforOverTypedSection);
-
-                                                    }
-
-                                                }
-                                            }
-
-                                            //the value the user has typed at the specific letter index
-                                            const typedchar = TypedWord[letterindex] ?? ""
-
-                                            const charClass = isCurrent ? (typedchar === "" ? "" : (typedchar === character ? "correct" : "incorrect")) : ""
-
-
-                                            //put each letter into a span and inside of the ref attribute add the current span into the currentwordsspanref array
-                                            return (
-                                                <span ref={wordIndex === CurrentWord ? (element) => { if (element) CurrentWordsSpansRef.current.push(element) } : null} className={charClass} key={letterindex}>{character}</span>
-                                            )
-
-                                        })}
-
-                                        {/* if lettersforOverTypedSection exists then we have overtyped and we can append the extra values after the word */}
-                                        {lettersforOverTypedSection && lettersforOverTypedSection.map((character, index) => (
-
-                                            <span ref={wordIndex === CurrentWord ? (element) => { if (element) CurrentWordsSpansRef.current.push(element) } : null} className="incorrect" key={index}>{character}</span>
-                                        ))}
-
-
-
-                                    </span>
-
-                                    <span> </span>
-                                </span>
-
-
-                            ))}
-
-                        </div>
-
-                    </div>
-
-
-                    <div className='TextInput'>
-
-
-                        <input ref={inputref} id="input" type="text" autoComplete='off' autoFocus value={TypedWord} onKeyDown={HandleKeyDown} onChange={ChangeInput} />
-
-                    </div>
-
-
-
-                </div>
 
 
 

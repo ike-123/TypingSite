@@ -37,7 +37,7 @@ export class GameRoom {
         this.words = [];
         this.startAt = null;
         this.countdownTimer = 10;
-        this.words = this.getRandomWords(10);
+        this.words = this.getRandomWords(30);
 
     }
 
@@ -75,7 +75,7 @@ export class GameRoom {
                 this.io.to(this.roomId).emit("countdown",countdown)
                 countdown--;
     
-                if(countdown <= 0){
+                if(countdown <= -1 ){
                     clearInterval(interval)
                     this.status = "running"
                     this.startAt = Date.now() + 500

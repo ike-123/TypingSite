@@ -542,6 +542,8 @@ export function useTypingEnigne2({ mode, config, LengthDurationSetting, provided
 
             case "Update_EverySecond":
 
+            console.log("updating");
+
                 CurrentModeLogic = Modes[mode].ModeLogic
 
                 const NewCount = state.count + 1
