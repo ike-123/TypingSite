@@ -10,6 +10,8 @@ import type { configID, modeID } from '@/utils/Typingmode';
 
 type PlayerState = { id: string; progressIndex: number; wpm: number; finished: boolean; finishtime: String };
 
+type Status = "waiting" | "countdown" | "running"
+
 
 // function getRandomWords(amount: number) {
 //     const randomArray = [...words].sort(() => 0.5 - Math.random());
@@ -43,7 +45,7 @@ const Multiplayer = () => {
 
     const [players, setPlayers] = useState<PlayerState[]>([]);
 
-    const [status, setStatus] = useState("waiting");
+    const [status, setStatus] = useState<Status>("waiting");
 
     const [PlayersInServer, SetPlayersInServer] = useState(0);
 
@@ -261,6 +263,7 @@ const Multiplayer = () => {
     return (
 
         <>
+        {engine.state.CurrentWordIndex}
 
             <div className='main bg-background max-w-7xl flex flex-col items-center m-auto'>
 

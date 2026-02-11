@@ -16,51 +16,57 @@ import Home2 from './Pages/Home2';
 import SinglePageTypingTest from './Pages/SinglePageTypingTest';
 import TestResults from './Components/TestResults';
 import TestResultsPage from './Components/TestResultsPage';
+import Games from './Pages/Games';
 
 
 
-const PageStructure = ()=>{
+const PageStructure = () => {
 
 
 
-  return(
+  return (
     <>
-    <Navbar/>
-    <Outlet/>
-    <Footer/>
+      <Navbar />
+      <Outlet />
+      <Footer />
     </>
   )
 }
 
 const router = createBrowserRouter([
-{
+  {
 
-  
-  path: "/",
-  element: <PageStructure/>,
-  children:[
-    {
-      path:"/",
-      element:<SinglePageTypingTest/>
-    },
-    {
-      path:"/Multiplayer",
-      element: <Multiplayer/>
-    }
-  ]
-  
-},
+
+    path: "/",
+    element: <PageStructure />,
+    children: [
+      {
+        path: "/",
+        element: <SinglePageTypingTest />
+      },
+      {
+        path: "/Multiplayer",
+        element: <Multiplayer />
+      },
+      {
+        path: "/Games",
+        element: <Games/>
+      }
+
+    ]
+
+  },
 ]);
 
 function App() {
 
   return (
     <div>
-      <RouterProvider router={router}/>
+      <RouterProvider router={router} />
     </div>
   )
-   
-  
+
+
 }
 
 export default App
