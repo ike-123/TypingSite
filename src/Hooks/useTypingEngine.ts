@@ -54,6 +54,7 @@ export interface State {
     isRedo: boolean
     PreviousWords: string[]
     errors: number[]
+    lastkeyPressed: string
 }
 
 // export interface InitialState {
@@ -796,7 +797,9 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
         TotalTime: 0,
         isRedo: false,
         PreviousWords: [],
-        errors: []
+        errors: [],
+        lastkeyPressed: ""
+
     }
 
     // const InitialState: InitialState = {

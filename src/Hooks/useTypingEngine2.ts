@@ -53,12 +53,13 @@ export interface State {
     isRedo: boolean
     PreviousWords: string[]
     errors: number[]
+    lastkeyPressed: string
 }
 
 
 
 export interface Action {
-    type: "InputChanged" | "SpacebarPressed" | "BackspacePressed" | "Reset" | "RedoTest" | "StartTest" | "FinishTest" | "Update_EverySecond" | "CurrentWordChange" | "UpdateAllwordMap" | "AddRandomWordToList" | "INIT_WORDS"
+    type: "InputChanged" | "SpacebarPressed" | "BackspacePressed" | "Reset" | "RedoTest" | "StartTest" | "FinishTest" | "Update_EverySecond" | "CurrentWordChange" | "UpdateAllwordMap" | "AddRandomWordToList" | "INIT_WORDS" | "UpdateLastKeyPressed"
     payload: any
 }
 
@@ -258,9 +259,9 @@ export function useTypingEnigne2({ mode, config, LengthDurationSetting, provided
 
 
                         if (value.length > state.words[CurrentWordIndex].length) {
-                            //we are over typing 
-                            // SetInCorrectCount((prev: number) => prev + 1);
+                            //we are over typing increase incorrect count
                             incorrectCount++;
+                            //Add current time to list of errors
                             errors = [...state.errors, timeElapsed]
 
                         }
@@ -298,9 +299,11 @@ export function useTypingEnigne2({ mode, config, LengthDurationSetting, provided
 
             case "SpacebarPressed":
 
+                // const LastKeyPressed = keyPressEvent.code;
+
                 const newMap0 = new Map(state.AllWordMap);
 
-                console.log(state.words);
+                // console.log(state.words);
 
                 //Only progress to the next word if it is correct
 
@@ -430,7 +433,7 @@ export function useTypingEnigne2({ mode, config, LengthDurationSetting, provided
                     RemainingWordsToGenerate: RemainingWordsToGenerate,
                     wordsSincePunctuation: wordsSincePunctuation,
                     isStartOfSentence: isStartOfSentence,
-                    errors: errors
+                    errors: errors,
 
                 }
 
@@ -508,7 +511,7 @@ export function useTypingEnigne2({ mode, config, LengthDurationSetting, provided
 
                 // console.log("words :", state.words);
                 // console.log("final word array")
-                console.log(state.WpmEverySecond)
+                // console.log(state.WpmEverySecond)
 
                 AllWordMap.forEach((word: any) => {
                     // console.log(word.text)
@@ -546,7 +549,7 @@ export function useTypingEnigne2({ mode, config, LengthDurationSetting, provided
 
             case "Update_EverySecond":
 
-            console.log("updating");
+                // console.log("updating");
 
                 CurrentModeLogic = Modes[mode].ModeLogic
 
@@ -690,6 +693,16 @@ export function useTypingEnigne2({ mode, config, LengthDurationSetting, provided
                     isStartOfSentence: isStartOfSentence
                 }
 
+            case "UpdateLastKeyPressed":
+
+              const LastKeyPressed = keyPressEvent.code;
+                return {
+                    ...state,
+                    lastkeyPressed: LastKeyPressed
+
+
+                }
+
             // case "UpdateRemainingWords":
 
             // const NewRemainingWords = RemainingWordsToGenerate - RemainingWords;
@@ -732,7 +745,8 @@ export function useTypingEnigne2({ mode, config, LengthDurationSetting, provided
         TotalTime: 0,
         isRedo: false,
         PreviousWords: [],
-        errors: []
+        errors: [],
+        lastkeyPressed: ""
     }
 
     // const InitialState: InitialState = {
@@ -1048,7 +1062,7 @@ export function useTypingEnigne2({ mode, config, LengthDurationSetting, provided
 
         // console.log("TOP = ", Top);
 
-        console.log("top")
+        // console.log("top")
 
         if (Top > 60) {
 
@@ -1061,19 +1075,19 @@ export function useTypingEnigne2({ mode, config, LengthDurationSetting, provided
         // console.log("chagne")
         //Mode has changed
 
-        if(config === PrevConfig.current){
-            console.log("the same")
+        if (config === PrevConfig.current) {
+            // console.log("the same")
         }
-        else{
-            console.log("not the same")
+        else {
+            // console.log("not the same")
 
         }
         if (mode !== prevMode.current || config !== PrevConfig.current || LengthDurationSetting !== PrevLengthDurationSetting.current) {
             Reset();
             // console.log("reset")
-            console.log("mode = ",mode, " prevmode = ",prevMode.current)
-            console.log("config = ",config, " prevconfig = ",PrevConfig.current)
-            console.log("lengthduartion = ",LengthDurationSetting," prevlengthduration = ",PrevLengthDurationSetting.current)
+            // console.log("mode = ",mode, " prevmode = ",prevMode.current)
+            // console.log("config = ",config, " prevconfig = ",PrevConfig.current)
+            // console.log("lengthduartion = ",LengthDurationSetting," prevlengthduration = ",PrevLengthDurationSetting.current)
 
             prevMode.current = mode;
             PrevConfig.current = config;
@@ -1150,9 +1164,23 @@ export function useTypingEnigne2({ mode, config, LengthDurationSetting, provided
             dispatch({ type: "StartTest", payload: {} });
 
         }
-        const value = event.target.value;
+        let value = event.target.value.trimEnd();
         const inputEvent = event.nativeEvent as InputEvent;
         const inputEventData = inputEvent.data;
+        console.log(inputEvent)
+
+        // console.log("last key pressed", state.lastkeyPressed);
+
+
+        if(value[value.length-1] === "." && state.lastkeyPressed != "Period"){
+            // console.log("ends in full stop")
+            // console.log("last key pressed", state.lastkeyPressed);
+            value = value.slice(0,-1);
+
+        }
+
+        //If there is a full stop at the end of the word. Check to see if the last key we pressed was '.' If not remove it.
+
 
         dispatch({ type: "InputChanged", payload: { value, inputEventData } })
 
@@ -1218,7 +1246,10 @@ export function useTypingEnigne2({ mode, config, LengthDurationSetting, provided
 
     function HandleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
 
+        // console.log("code = ", event.code);
 
+        console.log("1")
+        dispatch({type:"UpdateLastKeyPressed", payload: {keyPressEvent: event}})
 
         if (event.code === "Space") {
             event.preventDefault();
@@ -1285,12 +1316,12 @@ export function useTypingEnigne2({ mode, config, LengthDurationSetting, provided
 
         if (mode == "quote") {
 
-            console.log("is quote")
+            // console.log("is quote")
             if (providedText != null) {
 
-                
+
                 const CurrentQuote = providedText
-                console.log(CurrentQuote)
+                // console.log(CurrentQuote)
                 const WordsAmount = CurrentQuote.length;
 
                 if (WordsAmount <= AmountOfWordsToGenerateOnStart) {

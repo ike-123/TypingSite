@@ -119,7 +119,7 @@ const SP_TypingTest = ({ engine }: { engine: ReturnType<typeof useTypingEnigne> 
 
                     {/* <div className=''> */}
 
-                    <input className={`w-full h-[115px] m-auto  outline-none bg-red-200 pointer-events-none ${engine.focus ? "opacity-50" : "opacity-50"} `} ref={engine.inputref} id="input" type="text" autoComplete='off' spellCheck="false" autoCapitalize='false' autoCorrect='false' autoFocus value={engine.state.TypedWord} onFocus={() => { console.log("setting focus true"); engine.SetFocus(true) }} onBlur={() => { console.log("setting focus false"); engine.SetFocus(false) }} onKeyDown={engine.HandleKeyDown} onChange={engine.ChangeInput} onClick={engine.MoveCaretToEnd} />
+                    <input className={`w-full h-[115px] m-auto  outline-none bg-red-200 pointer-events-none ${engine.focus ? "opacity-50" : "opacity-50"} `} ref={engine.inputref} id="input" type="text" autoComplete='off' spellCheck="false" autoCapitalize='false' autoCorrect='false' autoFocus value={engine.state.TypedWord} onFocus={() => { engine.SetFocus(false) }} onKeyDown={engine.HandleKeyDown} onChange={engine.ChangeInput} onClick={engine.MoveCaretToEnd} />
 
                     {/* </div> */}
 

@@ -28,7 +28,7 @@ type Status = "waiting" | "countdown" | "running"
 
 const Multiplayer = () => {
 
-    console.log(1);
+    // console.log(1);
     const [TypedWord, setTypedWord] = useState<string>("")
 
     const [CurrentWord, SetNewCurrenetWord] = useState(0)
@@ -152,7 +152,7 @@ const Multiplayer = () => {
 
     useEffect(() => {
 
-        console.log("hey")
+        // console.log("hey")
 
         const socket = io("http://localhost:3001")
 
@@ -163,7 +163,7 @@ const Multiplayer = () => {
         })
         socket.on("setWords", ({ words }) => {
 
-            console.log("words coming")
+            // console.log("words coming")
 
             setWords(words);
             engine.Reset()
@@ -186,7 +186,7 @@ const Multiplayer = () => {
 
         socket.on("state", (ps: PlayerState[]) => {
             setPlayers(ps);
-            console.log(ps);
+            // console.log(ps);
         });
         socket.on("NumberOfPlayers", (amount) => {
             SetPlayersInServer(amount)
@@ -263,6 +263,7 @@ const Multiplayer = () => {
     return (
 
         <>
+        <div>Last Key pressed {engine.state.lastkeyPressed}</div>
         {engine.state.CurrentWordIndex}
 
             <div className='main bg-background max-w-7xl flex flex-col items-center m-auto'>
