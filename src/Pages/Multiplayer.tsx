@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useTypingEnigne2 } from '@/Hooks/useTypingEngine2';
 import SP_TypingTest from '@/Components/SP_TypingTest';
 import type { configID, modeID } from '@/utils/Typingmode';
+import { useTypingEnigne } from '@/Hooks/useTypingEngine';
 
 type PlayerState = { id: string; progressIndex: number; wpm: number; finished: boolean; finishtime: String };
 
@@ -142,11 +143,12 @@ const Multiplayer = () => {
 
     // let lettersforOverTypedSection: string[] = [];
 
-    let engine = useTypingEnigne2({
+    let engine = useTypingEnigne({
         mode: modeID,
         config: configs,
         LengthDurationSetting: LengthDurationSetting,
-        providedText: words
+        providedText: words,
+        ProgressOnlyOnCorrect: true
     })
 
 
@@ -367,7 +369,7 @@ const Multiplayer = () => {
 
 
 
-                <SP_TypingTest engine={engine} ></SP_TypingTest>
+                <SP_TypingTest engine={engine} HighlightIncorrectCurrentWord={true} ></SP_TypingTest>
 
 
             </div>

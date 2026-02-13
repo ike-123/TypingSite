@@ -18,7 +18,10 @@ export interface TypingModeConfig {
 
     mode: modeID,
     config: string[],
-    LengthDurationSetting: string
+    LengthDurationSetting: string,
+    providedText?: string[] | null,
+    ProgressOnlyOnCorrect: boolean
+
 
 }
 
@@ -54,6 +57,7 @@ export interface State {
     isRedo: boolean
     PreviousWords: string[]
     errors: number[]
+    CurrentWordIncorrect: false
     lastkeyPressed: string
 }
 
@@ -83,7 +87,7 @@ export interface State {
 
 
 export interface Action {
-    type: "InputChanged" | "SpacebarPressed" | "BackspacePressed" | "Reset" | "RedoTest" | "StartTest" | "FinishTest" | "Update_EverySecond" | "CurrentWordChange" | "UpdateAllwordMap" | "AddRandomWordToList" | "INIT_WORDS"
+    type: "InputChanged" | "SpacebarPressed" | "BackspacePressed" | "Reset" | "RedoTest" | "StartTest" | "FinishTest" | "Update_EverySecond" | "CurrentWordChange" | "UpdateAllwordMap" | "AddRandomWordToList" | "INIT_WORDS" | "UpdateLastKeyPressed"
     payload: any
 }
 
@@ -102,7 +106,7 @@ const punctuation2 = [
     // { char: ")", weight: 1 },
 ];
 
-export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingModeConfig) {
+export function useTypingEnigne({ mode, config, LengthDurationSetting, providedText, ProgressOnlyOnCorrect }: TypingModeConfig) {
 
 
     // const [words] = useState(() => getRandomWords(5));
@@ -251,6 +255,10 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
         let errors = state.errors;
 
+        let CurrentWordIncorrect = state.CurrentWordIncorrect;
+
+
+
 
 
 
@@ -286,6 +294,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                         //overtyped so incorrect
 
+
+                        
                         iscorrect = false;
 
                         // console.log("1")
@@ -319,7 +329,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                     NewMap0.set(CurrentWordIndex, { text: value, isCorrect: iscorrect, OutsideTextContainer: false });
 
-                    // console.log(NewMap0);
+                    console.log(NewMap0);
 
                     // const inputEvent = event.nativeEvent as InputEvent;
                     // const data = inputEvent.data;
@@ -403,6 +413,13 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                         correctCount++;
 
+                        if (ProgressOnlyOnCorrect) {
+
+                            //Move to the next word
+                            CurrentWordIndex++;
+                            TypedWord = "";
+                        }
+
                     }
                     else {
 
@@ -414,10 +431,12 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
                     }
 
-                    CurrentWordIndex++;
-                    TypedWord = "";
+                    if (!ProgressOnlyOnCorrect) {
 
-
+                        //Move to the next word
+                        CurrentWordIndex++;
+                        TypedWord = "";
+                    }
 
                     if (AllWordMap.size > HighestIndexTyped) {
                         //Only when the allwordmap size is greater than highest index typed can we generate a new word
@@ -754,6 +773,17 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
                     wordsSincePunctuation: wordsSincePunctuation,
                     isStartOfSentence: isStartOfSentence
                 }
+
+            case "UpdateLastKeyPressed":
+
+                const LastKeyPressed = keyPressEvent.code;
+                return {
+                    ...state,
+                    lastkeyPressed: LastKeyPressed
+
+
+                }
+
 
             // case "UpdateRemainingWords":
 
@@ -1299,15 +1329,28 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
         // console.log("tstate = ", state.status);
 
+
         if (state.status === "notstarted") {
             dispatch({ type: "StartTest", payload: {} });
 
         }
-        const value = event.target.value;
+        let value = event.target.value.trimEnd();
         const inputEvent = event.nativeEvent as InputEvent;
         const inputEventData = inputEvent.data;
+        console.log(inputEvent)
 
+        if (value[value.length - 1] === "." && state.lastkeyPressed != "Period") {
+            // console.log("ends in full stop")
+            // console.log("last key pressed", state.lastkeyPressed);
+            value = value.slice(0, -1);
+        }
+
+        //If there is a full stop at the end of the word. Check to see if the last key we pressed was '.' If not remove it.
         dispatch({ type: "InputChanged", payload: { value, inputEventData } })
+
+
+
+
 
         // setTypedWord(value)
 
@@ -1371,7 +1414,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
     function HandleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
 
-
+        dispatch({ type: "UpdateLastKeyPressed", payload: { keyPressEvent: event } })
 
         if (event.code === "Space") {
             event.preventDefault();
@@ -1518,6 +1561,31 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting }: TypingM
 
         //If mode = quote
         if (mode == "quote") {
+
+            if (providedText != null) {
+
+
+                const CurrentQuote = providedText
+                // console.log(CurrentQuote)
+                const WordsAmount = CurrentQuote.length;
+
+                if (WordsAmount <= AmountOfWordsToGenerateOnStart) {
+
+                    FinalWordArray = CurrentQuote;
+                    RemainingWords = 0;
+
+                }
+                else {
+
+                    FinalWordArray = CurrentQuote.slice(0, AmountOfWordsToGenerateOnStart)
+
+                    RemainingWords = WordsAmount - AmountOfWordsToGenerateOnStart;
+
+                }
+
+                return { words: FinalWordArray, RemainingWords, isStartOfSentence, wordsSincePunctuation, totalTime, currentQuote: CurrentQuote, WordsAmount };
+            }
+
 
             if (state && state.isRedo) {
 

@@ -341,7 +341,7 @@ export function useTypingEnigne2({ mode, config, LengthDurationSetting, provided
 
                         //This cause a new word to be spawned at the end in multiplayer mode even if the word is not typed correctly. and thats ok
 
-                        keyPressEvent.preventDefault()
+                        // keyPressEvent.preventDefault()
 
                         newMap0.set(CurrentWordIndex, { text: candidate, isCorrect: false, OutsideTextContainer: false })
 
@@ -433,7 +433,7 @@ export function useTypingEnigne2({ mode, config, LengthDurationSetting, provided
                     RemainingWordsToGenerate: RemainingWordsToGenerate,
                     wordsSincePunctuation: wordsSincePunctuation,
                     isStartOfSentence: isStartOfSentence,
-                    errors: errors,
+                    errors: errors
 
                 }
 

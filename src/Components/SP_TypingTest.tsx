@@ -5,7 +5,13 @@ import { useTypingEnigne } from '../Hooks/useTypingEngine'
 
 
 
-const SP_TypingTest = ({ engine }: { engine: ReturnType<typeof useTypingEnigne> }) => {
+type SP_TypingTestProps = {
+    engine: ReturnType<typeof useTypingEnigne>;
+    HighlightIncorrectCurrentWord: boolean;
+};
+
+
+const SP_TypingTest = ({engine,HighlightIncorrectCurrentWord}:SP_TypingTestProps) => {
 
     return (
 
@@ -24,12 +30,12 @@ const SP_TypingTest = ({ engine }: { engine: ReturnType<typeof useTypingEnigne> 
 
             <div className="TypeTestContainer">
 
-                <div ref={engine.TextContainerref} className='flex px-[3px] border-solid h-[115px] bg-[#1e293b] overflow-hidden relative'>
+                <div ref={engine.TextContainerref} className='flex px-[3px] h-[115px] bg-[#1e293b] overflow-hidden relative'>
 
 
                     {/* <div id='wordcontainer' className={`relative text-3xl text-[#8a8c8f]`} style={{ marginTop: engine.margin > 0 ? -(engine.margin * 39) : 0, }}> */}
                     {/* <div ref={engine.WordContainerRef}  id='wordcontainer' className={`relative text-3xl text-[#8a8c8f]`} style={{ transform: `translateY(-${engine.lineoffset * engine.LINE_HEIGHT}px)` }}> */}
-                    <div ref={engine.WordContainerRef} id='wordcontainer' className={`relative text-3xl text-[#8a8c8f] `} onClick={engine.MoveCaretToEnd} >
+                    <div ref={engine.WordContainerRef} id='wordcontainer' className={`relative text-3xl text-[#8a8c8f] my-1 `} onClick={engine.MoveCaretToEnd} >
 
 
                         <div ref={engine.caretRef} id='Textcontainer' className="absolute w-[2px] h-[33px] bg-white transition-all duration-100" />
@@ -39,7 +45,7 @@ const SP_TypingTest = ({ engine }: { engine: ReturnType<typeof useTypingEnigne> 
 
                             //If CurrentWord is greater than WordIndex then user has alreadly typed the word and class will be "correct"
 
-                            <span data-word-index={engine.state.IndexToStartFrom + wordIndex} className={`word ${(engine.state.IndexToStartFrom + wordIndex) < engine.state.CurrentWordIndex ? (`${engine.state.AllWordMap.get(engine.state.IndexToStartFrom + wordIndex)?.isCorrect ? "correct" : "incorrectword"}`) : ""}`} key={engine.state.IndexToStartFrom + wordIndex}>
+                            <span data-word-index={engine.state.IndexToStartFrom + wordIndex} className={`word ${ (HighlightIncorrectCurrentWord && (engine.state.IndexToStartFrom + wordIndex) === (engine.state.CurrentWordIndex) && !engine.state.AllWordMap.get(engine.state.IndexToStartFrom + wordIndex)?.isCorrect && engine.state.TypedWord.length > 0)? " border-3 border-red-400 border-dashed rounded-xs" : "" } ${(engine.state.IndexToStartFrom + wordIndex) < engine.state.CurrentWordIndex ? (`${engine.state.AllWordMap.get(engine.state.IndexToStartFrom + wordIndex)?.isCorrect ? "correct" : "incorrectword"}`) : ""}`} key={engine.state.IndexToStartFrom + wordIndex}>
 
                                 <span>
                                     {/* split the word array to retrieve each letter and put it in a span */}

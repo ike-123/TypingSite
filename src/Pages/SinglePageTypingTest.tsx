@@ -171,7 +171,8 @@ const SinglePageTypingTest = () => {
     const engine = useTypingEnigne({
         mode: modeID,
         config: Allowedconfigs,
-        LengthDurationSetting: LengthDurationSetting
+        LengthDurationSetting: LengthDurationSetting,
+        ProgressOnlyOnCorrect: false
     })
 
 
@@ -376,7 +377,7 @@ const SinglePageTypingTest = () => {
             </div>
 
 
-            <SP_TypingTest engine={engine} ></SP_TypingTest>
+            <SP_TypingTest engine={engine} HighlightIncorrectCurrentWord={false} ></SP_TypingTest>
 
 
 
