@@ -57,7 +57,6 @@ export interface State {
     isRedo: boolean
     PreviousWords: string[]
     errors: number[]
-    CurrentWordIncorrect: false
     lastkeyPressed: string
 }
 
@@ -255,7 +254,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
         let errors = state.errors;
 
-        let CurrentWordIncorrect = state.CurrentWordIncorrect;
+        // let CurrentWordIncorrect = state.CurrentWordIncorrect;
 
 
 
@@ -329,7 +328,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
                     NewMap0.set(CurrentWordIndex, { text: value, isCorrect: iscorrect, OutsideTextContainer: false });
 
-                    console.log(NewMap0);
+                    // console.log(NewMap0);
 
                     // const inputEvent = event.nativeEvent as InputEvent;
                     // const data = inputEvent.data;
@@ -388,7 +387,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
                 const newMap0 = new Map(state.AllWordMap);
 
-                console.log(state.words);
+                // console.log(state.words);
 
 
                 if (TypedWord.length > 0) {
@@ -1059,7 +1058,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
         // console.log("offset Top = ", `${caretElement.offsetTop}px`);
 
 
-    }, [state.TypedWord.length, state.IndexToStartFrom])
+    }, [state.TypedWord.length, state.IndexToStartFrom, state.incorrectCount])
 
     //change the dependecncy to change on keypress rather than typedword.length. This is because currently it doesn't track space bar presses
     //try and change the margin from code rather than in html
@@ -1074,6 +1073,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
         // setlineoffset(prev => prev + 1);
         const spans = WordContainerRef.current!.querySelectorAll<HTMLSpanElement>("span.word");
+
+        console.log(spans)
 
         const TextContainerRect = TextContainerref.current!.getBoundingClientRect();
 
@@ -1104,6 +1105,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
                 //span is above the Text Container.
                 SpanstoRemove.push(span);
             }
+            
 
             else {
                 // console.log("break = ", span);
@@ -1114,7 +1116,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
         }
 
         // console.log("start")
-        // console.log(SpanstoRemove)
+        console.log(SpanstoRemove)
 
         const IndexOfSpansToRemove = SpanstoRemove.map((span) => {
             const Index = parseInt(span.dataset.wordIndex!, 10);
@@ -1124,7 +1126,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
         const HighestIndexFoundOutOfBounds = Math.max(...IndexOfSpansToRemove)
 
-        // console.log("highest ", HighestIndexFoundOutOfBounds);
+        console.log("highest ", HighestIndexFoundOutOfBounds);
 
         dispatch({ type: "UpdateAllwordMap", payload: { HighestIndexFoundOutOfBounds } })
 
