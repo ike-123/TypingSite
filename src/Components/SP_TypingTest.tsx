@@ -125,7 +125,7 @@ const SP_TypingTest = ({engine,HighlightIncorrectCurrentWord}:SP_TypingTestProps
 
                     {/* <div className=''> */}
 
-                    <input className={`w-full h-[115px] m-auto absolute outline-none bg-red-200 pointer-events-none ${engine.focus? "opacity-0" : "opacity-50"} `} ref={engine.inputref} id="input" type="text" autoComplete='off' spellCheck="false" autoCapitalize='false' autoCorrect='false' autoFocus value={engine.state.TypedWord} onFocus={() => { engine.SetFocus(true) }} onBlur={()=>{engine.SetFocus(false)}}  onKeyDown={engine.HandleKeyDown} onChange={engine.ChangeInput} onClick={engine.MoveCaretToEnd} />
+                    <input className={`w-full h-[115px] m-auto absolute outline-none pointer-events-none ${engine.focus? "opacity-0" : "bg-red-200/20 backdrop-blur-xs"} `} ref={engine.inputref} id="input" type="text" autoComplete='off' spellCheck="false" autoCapitalize='false' autoCorrect='false' autoFocus value={engine.state.TypedWord} onFocus={() => { engine.SetFocus(true) }} onBlur={()=>{engine.SetFocus(false)}}  onKeyDown={engine.HandleKeyDown} onChange={engine.ChangeInput} onClick={engine.MoveCaretToEnd} />
 
                     {/* </div> */}
 
