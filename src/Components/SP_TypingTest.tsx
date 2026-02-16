@@ -28,7 +28,7 @@ const SP_TypingTest = ({engine,HighlightIncorrectCurrentWord}:SP_TypingTestProps
 
             {/* <h1 className='text-2xl font-bold mt-6 text-primary flex justify-center'>{engine.state.displayText}</h1> */}
 
-            <div className="TypeTestContainer">
+            <div className="TypeTestContainer font-sans">
 
                 <div ref={engine.TextContainerref} className='flex px-[3px] h-[115px] p-1 bg-[#1e293b] overflow-hidden relative'>
 
