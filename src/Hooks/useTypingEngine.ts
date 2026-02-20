@@ -527,7 +527,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
                         ...state,
                     };
 
-                console.log("outsidecontainer ,", AllWordMap.get(CurrentWordIndex - 1)?.OutsideTextContainer)
+                // console.log("outsidecontainer ,", AllWordMap.get(CurrentWordIndex - 1)?.OutsideTextContainer)
                 //if we haven't typed a character in the currentword & the previous word is incorrect
                 if (TypedWord.length == 0 && AllWordMap.get(CurrentWordIndex - 1)?.isCorrect == false && AllWordMap.get(CurrentWordIndex - 1)?.OutsideTextContainer == false) {
                     keyPressEvent.preventDefault();
