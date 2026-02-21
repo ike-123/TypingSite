@@ -17,6 +17,7 @@ import SinglePageTypingTest from './Pages/SinglePageTypingTest';
 import TestResults from './Components/TestResults';
 import TestResultsPage from './Components/TestResultsPage';
 import Games from './Pages/Games';
+import Login from './Pages/Login';
 
 
 
@@ -51,6 +52,11 @@ const router = createBrowserRouter([
       {
         path: "/Games",
         element: <Games/>
+      },
+      {
+        path: "/Login",
+        element: <Login/>
+
       }
 
     ]
