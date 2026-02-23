@@ -15,7 +15,7 @@ app.use(cors({
 
 const port = 3001
 
-app.use('/api',AuthRouter)
+app.use('/api/Auth',AuthRouter)
 
 server.listen(port,'0.0.0.0',()=>{
 
