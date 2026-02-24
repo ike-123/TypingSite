@@ -11,6 +11,12 @@ import wordsList from "../src/words.json" with { type: "json" };
 
 const app = express()
 
+app.use(express.json())
+// app.use(express.urlencoded({extended:true})) I'm not sure if this needs to be false or true
+
+
+
+
 const server = http.createServer(app as http.RequestListener);
 
 const io = new Server(server,{
