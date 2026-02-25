@@ -8,10 +8,16 @@ import express from "express";
 
 import { GameRoom } from "./GameRoom.tsx";
 import wordsList from "../src/words.json" with { type: "json" };
+import cookieParser from "cookie-parser"
+
+
 
 const app = express()
 
 app.use(express.json())
+app.use(cookieParser())
+
+
 // app.use(express.urlencoded({extended:true})) I'm not sure if this needs to be false or true
 
 
