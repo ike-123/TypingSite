@@ -1,10 +1,11 @@
-import { LoginForm } from '@/Components/login-form'
+import { SignupForm } from '@/Components/signup-form'
 import React, { useState } from 'react'
 import axios, { type AxiosInstance } from "axios"
 
-const Login = () => {
+const SignUp = () => {
 
   const [input, setInput] = useState({
+    username:"",
     email: "",
     password: ""
   });
@@ -22,9 +23,9 @@ const Login = () => {
   }
 
 
-  async function LoginButton(event: React.MouseEvent<HTMLButtonElement>) {
+  async function SignUpButton(event: React.MouseEvent<HTMLButtonElement>) {
 
-    console.log("Login button clicked")
+    console.log("Signup button clicked")
     event.preventDefault();
 
     try { 
@@ -32,7 +33,7 @@ const Login = () => {
       // console.log(input.email)
       // console.log(input.password)
 
-       const {data} = await api.post("Login", { email: input.email, password:input.password });
+       const {data} = await api.post("register", { username:input.username, email: input.email, password:input.password });
        console.log(data);
 
     } catch (error) {
@@ -49,10 +50,10 @@ const Login = () => {
   return (
     <div className='max-w-7xl m-auto'>
 
-      <LoginForm onChangeInput={OnChangeInput} onLogin={LoginButton}></LoginForm>
+      <SignupForm onChangeInput={OnChangeInput} OnSignUp={SignUpButton}></SignupForm>
 
     </div>
   )
 }
 
-export default Login
+export default SignUp

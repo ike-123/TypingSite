@@ -18,6 +18,8 @@ import TestResults from './Components/TestResults';
 import TestResultsPage from './Components/TestResultsPage';
 import Games from './Pages/Games';
 import Login from './Pages/Login';
+import SignUp from './Pages/SignUp';
+
 
 
 
@@ -51,13 +53,19 @@ const router = createBrowserRouter([
       },
       {
         path: "/Games",
-        element: <Games/>
+        element: <Games />
       },
       {
         path: "/Login",
-        element: <Login/>
+        element: <Login />
+
+      },
+      {
+        path: "/SignUp",
+        element: <SignUp />
 
       }
+
 
     ]
 

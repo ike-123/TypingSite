@@ -1,19 +1,22 @@
 
 import { error } from "console";
-import { prisma } from "../lib/prisma"
+import { prisma } from "../lib/prisma.ts"
 import bcrypt, { hash } from 'bcrypt'
 // import jwt from "jsonwebtoken"
 import jwt from "jsonwebtoken"
 import { env } from "process";
 import { request, Request, Response } from "express";
-import { loginSchema } from "../validators/loginvalidator";
+import { registerSchema, loginSchema } from "../validators/loginvalidator.ts";
 import { boolean, object } from "zod";
+import * as z from "zod";
 
 
 
 
 const register = async (req: Request, res: Response) => {
 
+    console.log(req.body.username);
+    console.log(req.body.password)
     const { username, email, password } = req.body;
 
     //Search for a user with the username or email
@@ -25,7 +28,7 @@ const register = async (req: Request, res: Response) => {
     }
 
 
-    const salt = bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt)
 
     const user = await prisma.user.create({
@@ -54,23 +57,24 @@ const register = async (req: Request, res: Response) => {
 
 const login = async (req: Request, res: Response) => {
 
+    console.log("hey");
 
     const result = loginSchema.safeParse(req.body)
 
-
     if (!result.success) {
+
+
+        console.log("wrong");
 
         // const formatted = result.error?.format();
         // const flatErrors = Object.values(formatted).flat().filter(Boolean).map((err)=>err._errors).flat();
 
         // console.log(flatErrors);
 
-
-        return res.status(400).json({ errors: result.error.flatten().fieldErrors});
+        return res.status(400).json({ errors: z.treeifyError(result.error) });
     }
 
-
-    const { username, email, password } = result.data;
+    const { email, password } = result.data;
 
     //Check if user email exists
     const user = await prisma.user.findUnique({ where: { email: email } })
@@ -79,11 +83,13 @@ const login = async (req: Request, res: Response) => {
         return res.status(401).json({ error: "Invalid Email or Password" })
     }
     else {
+        console.log("user exists");
         //what is the difference between compare and comparesync
         const PasswordCorrect = await bcrypt.compare(password, user.passwordHash);
 
         if (PasswordCorrect) {
             //Generate webtoken
+
 
             const payload = { id: user.id }
             const token = jwt.sign(payload, process.env.JWT_Secret, { expiresIn: process.env.JWT_Expires_In });
@@ -96,6 +102,11 @@ const login = async (req: Request, res: Response) => {
                     maxAge: 60000 * 15,
 
                 }).status(200).json()
+
+        }
+        else {
+
+            return res.status(400).json({ message: "Email or Password is incorrect" })
 
         }
     }
@@ -123,4 +134,4 @@ const logout = async (req: Request, res: Response) => {
 
 
 
-export { register }
+export { register, login }

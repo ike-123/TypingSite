@@ -6,7 +6,7 @@ import * as http from "http";
 import express from "express";
 // import * as express from "express";
 
-import { GameRoom } from "./GameRoom.tsx";
+import { GameRoom } from "./GameRoom.ts";
 import wordsList from "../src/words.json" with { type: "json" };
 import cookieParser from "cookie-parser"
 
@@ -16,6 +16,7 @@ const app = express()
 
 app.use(express.json())
 app.use(cookieParser())
+app.use(express.urlencoded({extended:true}))
 
 
 // app.use(express.urlencoded({extended:true})) I'm not sure if this needs to be false or true

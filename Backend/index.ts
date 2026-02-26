@@ -1,13 +1,13 @@
-import AuthRouter from "./Routes/AuthRouter.js";
+import AuthRouter from "./Routes/AuthRouter";
 import cors from 'cors';
 // import * as cors from 'cors';
 
-import {server} from "./socket";
-import {app} from "./socket";
+import {server} from "./socket.ts";
+import {app} from "./socket.ts";
 
 
 app.use(cors({
-    origin: 'http://localhost:5173/Multiplayer', // Replace with your frontend URL
+    origin: 'http://localhost:5173', // Replace with your frontend URL
     // origin: "*",
     credentials: true
 }));

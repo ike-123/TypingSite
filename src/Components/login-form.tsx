@@ -10,10 +10,20 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 
+
+type LoginFormProps = React.ComponentProps<"div"> & {
+  onLogin: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onChangeInput: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  // values: {
+  //   email: string;
+  //   password: string;
+  // };
+};
+
 export function LoginForm({
   className,
   ...props
-}: React.ComponentProps<"div">) {
+}: LoginFormProps) {
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
@@ -30,9 +40,11 @@ export function LoginForm({
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
                   id="email"
+                  name="email"
                   type="email"
                   placeholder="m@example.com"
                   required
+                  onChange={props.onChangeInput}
                 />
               </Field>
               <Field>
@@ -45,10 +57,10 @@ export function LoginForm({
                     Forgot your password?
                   </a>
                 </div>
-                <Input id="password" type="password" required />
+                <Input id="password" name="password" type="password" required onChange={props.onChangeInput} />
               </Field>
               <Field>
-                <Button type="submit">Login</Button>
+                <Button onClick={props.onLogin} type="submit">Login</Button>
               </Field>
               <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                 Or continue with
