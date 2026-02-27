@@ -1,6 +1,8 @@
 import { SignupForm } from '@/Components/signup-form'
 import React, { useState } from 'react'
 import axios, { type AxiosInstance } from "axios"
+import { useAuthStore } from '@/Stores/AuthStore'
+
 
 const SignUp = () => {
 
@@ -11,12 +13,9 @@ const SignUp = () => {
   });
 
 
-  const api: AxiosInstance = axios.create({
-    baseURL: "http://localhost:3001/api/Auth/",
-    withCredentials: true,
-  });
-
   const [errorText, SetErrorText] = useState("");
+
+  const SignUp = useAuthStore((state)=> state.Register);
 
   function OnChangeInput(event: React.ChangeEvent<HTMLInputElement>) {
     setInput(previous => ({ ...previous, [event.target.name]: event.target.value }));
@@ -33,8 +32,7 @@ const SignUp = () => {
       // console.log(input.email)
       // console.log(input.password)
 
-       const {data} = await api.post("register", { username:input.username, email: input.email, password:input.password });
-       console.log(data);
+      SignUp(input.username,input.email,input.password);
 
     } catch (error) {
 
