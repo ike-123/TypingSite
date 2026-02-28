@@ -9,6 +9,7 @@ import { request, Request, Response } from "express";
 import { registerSchema, loginSchema } from "../validators/loginvalidator.ts";
 import { boolean, object } from "zod";
 import * as z from "zod";
+import crypto from "crypto"
 
 
 
@@ -84,6 +85,8 @@ const login = async (req: Request, res: Response) => {
     }
     else {
         console.log("user exists");
+
+
         //what is the difference between compare and comparesync
         const PasswordCorrect = await bcrypt.compare(password, user.passwordHash);
 
@@ -94,6 +97,15 @@ const login = async (req: Request, res: Response) => {
             const payload = { id: user.id }
             const token = jwt.sign(payload, process.env.JWT_Secret, { expiresIn: process.env.JWT_Expires_In });
 
+
+                //Generate Refresh Token
+
+                const randomBytes = crypto.randomBytes(32);
+                const RefreshToken = randomBytes.toString();
+                
+                
+
+
             res.cookie("Access_Token", token,
                 {
                     httpOnly: true,
@@ -102,6 +114,9 @@ const login = async (req: Request, res: Response) => {
                     maxAge: 60000 * 15,
 
                 }).status(200).json()
+
+
+
 
         }
         else {

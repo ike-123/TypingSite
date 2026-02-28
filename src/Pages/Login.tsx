@@ -2,6 +2,7 @@ import { LoginForm } from '@/Components/login-form'
 import React, { useState } from 'react'
 import axios, { type AxiosInstance } from "axios"
 import { useAuthStore } from '@/Stores/AuthStore'
+import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
 
@@ -11,9 +12,11 @@ const Login = () => {
   });
 
   const [errorText, SetErrorText] = useState("");
+  const navigate = useNavigate();
 
 
-    const Login = useAuthStore((state) => state.Login)
+
+  const Login = useAuthStore((state) => state.Login)
 
 
 
@@ -31,7 +34,9 @@ const Login = () => {
       // console.log(input.email)
       // console.log(input.password)
 
-      await Login(input.email,input.password)
+      await Login(input.email, input.password)
+      navigate("/")
+
 
     } catch (error) {
 
