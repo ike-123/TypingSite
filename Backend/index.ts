@@ -6,6 +6,12 @@ import {server} from "./socket.ts";
 import {app} from "./socket.ts";
 
 
+import {toNodeHandler} from "better-auth/node"
+import { auth } from './lib/Auth.ts'
+
+
+
+
 app.use(cors({
     origin: 'http://localhost:5173', // Replace with your frontend URL
     // origin: "*",
@@ -15,7 +21,12 @@ app.use(cors({
 
 const port = 3001
 
-app.use('/api/Auth',AuthRouter)
+// app.use('/api/Auth',AuthRouter)
+
+app.all('/api/auth/{*any}', toNodeHandler(auth));
+
+
+
 
 server.listen(port,'0.0.0.0',()=>{
 

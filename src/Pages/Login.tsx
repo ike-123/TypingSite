@@ -4,7 +4,15 @@ import axios, { type AxiosInstance } from "axios"
 import { useAuthStore } from '@/Stores/AuthStore'
 import { useNavigate } from 'react-router-dom'
 
+
+import { authClient } from "@/lib/auth-client"; //import the auth client
+
+
+
 const Login = () => {
+
+
+
 
   const [input, setInput] = useState({
     email: "",
@@ -29,23 +37,50 @@ const Login = () => {
     console.log("Login button clicked")
     event.preventDefault();
 
-    try {
+    // try {
 
-      // console.log(input.email)
-      // console.log(input.password)
+    //   // console.log(input.email)
+    //   // console.log(input.password)
 
-      await Login(input.email, input.password)
-      navigate("/")
+    //   await Login(input.email, input.password)
+    //   navigate("/")
 
 
-    } catch (error) {
+    // } catch (error) {
 
-      if (axios.isAxiosError(error)) {
+    //   if (axios.isAxiosError(error)) {
 
-        // console.log(error);
-        SetErrorText(error.response?.data);
-      };
+    //     // console.log(error);
+    //     SetErrorText(error.response?.data);
+    //   };
+    // }
+
+    const { data, error } = await authClient.signIn.email({
+      /**
+       * The user email
+       */
+      email:input.email,
+      /**
+       * The user password
+       */
+      password:input.password,
+      /**
+       * A URL to redirect to after the user verifies their email (optional)
+       */
+      callbackURL: "/",
+      /**
+       * remember the user session after the browser is closed. 
+       * @default true
+       */
+      rememberMe: false
+    }, {
+      //callbacks
+    })
+
+     if (data) {
+      console.log("User created:", data);
     }
+
   }
 
 
