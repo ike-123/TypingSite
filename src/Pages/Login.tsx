@@ -7,6 +7,9 @@ import { useNavigate } from 'react-router-dom'
 
 import { authClient } from "@/lib/auth-client"; //import the auth client
 
+import { createAuthClient } from "better-auth/client";
+
+
 
 
 const Login = () => {
@@ -59,11 +62,11 @@ const Login = () => {
       /**
        * The user email
        */
-      email:input.email,
+      email: input.email,
       /**
        * The user password
        */
-      password:input.password,
+      password: input.password,
       /**
        * A URL to redirect to after the user verifies their email (optional)
        */
@@ -77,9 +80,24 @@ const Login = () => {
       //callbacks
     })
 
-     if (data) {
+    if (data) {
       console.log("User created:", data);
     }
+
+  }
+
+  async function loginWithGoogle(event: React.MouseEvent<HTMLButtonElement>) {
+
+    event.preventDefault();
+
+      const data = await authClient.signIn.social({
+        provider: "google",
+        callbackURL:"http://localhost:5173"
+      });
+
+      if(data){
+        console.log(data);
+      }
 
   }
 
@@ -87,7 +105,7 @@ const Login = () => {
   return (
     <div className='max-w-7xl m-auto'>
 
-      <LoginForm onChangeInput={OnChangeInput} onLogin={LoginButton}></LoginForm>
+      <LoginForm onChangeInput={OnChangeInput} onLogin={LoginButton} onLoginWithGoogle={loginWithGoogle}></LoginForm>
 
     </div>
   )

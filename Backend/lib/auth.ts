@@ -19,4 +19,12 @@ export const auth = betterAuth({
         enabled: true,
     },
     trustedOrigins: ["http://localhost:5173"],
+    baseURL: process.env.BETTER_AUTH_URL,
+    socialProviders: { 
+        google:{
+            clientId: process.env.GOOGLE_CLIENT_ID as string,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string
+
+        }
+    }, 
 });
