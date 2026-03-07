@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 
@@ -19,6 +19,7 @@ import TestResultsPage from './Components/TestResultsPage';
 import Games from './Pages/Games';
 import Login from './Pages/Login';
 import SignUp from './Pages/SignUp';
+import { useAuthStore } from './Stores/AuthStore';
 
 
 
@@ -73,6 +74,19 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+
+  const FetchUser = useAuthStore((state) => state.getUser)
+
+
+  useEffect(()=>{
+
+    async function Call_FetchUser() {
+      await FetchUser()
+    }
+
+    Call_FetchUser();
+
+  },[])
 
   return (
     <div>

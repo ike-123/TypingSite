@@ -27,7 +27,6 @@ const Login = () => {
 
 
 
-  const Login = useAuthStore((state) => state.Login)
 
 
 
@@ -86,18 +85,32 @@ const Login = () => {
 
   }
 
+  async function GetProfile(event: React.MouseEvent<HTMLButtonElement>) {
+
+    event.preventDefault();
+
+    const res = await fetch("http://localhost:3001/api/profile", {
+      method: "GET",
+      credentials: "include"
+    });
+
+    const data = await res.json();
+    console.log(data);
+  }
+
+
   async function loginWithGoogle(event: React.MouseEvent<HTMLButtonElement>) {
 
     event.preventDefault();
 
-      const data = await authClient.signIn.social({
-        provider: "google",
-        callbackURL:"http://localhost:5173"
-      });
+    const data = await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "http://localhost:5173"
+    });
 
-      if(data){
-        console.log(data);
-      }
+    if (data) {
+      console.log(data);
+    }
 
   }
 
@@ -106,6 +119,7 @@ const Login = () => {
     <div className='max-w-7xl m-auto'>
 
       <LoginForm onChangeInput={OnChangeInput} onLogin={LoginButton} onLoginWithGoogle={loginWithGoogle}></LoginForm>
+      {/* <button onClick={GetProfile}>Profile</button> */}
 
     </div>
   )
