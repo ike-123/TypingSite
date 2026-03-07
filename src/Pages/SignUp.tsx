@@ -69,7 +69,7 @@ const SignUp = () => {
       console.log("User created:", data);
     }
 
-
+    
 
   }
 

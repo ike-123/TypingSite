@@ -11,6 +11,9 @@ const adapter = new PrismaPg({ connectionString });
 
 const prisma = new PrismaClient({ adapter })
 
+
+
+
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql", // or "mysql", "postgresql", ...etc
