@@ -18,6 +18,7 @@ import {
 import TestResults from '@/Components/TestResults'
 import { DialogOverlay } from '@radix-ui/react-dialog'
 import { NavLink } from 'react-router-dom'
+import axios from 'axios'
 
 
 
@@ -187,12 +188,12 @@ const SinglePageTypingTest = () => {
 
         const stored = localStorage.getItem("SoloTestConfigs")
         const UserConfig: SoloTestConfigs = stored ? JSON.parse(stored) : null
-        console.log(UserConfig)
+        // console.log(UserConfig)
         // console.log("Heyeeeee");
 
         if (UserConfig) {
 
-            console.log("yes")
+            // console.log("yes")
 
             // const LengthDurationSettingWord = 
 
@@ -202,7 +203,7 @@ const SinglePageTypingTest = () => {
             const time_LengthDurationSetting = UserConfig.LengthDurationSetting.time
             const quote_LengthDurationSetting = UserConfig.LengthDurationSetting.quote
 
-            console.log(time_LengthDurationSetting);
+            // console.log(time_LengthDurationSetting);
 
             const Settings: SoloTestConfigs = {
                 ModeID: modeID,
@@ -215,7 +216,7 @@ const SinglePageTypingTest = () => {
             }
 
             //If there is solotestconfig inside of localstorage
-            console.log("LDS = ", LengthDurationSetting)
+            // console.log("LDS = ", LengthDurationSetting)
 
             // I think this only makes sense to do in when changing the lengthdurationsetting 
             //When we change the mode this breaks and sets
@@ -248,7 +249,45 @@ const SinglePageTypingTest = () => {
     useEffect(() => {
 
         if (engine.state.status === "finished") {
+
+
             SetShowResults(true);
+
+            //Send Test results
+
+            console.log(engine.state);
+            console.log(engine.state.WPM);
+            console.log(engine.state.Accuracy);
+
+
+            const results = {
+                wpm: engine.state.WPM,
+                accuracy: engine.state.Accuracy,
+                correctChars: engine.state.correctCount,
+                incorrectChars: engine.state.incorrectCount,
+                duration: engine.state.TotalTime,
+                config: {
+                    mode: modeID,
+                    configs: Allowedconfigs,
+                    LengthDurationSetting: LengthDurationSetting
+                }
+            }
+
+            async function SubmitTestResult() {
+                try {
+                    const data = await axios.post("http://localhost:3001/api/testresult",
+                        results,
+                        { withCredentials: true }
+                    );
+
+                    console.log(data);
+                } catch (error) {
+                    console.error("Failed to save test result", error);
+                }
+            }
+            SubmitTestResult();
+
+
         }
         if (engine.state.status === "notstarted") {
             SetShowResults(false)
@@ -293,7 +332,7 @@ const SinglePageTypingTest = () => {
 
                 </NavLink>
 
-                  <NavLink to={"/Multiplayer"} >
+                <NavLink to={"/Multiplayer"} >
 
                     {({ isActive }) => (
 
@@ -304,7 +343,7 @@ const SinglePageTypingTest = () => {
                 </NavLink>
 
 
-                  <NavLink to={"/Games"} >
+                <NavLink to={"/Games"} >
 
                     {({ isActive }) => (
 

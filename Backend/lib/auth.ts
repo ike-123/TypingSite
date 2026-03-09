@@ -1,15 +1,15 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { PrismaClient } from "@prisma/client";
-
+import {prisma} from "./prisma"
 
 import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 
-const connectionString = `${process.env.DATABASE_URL}`;
-const adapter = new PrismaPg({ connectionString });
+// const connectionString = `${process.env.DATABASE_URL}`;
+// const adapter = new PrismaPg({ connectionString });
 
-const prisma = new PrismaClient({ adapter })
+// const prisma = new PrismaClient({ adapter })
 
 
 

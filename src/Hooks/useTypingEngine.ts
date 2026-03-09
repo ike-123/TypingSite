@@ -1339,7 +1339,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
         let value = event.target.value.trimEnd();
         const inputEvent = event.nativeEvent as InputEvent;
         const inputEventData = inputEvent.data;
-        console.log(inputEvent)
+        // console.log(inputEvent)
 
         if (value[value.length - 1] === "." && state.lastkeyPressed != "Period") {
             // console.log("ends in full stop")
@@ -1768,7 +1768,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
                         isStartOfSentence = false;
                         wordsSincePunctuation = 0;
                         wordsSincePunctuation++;
-                        console.log("true");
+                        // console.log("true");
 
                     }
                     else {
@@ -2189,7 +2189,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
                 if (Should_Spawn_Number === 0) {
 
-                    console.log("equal 0")
+                    // console.log("equal 0")
 
                     const RandomNumber = Math.floor(Math.random() * 1001).toString();
 

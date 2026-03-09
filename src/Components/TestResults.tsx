@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { ArrowBigRight, RotateCcw, TrendingUp } from "lucide-react"
 import { Button } from '@/components/ui/button'
@@ -145,7 +145,7 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
         const y = interpolateY(state.WpmEverySecond, time)
         if (y == null) return null
 
-        console.log("time ", time, " wpm ", y);
+        // console.log("time ", time, " wpm ", y);
 
         return {
             time,
@@ -187,6 +187,10 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
 
     ];
 
+    useEffect(() => {
+      console.log(state)
+    }, [state])
+    
 
 
     return (
