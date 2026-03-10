@@ -10,7 +10,7 @@ import { toNodeHandler } from "better-auth/node"
 import { auth } from './lib/Auth.ts'
 import { NextFunction } from "express";
 import { protectRoute } from "./Middleware/AuthMiddleware.ts";
-import {prisma} from "./lib/prisma.ts"
+import { prisma } from "./lib/prisma.ts"
 
 
 
@@ -65,10 +65,10 @@ app.post("/api/testresult", protectRoute, async (req, res) => {
         console.log("dur " + duration);
         console.log("config " + config);
 
-        
+
 
         const testresult = await prisma.typingTest.create({
-            data:{
+            data: {
                 userId,
                 wpm,
                 accuracy,
@@ -89,6 +89,69 @@ app.post("/api/testresult", protectRoute, async (req, res) => {
     }
 });
 
+
+app.get("/api/averagestats", protectRoute, async (req, res) => {
+
+    try {
+
+        const userid = req.user.id;
+        const tests = await prisma.typingTest.findMany({
+            where: { userId: userid },
+            orderBy: { createdAt: "desc" },
+            take: 20,
+            select: { wpm: true, accuracy: true }
+        })
+
+        if (tests.length === 0) {
+
+            return
+        }
+
+        const averageWPM = tests.reduce((sum, t) => sum + t.wpm, 0) / tests.length;
+        const averageAccuracy = tests.reduce((sum, t) => sum + t.accuracy, 0) / tests.length;
+
+        const data = {
+            averageWPM,
+            averageAccuracy
+        }
+        res.json(data);
+
+    } catch (error) {
+        res.status(500).json({ error: "Failed to retrieve averagestats" })
+    }
+
+});
+
+
+app.get("/api/ExtraTestInfo", protectRoute, async (req, res) => {
+
+    try {
+        const userid = req.user.id;
+
+        const results = await prisma.typingTest.aggregate({
+            where: { userId: userid },
+            _count: { id: true },
+            _sum: { duration: true }
+        })
+
+        const TestsCompleted = results._count.id
+        const TotalTimeSpentTyping = results._sum.duration
+
+        const data = {
+            TestsCompleted,
+            TotalTimeSpentTyping
+        }
+
+        res.json(data);
+        
+    } catch (error) {
+
+        res.status(500).json({ error: "Failed to retrieve extra test info" })
+
+    }
+
+
+});
 
 server.listen(port, '0.0.0.0', () => {
 

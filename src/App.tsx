@@ -20,6 +20,7 @@ import Games from './Pages/Games';
 import Login from './Pages/Login';
 import SignUp from './Pages/SignUp';
 import { useAuthStore } from './Stores/AuthStore';
+import MyStats from './Pages/MyStats';
 
 
 
@@ -59,14 +60,15 @@ const router = createBrowserRouter([
       {
         path: "/Login",
         element: <Login />
-
       },
       {
         path: "/SignUp",
         element: <SignUp />
-
+      },
+      {
+        path: "/stats",
+        element: <MyStats/>
       }
-
 
     ]
 
