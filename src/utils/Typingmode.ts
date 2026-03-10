@@ -94,7 +94,7 @@ export const Modes: Record<modeID, TypingModeConfig> = {
                 return{
                     ...state,
                     displayText:TextToDisplay,
-                    status: isFinished ? "finished" : state.status
+                    stopTest: isFinished ? true : false
                 }
             },
         }
@@ -133,7 +133,8 @@ export const Modes: Record<modeID, TypingModeConfig> = {
                 return{
                     ...state,
                     displayText:TextToDisplay,
-                    status: isFinished ? "finished" : state.status
+                    stopTest: isFinished ? true : false
+
                 }
 
             },
@@ -168,7 +169,8 @@ export const Modes: Record<modeID, TypingModeConfig> = {
                 return{
                     ...state,
                     displayText:TextToDisplay,
-                    status: isFinished ? "finished" : state.status
+                    stopTest: isFinished ? true : false
+
                 }
 
             },

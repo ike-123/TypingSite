@@ -256,8 +256,8 @@ const SinglePageTypingTest = () => {
             //Send Test results
 
             console.log(engine.state);
-            console.log(engine.state.WPM);
-            console.log(engine.state.Accuracy);
+            // console.log(engine.state.WPM);
+            // console.log(engine.state.Accuracy);
 
 
             const results = {

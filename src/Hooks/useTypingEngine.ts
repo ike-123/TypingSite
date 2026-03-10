@@ -40,6 +40,7 @@ export interface State {
     WPM: number,
     Accuracy: number,
     displayText: string | null,
+    stopTest: boolean
     status: Status,
     setintervalTimer: NodeJS.Timeout | undefined
     count: number,
@@ -593,7 +594,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
                 // console.log("words :", state.words);
                 // console.log("final word array")
-                console.log(state.WpmEverySecond)
+                // console.log(state.WpmEverySecond)
 
                 AllWordMap.forEach((word: any) => {
                     // console.log(word.text)
@@ -607,9 +608,10 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
                 // console.log("Character count = ", characterLength);
 
                 const WordsTyped = characterLength / 5;
+                
 
                 WPM = Math.round(WordsTyped / timeElapsed)
-
+                
                 Accuracy = Math.round((correctCount / (correctCount + incorrectCount)) * 100)
 
                 TestFinished = true;
@@ -810,6 +812,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
         WPM: 0,
         Accuracy: 0,
         displayText: null,
+        stopTest: false,
         status: "notstarted",
         setintervalTimer: undefined,
         count: 0,
@@ -1284,11 +1287,11 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
             }, 1000);
         }
 
-        if (state.status === "finished") {
+        // if (state.status === "finished") {
 
-            dispatch({ type: "FinishTest", payload: {} })
+        //     dispatch({ type: "FinishTest", payload: {} })
 
-        }
+        // }
 
         return () => {
             ClearTimer()
@@ -1296,6 +1299,15 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
     }, [state.status])
 
+    useEffect(()=>{
+
+        if(state.stopTest === true){
+
+            dispatch({ type: "FinishTest", payload: {} })
+
+        }
+    },[state.stopTest])
+    
     //CurrentWord index Change
     useEffect(() => {
 

@@ -187,11 +187,6 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
 
     ];
 
-    useEffect(() => {
-      console.log(state)
-    }, [state])
-    
-
 
     return (
         <div className=''>
@@ -339,7 +334,7 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
                                             // console.log(state.count)
                                             time = state.count
                                         }
-                                        console.log(time)
+                                        // console.log(time)
                                         return (
                                             <ReferenceDot
                                                 key={id}
