@@ -93,7 +93,15 @@ model TypingTest {
   correctChars   Int
   incorrectChars Int
   duration       Int
-  config         Json
+
+  mode String
+  LengthDurationSetting String
+
+  punctuation Boolean
+  numbers Boolean
+  error Boolean
+
+
   createdAt      DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

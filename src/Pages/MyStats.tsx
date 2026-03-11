@@ -13,16 +13,33 @@ const MyStats = () => {
 
 
 
+    //   config: {
+    //                 mode: modeID,
+    //                 configs: Allowedconfigs,
+    //                 LengthDurationSetting: LengthDurationSetting
+    //             }
+
     useEffect(() => {
+
 
 
         async function GetAverageTestStats() {
             try {
-                const stats = await axios.get("http://localhost:3001/api/averagestats", { withCredentials: true });
+
+                const config = {
+                    mode: "time",
+                    configs: ["punctuation","numbers"],
+                    LengthDurationSetting: "5"
+                }
+                const stats = await axios.get("http://localhost:3001/api/averagestats?last=20", { withCredentials: true });
                 // console.log(data.);
 
                 SetAverageWPM(stats.data.averageWPM)
                 SetAverageAccuracy(stats.data.averageAccuracy)
+
+
+
+
 
 
             } catch (error) {

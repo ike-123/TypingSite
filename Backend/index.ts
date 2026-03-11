@@ -92,13 +92,19 @@ app.post("/api/testresult", protectRoute, async (req, res) => {
 
 app.get("/api/averagestats", protectRoute, async (req, res) => {
 
+
     try {
+
+        console.log(req.query.last);
+
+        const last = Number(req.query.last) || 20;
+        //Should I make sure last is a number before using 
 
         const userid = req.user.id;
         const tests = await prisma.typingTest.findMany({
             where: { userId: userid },
             orderBy: { createdAt: "desc" },
-            take: 20,
+            take: last,
             select: { wpm: true, accuracy: true }
         })
 
@@ -143,7 +149,7 @@ app.get("/api/ExtraTestInfo", protectRoute, async (req, res) => {
         }
 
         res.json(data);
-        
+
     } catch (error) {
 
         res.status(500).json({ error: "Failed to retrieve extra test info" })
