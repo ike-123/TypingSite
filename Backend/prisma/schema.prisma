@@ -95,17 +95,15 @@ model TypingTest {
   duration       Int
 
   mode String
-  LengthDurationSetting String
+  lengthDurationSetting String
 
-  punctuation Boolean
-  numbers Boolean
-  error Boolean
-
+  configKey String?
 
   createdAt      DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
-  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([userId, configKey])
+
 }

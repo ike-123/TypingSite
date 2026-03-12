@@ -11,6 +11,7 @@ import { auth } from './lib/Auth.ts'
 import { NextFunction } from "express";
 import { protectRoute } from "./Middleware/AuthMiddleware.ts";
 import { prisma } from "./lib/prisma.ts"
+import { config, length } from "zod";
 
 
 
@@ -46,8 +47,13 @@ app.get("/api/profile", protectRoute, (req, res) => {
 
 app.post("/api/testresult", protectRoute, async (req, res) => {
 
+
     try {
         const userId = req.user.id;
+        // const configs = req.query.configs as string[]
+
+        // console.log(req.query);
+
 
         const {
             wpm,
@@ -55,15 +61,35 @@ app.post("/api/testresult", protectRoute, async (req, res) => {
             correctChars,
             incorrectChars,
             duration,
-            config
+            mode,
+            LengthDurationSetting,
+            configs
+
         } = req.body;
+
+
+        let NormalizedConfigKey = null;
+
+
+        if (Array.isArray(configs)) {
+
+            let FilteredConfigs = configs.filter(item => item !== "error")
+           NormalizedConfigKey = FilteredConfigs.sort().join("_")
+        }
+
+
+
 
         console.log("wpm " + wpm);
         console.log("Acc " + accuracy);
         console.log("corr " + correctChars);
         console.log("inco " + incorrectChars);
         console.log("dur " + duration);
-        console.log("config " + config);
+        console.log("mode " + mode);
+        console.log("lengthDur " + LengthDurationSetting);
+        console.log("ConfigKey " + NormalizedConfigKey)
+
+
 
 
 
@@ -75,7 +101,9 @@ app.post("/api/testresult", protectRoute, async (req, res) => {
                 correctChars,
                 incorrectChars,
                 duration,
-                config
+                mode,
+                lengthDurationSetting: LengthDurationSetting,
+                configKey: NormalizedConfigKey
             }
         })
 
@@ -95,14 +123,36 @@ app.get("/api/averagestats", protectRoute, async (req, res) => {
 
     try {
 
-        console.log(req.query.last);
+        // console.log(req.query.last);
+
+        //array of strings
+        console.log(req.query.configs);
+
+        const mode = String(req.query.mode);
+        const lengthDurationSetting = String(req.query.LengthDurationSetting);
+
+        const configs = req.query.configs
+
+
+        let NormalizedConfigKey = null;
+
+        if (Array.isArray(configs)) {
+
+            let FilteredConfigs = configs.filter(item => item !== "error")
+            NormalizedConfigKey = FilteredConfigs.sort().join("_")
+        }
+
+        // const NormalizedConfigKey = configs ? configs.sort().join("_") : null;
+
+        console.log(NormalizedConfigKey);
 
         const last = Number(req.query.last) || 20;
+
         //Should I make sure last is a number before using 
 
         const userid = req.user.id;
         const tests = await prisma.typingTest.findMany({
-            where: { userId: userid },
+            where: { userId: userid, mode, lengthDurationSetting, configKey: NormalizedConfigKey },
             orderBy: { createdAt: "desc" },
             take: last,
             select: { wpm: true, accuracy: true }
@@ -110,7 +160,9 @@ app.get("/api/averagestats", protectRoute, async (req, res) => {
 
         if (tests.length === 0) {
 
-            return
+            console.log("nothing found");
+            return res.status(404).json({ error: "No data found" })
+
         }
 
         const averageWPM = tests.reduce((sum, t) => sum + t.wpm, 0) / tests.length;
@@ -123,6 +175,7 @@ app.get("/api/averagestats", protectRoute, async (req, res) => {
         res.json(data);
 
     } catch (error) {
+        console.log(error)
         res.status(500).json({ error: "Failed to retrieve averagestats" })
     }
 

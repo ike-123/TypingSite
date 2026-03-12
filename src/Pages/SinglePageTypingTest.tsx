@@ -255,7 +255,7 @@ const SinglePageTypingTest = () => {
 
             //Send Test results
 
-            console.log(engine.state);
+            // console.log(engine.state);
             // console.log(engine.state.WPM);
             // console.log(engine.state.Accuracy);
 
@@ -266,11 +266,9 @@ const SinglePageTypingTest = () => {
                 correctChars: engine.state.correctCount,
                 incorrectChars: engine.state.incorrectCount,
                 duration: engine.state.TotalTime,
-                config: {
-                    mode: modeID,
-                    configs: Allowedconfigs,
-                    LengthDurationSetting: LengthDurationSetting
-                }
+                mode:modeID,
+                LengthDurationSetting:LengthDurationSetting,
+                configs:Allowedconfigs
             }
 
             async function SubmitTestResult() {
