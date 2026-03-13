@@ -74,7 +74,7 @@ app.post("/api/testresult", protectRoute, async (req, res) => {
         if (Array.isArray(configs)) {
 
             let FilteredConfigs = configs.filter(item => item !== "error")
-           NormalizedConfigKey = FilteredConfigs.sort().join("_")
+            NormalizedConfigKey = FilteredConfigs.sort().join("_")
         }
 
 
@@ -172,6 +172,136 @@ app.get("/api/averagestats", protectRoute, async (req, res) => {
             averageWPM,
             averageAccuracy
         }
+        res.json(data);
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ error: "Failed to retrieve averagestats" })
+    }
+
+});
+
+app.get("/api/averagestats", protectRoute, async (req, res) => {
+
+
+    try {
+
+        // console.log(req.query.last);
+
+        //array of strings
+        console.log(req.query.configs);
+
+        const mode = String(req.query.mode);
+        const lengthDurationSetting = String(req.query.LengthDurationSetting);
+
+        const configs = req.query.configs
+
+
+        let NormalizedConfigKey = null;
+
+        if (Array.isArray(configs)) {
+
+            let FilteredConfigs = configs.filter(item => item !== "error")
+            NormalizedConfigKey = FilteredConfigs.sort().join("_")
+        }
+
+        // const NormalizedConfigKey = configs ? configs.sort().join("_") : null;
+
+        console.log(NormalizedConfigKey);
+
+        const last = Number(req.query.last) || 20;
+
+        //Should I make sure last is a number before using 
+
+        const userid = req.user.id;
+        const tests = await prisma.typingTest.findMany({
+            where: { userId: userid, mode, lengthDurationSetting, configKey: NormalizedConfigKey },
+            orderBy: { createdAt: "desc" },
+            take: last,
+            select: { wpm: true, accuracy: true }
+        })
+
+        if (tests.length === 0) {
+
+            console.log("nothing found");
+            return res.status(404).json({ error: "No data found" })
+
+        }
+
+        const averageWPM = tests.reduce((sum, t) => sum + t.wpm, 0) / tests.length;
+        const averageAccuracy = tests.reduce((sum, t) => sum + t.accuracy, 0) / tests.length;
+
+        const data = {
+            averageWPM,
+            averageAccuracy
+        }
+        res.json(data);
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ error: "Failed to retrieve averagestats" })
+    }
+
+});
+
+app.get("/api/PBandHistory", protectRoute, async (req, res) => {
+
+
+    try {
+
+        const mode = String(req.query.mode);
+        const lengthDurationSetting = String(req.query.LengthDurationSetting);
+
+        const configs = req.query.configs
+
+        let NormalizedConfigKey = null;
+
+        if (Array.isArray(configs)) {
+
+            let FilteredConfigs = configs.filter(item => item !== "error")
+            NormalizedConfigKey = FilteredConfigs.sort().join("_")
+        }
+
+        // const last = Number(req.query.last) || 20;
+
+        const userid = req.user.id;
+
+        //Get the best wpm score 
+
+        //Get all the test results 
+
+
+        const [PersonalBest, tests] = await Promise.all([
+
+            prisma.typingTest.aggregate({
+                where: { userId: userid, mode, lengthDurationSetting, configKey: NormalizedConfigKey },
+                _max: { wpm: true },
+            }),
+
+            prisma.typingTest.findMany({
+                where: { userId: userid, mode, lengthDurationSetting, configKey: NormalizedConfigKey },
+                orderBy: { createdAt: "desc" },
+                select: { wpm: true, accuracy: true }
+            })
+
+        ])
+
+
+        if (tests.length === 0) {
+
+            console.log("nothing found");
+            return res.status(404).json({ error: "No data found" })
+
+        }
+
+        // const averageWPM = tests.reduce((sum, t) => sum + t.wpm, 0) / tests.length;
+        // const averageAccuracy = tests.reduce((sum, t) => sum + t.accuracy, 0) / tests.length;
+
+        const data = {
+            PersonalBest,
+            tests
+        }
+        
         res.json(data);
 
     } catch (error) {

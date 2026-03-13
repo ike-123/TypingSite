@@ -56,6 +56,22 @@ const MyStats = () => {
         GetAverageTestStats();
 
 
+        
+
+        async function GetExtraTestInfo() {
+            try {
+                const stats = await axios.get(`http://localhost:3001/api/ExtraTestInfo`, {
+                    withCredentials: true
+                });
+                console.log(stats);
+
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        GetExtraTestInfo();
+
+
     }, [])
 
     return (
