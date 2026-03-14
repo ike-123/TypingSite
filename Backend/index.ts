@@ -118,6 +118,69 @@ app.post("/api/testresult", protectRoute, async (req, res) => {
 });
 
 
+// app.get("/api/averagestats", protectRoute, async (req, res) => {
+
+
+//     try {
+
+//         // console.log(req.query.last);
+
+//         //array of strings
+//         console.log(req.query.configs);
+
+//         const mode = String(req.query.mode);
+//         const lengthDurationSetting = String(req.query.LengthDurationSetting);
+
+//         const configs = req.query.configs
+
+
+//         let NormalizedConfigKey = null;
+
+//         if (Array.isArray(configs)) {
+
+//             let FilteredConfigs = configs.filter(item => item !== "error")
+//             NormalizedConfigKey = FilteredConfigs.sort().join("_")
+//         }
+
+//         // const NormalizedConfigKey = configs ? configs.sort().join("_") : null;
+
+//         console.log(NormalizedConfigKey);
+
+//         const last = Number(req.query.last) || 20;
+
+//         //Should I make sure last is a number before using 
+
+//         const userid = req.user.id;
+//         const tests = await prisma.typingTest.findMany({
+//             where: { userId: userid, mode, lengthDurationSetting, configKey: NormalizedConfigKey },
+//             orderBy: { createdAt: "desc" },
+//             take: last,
+//             select: { wpm: true, accuracy: true }
+//         })
+
+//         if (tests.length === 0) {
+
+//             console.log("nothing found");
+//             return res.status(404).json({ error: "No data found" })
+
+//         }
+
+//         const averageWPM = tests.reduce((sum, t) => sum + t.wpm, 0) / tests.length;
+//         const averageAccuracy = tests.reduce((sum, t) => sum + t.accuracy, 0) / tests.length;
+
+//         const data = {
+//             averageWPM,
+//             averageAccuracy
+//         }
+//         res.json(data);
+
+//     } catch (error) {
+//         console.log(error)
+//         res.status(500).json({ error: "Failed to retrieve averagestats" })
+//     }
+
+// });
+
 app.get("/api/averagestats", protectRoute, async (req, res) => {
 
 
@@ -144,72 +207,13 @@ app.get("/api/averagestats", protectRoute, async (req, res) => {
 
         // const NormalizedConfigKey = configs ? configs.sort().join("_") : null;
 
-        console.log(NormalizedConfigKey);
+        // console.log(NormalizedConfigKey);
 
-        const last = Number(req.query.last) || 20;
+        const valid_Last = Number.isFinite( Number(req.query.last) ) && Number(req.query.last) > 0
 
-        //Should I make sure last is a number before using 
-
-        const userid = req.user.id;
-        const tests = await prisma.typingTest.findMany({
-            where: { userId: userid, mode, lengthDurationSetting, configKey: NormalizedConfigKey },
-            orderBy: { createdAt: "desc" },
-            take: last,
-            select: { wpm: true, accuracy: true }
-        })
-
-        if (tests.length === 0) {
-
-            console.log("nothing found");
-            return res.status(404).json({ error: "No data found" })
-
-        }
-
-        const averageWPM = tests.reduce((sum, t) => sum + t.wpm, 0) / tests.length;
-        const averageAccuracy = tests.reduce((sum, t) => sum + t.accuracy, 0) / tests.length;
-
-        const data = {
-            averageWPM,
-            averageAccuracy
-        }
-        res.json(data);
-
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ error: "Failed to retrieve averagestats" })
-    }
-
-});
-
-app.get("/api/averagestats", protectRoute, async (req, res) => {
-
-
-    try {
-
-        // console.log(req.query.last);
-
-        //array of strings
-        console.log(req.query.configs);
-
-        const mode = String(req.query.mode);
-        const lengthDurationSetting = String(req.query.LengthDurationSetting);
-
-        const configs = req.query.configs
-
-
-        let NormalizedConfigKey = null;
-
-        if (Array.isArray(configs)) {
-
-            let FilteredConfigs = configs.filter(item => item !== "error")
-            NormalizedConfigKey = FilteredConfigs.sort().join("_")
-        }
-
-        // const NormalizedConfigKey = configs ? configs.sort().join("_") : null;
-
-        console.log(NormalizedConfigKey);
-
-        const last = Number(req.query.last) || 20;
+        console.log("hey");
+        console.log(Number(req.query.last));
+        console.log(valid_Last);
 
         //Should I make sure last is a number before using 
 
@@ -217,7 +221,7 @@ app.get("/api/averagestats", protectRoute, async (req, res) => {
         const tests = await prisma.typingTest.findMany({
             where: { userId: userid, mode, lengthDurationSetting, configKey: NormalizedConfigKey },
             orderBy: { createdAt: "desc" },
-            take: last,
+            ...(valid_Last? { take: Number(req.query.last) } : {}),
             select: { wpm: true, accuracy: true }
         })
 
@@ -280,8 +284,8 @@ app.get("/api/PBandHistory", protectRoute, async (req, res) => {
 
             prisma.typingTest.findMany({
                 where: { userId: userid, mode, lengthDurationSetting, configKey: NormalizedConfigKey },
-                orderBy: { createdAt: "desc" },
-                select: { wpm: true, accuracy: true }
+                orderBy: { createdAt: "asc" },
+                select: { wpm: true, accuracy: true, mode: true, lengthDurationSetting: true, configKey: true, createdAt: true }
             })
 
         ])
@@ -301,7 +305,7 @@ app.get("/api/PBandHistory", protectRoute, async (req, res) => {
             PersonalBest,
             tests
         }
-        
+
         res.json(data);
 
     } catch (error) {
