@@ -194,26 +194,36 @@ app.get("/api/averagestats", protectRoute, async (req, res) => {
         const mode = String(req.query.mode);
         const lengthDurationSetting = String(req.query.LengthDurationSetting);
 
-        const configs = req.query.configs
+        let configs = req.query.configs
 
+        if (!configs) {
+            configs = [];
+        } else if (!Array.isArray(configs)) {
+            configs = [configs];
+        }
 
         let NormalizedConfigKey = null;
 
         if (Array.isArray(configs)) {
 
+            console.log("is array")
             let FilteredConfigs = configs.filter(item => item !== "error")
-            NormalizedConfigKey = FilteredConfigs.sort().join("_")
+
+            if (FilteredConfigs.length > 0) {
+                NormalizedConfigKey = FilteredConfigs.sort().join("_")
+            }
         }
 
         // const NormalizedConfigKey = configs ? configs.sort().join("_") : null;
 
         // console.log(NormalizedConfigKey);
 
-        const valid_Last = Number.isFinite( Number(req.query.last) ) && Number(req.query.last) > 0
+        const valid_Last = Number.isFinite(Number(req.query.last)) && Number(req.query.last) > 0
 
         console.log("hey");
         console.log(Number(req.query.last));
         console.log(valid_Last);
+        console.log("config key = ", NormalizedConfigKey);
 
         //Should I make sure last is a number before using 
 
@@ -221,9 +231,10 @@ app.get("/api/averagestats", protectRoute, async (req, res) => {
         const tests = await prisma.typingTest.findMany({
             where: { userId: userid, mode, lengthDurationSetting, configKey: NormalizedConfigKey },
             orderBy: { createdAt: "desc" },
-            ...(valid_Last? { take: Number(req.query.last) } : {}),
+            ...(valid_Last ? { take: Number(req.query.last) } : {}),
             select: { wpm: true, accuracy: true }
         })
+        console.log(`found ${tests.length} tests`)
 
         if (tests.length === 0) {
 
@@ -256,14 +267,25 @@ app.get("/api/PBandHistory", protectRoute, async (req, res) => {
         const mode = String(req.query.mode);
         const lengthDurationSetting = String(req.query.LengthDurationSetting);
 
-        const configs = req.query.configs
+        let configs = req.query.configs
+
+        if (!configs) {
+            configs = [];
+        } else if (!Array.isArray(configs)) {
+            configs = [configs];
+        }
+
 
         let NormalizedConfigKey = null;
 
         if (Array.isArray(configs)) {
 
+            console.log("is array")
             let FilteredConfigs = configs.filter(item => item !== "error")
-            NormalizedConfigKey = FilteredConfigs.sort().join("_")
+
+            if (FilteredConfigs.length > 0) {
+                NormalizedConfigKey = FilteredConfigs.sort().join("_")
+            }
         }
 
         // const last = Number(req.query.last) || 20;
