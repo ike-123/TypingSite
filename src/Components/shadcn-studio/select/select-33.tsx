@@ -22,7 +22,7 @@ type Props = {
 
 const MultipleSelectWithPlaceholderDemo = ({ value, onChange }: Props) => {
   return (
-    <div className='w-full max-w-xs space-y-2'>
+    <div className='w-full max-w-45 space-y-2'>
       {/* <Label>Multiselect with placeholder and clear</Label> */}
 
       <MultipleSelector
