@@ -33,6 +33,7 @@ const MyStats = () => {
 
     const [testsCompleted, SetTestsCompleted] = useState<number>(0);
     const [timeSpentTyping, SetTimeSpentTyping] = useState<number>(0);
+    
 
 
     // const [selectedMode, SetSelectedMode] = useState("")
@@ -85,13 +86,13 @@ const MyStats = () => {
     }, [AverageStats_Options.selectedLengthDuration, AverageStats_Options.selected_Test_Scope, avg_stats_selectedConfigs])
 
 
-    // useEffect(() => {
+    useEffect(() => {
 
 
-    //     console.log(selectedConfigs);
+        GetExtraTestInfo();
 
 
-    // }, [selectedConfigs])
+    }, [])
 
 
     function Change_LengthDuration(mode: string) {

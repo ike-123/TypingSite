@@ -37,16 +37,6 @@ const MultipleSelectWithPlaceholderDemo = ({ value, onChange }: Props) => {
         onChange={(onChange)}
         className='w-full'
       />
-      <p className='text-muted-foreground text-xs' role='region' aria-live='polite'>
-        Inspired by{' '}
-        <a
-          // href='https://shadcnui-expansions.typeart.cc/docs/multiple-selector'
-          className='hover:text-primary underline'
-          target='_blank'
-        >
-          shadcn/ui expressions
-        </a>
-      </p>
     </div>
   )
 }

@@ -259,6 +259,19 @@ const SinglePageTypingTest = () => {
             // console.log(engine.state.WPM);
             // console.log(engine.state.Accuracy);
 
+            //If test stopped due to error or test duration is less than 5 don't send
+
+            if (engine.state.stoppedDueToError) {
+
+                //Show a toast to the user here
+                console.log("Test result won't be saved Error made")
+                return
+            }
+            else if (engine.state.totalTime < 3) {
+
+                console.log("Test is too short will not save")
+                return
+            }
 
             const results = {
                 wpm: engine.state.WPM,
@@ -266,9 +279,9 @@ const SinglePageTypingTest = () => {
                 correctChars: engine.state.correctCount,
                 incorrectChars: engine.state.incorrectCount,
                 duration: engine.state.TotalTime,
-                mode:modeID,
-                LengthDurationSetting:LengthDurationSetting,
-                configs:Allowedconfigs
+                mode: modeID,
+                LengthDurationSetting: LengthDurationSetting,
+                configs: Allowedconfigs
             }
 
             async function SubmitTestResult() {
@@ -283,7 +296,9 @@ const SinglePageTypingTest = () => {
                     console.error("Failed to save test result", error);
                 }
             }
+
             SubmitTestResult();
+
 
 
         }

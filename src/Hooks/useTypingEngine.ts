@@ -57,6 +57,7 @@ export interface State {
     wordsAmount: number
     isRedo: boolean
     PreviousWords: string[]
+    stoppedDueToError:boolean
     errors: number[]
     lastkeyPressed: string
 }
@@ -264,7 +265,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
 
 
-        const { value, inputEventData, keyPressEvent, textForDisplay, indexToChange, word, Init_Words, HighestIndexFoundOutOfBounds, RemainingWords, wordsSincePunctuation, isStartOfSentence } = action.payload
+        const { value, inputEventData, keyPressEvent, textForDisplay, indexToChange, word, Init_Words, HighestIndexFoundOutOfBounds, RemainingWords, wordsSincePunctuation, isStartOfSentence, stoppedDueToError} = action.payload
 
 
         switch (action.type) {
@@ -588,6 +589,9 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
                 timeElapsedsecs = parseFloat(((finishTime - startTime) / 1000).toFixed(1)) //elapsed time in minutes to 1 dp
 
+                let StoppedBecauesOfError = stoppedDueToError ? stoppedDueToError : false;
+                // console.log(StoppedBecauesOfError)
+
                 // console.log(errors);
 
                 var CorrectlyTypedWordsArr: string[] = new Array();
@@ -626,7 +630,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
                     correctCount: correctCount,
                     incorrectCount: incorrectCount,
                     TestFinished: TestFinished,
-                    TotalTime: timeElapsedsecs
+                    TotalTime: timeElapsedsecs,
+                    stoppedDueToError: StoppedBecauesOfError
 
                 }
 
@@ -829,6 +834,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
         TotalTime: 0,
         isRedo: false,
         PreviousWords: [],
+        stoppedDueToError: false,
         errors: [],
         lastkeyPressed: ""
 
@@ -1326,7 +1332,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
     useEffect(() => {
 
         if (config.includes("error") && state.incorrectCount > 0) {
-            dispatch({ type: "FinishTest", payload: {} })
+            dispatch({ type: "FinishTest", payload: {stoppedDueToError:true} })
         }
 
     }, [state.incorrectCount])
