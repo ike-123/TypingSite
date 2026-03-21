@@ -2,8 +2,12 @@ import AuthRouter from "./Routes/AuthRouter";
 import cors from 'cors';
 // import * as cors from 'cors';
 
-import { server } from "./socket.ts";
-import { app } from "./socket.ts";
+// import { server } from "./socket.ts";
+// import { app } from "./socket.ts";
+
+import { Server } from "socket.io";
+import * as http from "http"; 
+
 
 
 import { toNodeHandler } from "better-auth/node"
@@ -12,7 +16,22 @@ import { NextFunction } from "express";
 import { protectRoute } from "./Middleware/AuthMiddleware.ts";
 import { prisma } from "./lib/prisma.ts"
 import { config, length } from "zod";
+import { setupSockets } from "./socket.ts";
 
+/////
+import express from "express";
+import cookieParser from "cookie-parser"
+
+
+
+const app = express()
+
+app.use(express.json())
+app.use(cookieParser())
+app.use(express.urlencoded({extended:true}))
+
+
+/////
 
 
 app.use(cors({
@@ -20,6 +39,11 @@ app.use(cors({
     // origin: "*",
     credentials: true
 }));
+
+
+const server = http.createServer(app as http.RequestListener);
+
+const io = setupSockets(server);
 
 
 const port = 3001

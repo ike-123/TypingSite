@@ -120,6 +120,8 @@ export class GameRoom {
             TargetPlayer.progressIndex = data.nextIndex;
             TargetPlayer.wpm = Math.round((data.totalChars / 5) / (data.elapsedMs / 60000));
 
+            console.log("words = ", data.totalChars/5);
+            console.log("time elapsed = ", data.elapsedMs);
 
             //if player has finished
             if (TargetPlayer.progressIndex === this.words.length) {

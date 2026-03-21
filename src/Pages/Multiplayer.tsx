@@ -8,6 +8,7 @@ import { useTypingEnigne2 } from '@/Hooks/useTypingEngine2';
 import SP_TypingTest from '@/Components/SP_TypingTest';
 import type { configID, modeID } from '@/utils/Typingmode';
 import { useTypingEnigne } from '@/Hooks/useTypingEngine';
+// import { date } from 'better-auth';
 
 type PlayerState = { id: string; progressIndex: number; wpm: number; finished: boolean; finishtime: String };
 
@@ -156,7 +157,9 @@ const Multiplayer = () => {
 
         // console.log("hey")
 
-        const socket = io("http://localhost:3001")
+        // const socket = io("http://localhost:3001")
+        const socket = io("192.168.1.70:3001")
+
 
         socketRef.current = socket;
 
@@ -176,7 +179,10 @@ const Multiplayer = () => {
             setWords(words)
             engine.Reset()
 
-            setStartAt(startAt)
+            //set startAt to value provided from server
+            // setStartAt(startAt)
+
+            setStartAt(Date.now());
             SetNewCurrenetWord(0);
             setTypedWord("");
             setCountdown(null);
@@ -212,40 +218,42 @@ const Multiplayer = () => {
 
     }
 
-    function HandleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    // function HandleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
 
 
-        if (event.code === "Space") {
+    //     if (event.code === "Space") {
 
-            event.preventDefault();
-            const candidate = TypedWord.trim()
+    //         event.preventDefault();
+    //         const candidate = TypedWord.trim()
+            
+    //         if (candidate === words[CurrentWord]) {
 
-            if (candidate === words[CurrentWord]) {
+    //             console.log(CurrentWord);
+    //             const nextIndex = CurrentWord + 1;
 
-                console.log(CurrentWord);
-                const nextIndex = CurrentWord + 1;
+    //             SetNewCurrenetWord((previous) => previous + 1)
+    //             if (status != "waiting" && status != "countdown") {
 
-                SetNewCurrenetWord((previous) => previous + 1)
-                if (status != "waiting" && status != "countdown") {
+    //                 setprogressPercent(nextIndex / words.length * 100)
 
-                    setprogressPercent(nextIndex / words.length * 100)
+    //             }
 
-                }
+    //             setTypedWord("")
 
-                setTypedWord("")
+    //             console.log("server ", startAt);
+    //             console.log("now ", Date.now());
 
-                const elapsedMs = Date.now() - (startAt ?? 0);
-                const totalChars = words.slice(0, nextIndex).join(" ").length;
+    //             const elapsedMs = Date.now() - (startAt ?? 0);
+    //             const totalChars = words.slice(0, nextIndex).join(" ").length;
 
-                socketRef.current?.emit("wordDone", { nextIndex, elapsedMs, totalChars });
+    //             socketRef.current?.emit("wordDone", { nextIndex, elapsedMs, totalChars });
 
-            }
+    //         }
 
-        }
-    }
+    //     }
+    // }
 
     useEffect(() => {
-
 
         if (status != "waiting" && status != "countdown") {
 
