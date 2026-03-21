@@ -41,7 +41,7 @@ app.use(cors({
 }));
 
 
-const server = http.createServer(app as http.RequestListener);
+const server = http.createServer(app);
 
 const io = setupSockets(server);
 

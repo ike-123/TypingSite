@@ -316,7 +316,7 @@ const Multiplayer = () => {
 
                 <div className='Multiplayer mb-10'>
 
-                    {countdown !== null && <h1 className='infotext text-2xl'>Game starts in {countdown}</h1>}
+                    {status === "countdown" && countdown !== null && <h1 className='infotext text-2xl'>Game starts in {countdown}</h1>}
                     {status === "waiting" ? <h1 className='infotext text-2xl'>Waiting For more Players</h1> : ""}
                     {<h1 className='infotext'>Players in Server: {PlayersInServer}</h1>}
 

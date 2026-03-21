@@ -25,6 +25,8 @@ export class GameRoom {
     words: string[];
     startAt: number | null;
     countdownTimer: number;
+    interval: any
+
 
 
 
@@ -38,7 +40,7 @@ export class GameRoom {
         this.startAt = null;
         this.countdownTimer = 10;
         this.words = this.getRandomWords(30);
-
+        this.interval = null
     }
 
 
@@ -65,41 +67,54 @@ export class GameRoom {
             // this.words = this.getRandomWords(10)
 
             //set status to countdown and send to clients in room
-            this.status = "countdown"
-            this.io.to(this.roomId).emit("status", this.status)
 
 
-            let countdown = 7;
+            this.BeginCountDown();
 
-            const interval = setInterval(() => {
-                this.io.to(this.roomId).emit("countdown", countdown)
-                countdown--;
-    
-                if(countdown <= 0){
-                    clearInterval(interval)
-                    this.status = "running"
-                    this.startAt = Date.now() + 500
-
-                    this.io.to(this.roomId).emit("start", { "words": this.words, "startAt": this.startAt });
-                    this.io.to(this.roomId).emit("state", Array.from(this.players.entries()).map(([id, val]) => ({ id, ...val })));
-                    this.io.to(this.roomId).emit("status", this.status)
-
-
-                }
-
-            }, 1000);
         }
     }
+
+    BeginCountDown() {
+
+        this.status = "countdown"
+        this.io.to(this.roomId).emit("status", this.status)
+
+        let countdown = 7;
+
+        this.interval = setInterval(() => {
+            this.io.to(this.roomId).emit("countdown", countdown)
+            countdown--;
+
+            if (countdown <= 0) {
+                clearInterval(this.interval)
+                this.status = "running"
+                this.startAt = Date.now() + 500
+
+                this.io.to(this.roomId).emit("start", { "words": this.words, "startAt": this.startAt });
+                this.io.to(this.roomId).emit("state", Array.from(this.players.entries()).map(([id, val]) => ({ id, ...val })));
+                this.io.to(this.roomId).emit("status", this.status)
+
+            }
+
+        }, 1000);
+    }
+
+
 
     HandleDisconnect(socket: Socket): void {
 
         this.players.delete(socket.id);
+        console.log(socket.id, "has been removed");
 
         if (this.status === "countdown") {
 
             if (this.players.size === 1) {
 
                 this.status = "waiting"
+                clearInterval(this.interval)
+                // this.io.to(this.roomId).emit("countdown", null)
+
+
             }
         }
 
@@ -120,7 +135,7 @@ export class GameRoom {
             TargetPlayer.progressIndex = data.nextIndex;
             TargetPlayer.wpm = Math.round((data.totalChars / 5) / (data.elapsedMs / 60000));
 
-            console.log("words = ", data.totalChars/5);
+            console.log("words = ", data.totalChars / 5);
             console.log("time elapsed = ", data.elapsedMs);
 
             //if player has finished
