@@ -1,4 +1,4 @@
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { Server as HttpServer } from "http";
 
 // import http from "http";
@@ -10,6 +10,7 @@ import express from "express";
 import { GameRoom } from "./GameRoom.ts";
 import wordsList from "../src/words.json" with { type: "json" };
 import cookieParser from "cookie-parser"
+import { map } from "zod";
 
 
 
@@ -39,16 +40,42 @@ export function setupSockets(server: HttpServer) {
     })
 
     let rooms = new Map<string, GameRoom>()
-    let TotalPlayersInServer = 0;
 
+    let players = new Map<string, Socket>()
+
+
+
+    let TotalPlayersInServer = 0;
 
 
     io.on("connection", (socket) => {
 
         console.log(socket.id)
+
+        const playerID = socket.handshake.auth.playerID;
+
+        //Player should always have an ID whether logged in or not so this shouldn't really be called
+        if (!playerID) {
+            socket.disconnect();
+            return;
+        }
+
+        //If player already exists kick the old socket
+        const ExistingSocket = players.get(playerID);
+
+        if (ExistingSocket) {
+            ExistingSocket.disconnect(true);
+        }
+
+        players.set(playerID, socket);
+
+
+
+
+
         const GameRoom = FindRoom();
 
-        console.log(rooms.size);
+        // console.log(rooms.size);
 
         GameRoom.addPlayer(socket);
 
@@ -61,6 +88,12 @@ export function setupSockets(server: HttpServer) {
         })
 
         socket.on("disconnect", () => {
+
+            //Only delete if the socket disconnecting is still the current socket stored in the map
+            if (players.get(playerID) === socket) {
+                players.delete(playerID);
+
+            }
             GameRoom.HandleDisconnect(socket);
         })
 

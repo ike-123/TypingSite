@@ -114,7 +114,6 @@ export class GameRoom {
                 clearInterval(this.interval)
                 // this.io.to(this.roomId).emit("countdown", null)
 
-
             }
         }
 
