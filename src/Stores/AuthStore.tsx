@@ -62,7 +62,7 @@ export const useAuthStore = create<AuthStore>((set) => ({
 
             set({ user: data});
 
-            // console.log(data);
+            console.log(data);
 
         } catch (error) {
 

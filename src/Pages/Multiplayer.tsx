@@ -8,6 +8,8 @@ import { useTypingEnigne2 } from '@/Hooks/useTypingEngine2';
 import SP_TypingTest from '@/Components/SP_TypingTest';
 import type { configID, modeID } from '@/utils/Typingmode';
 import { useTypingEnigne } from '@/Hooks/useTypingEngine';
+import { useAuthStore } from '@/Stores/AuthStore';
+import { v4 as uuidv4 } from 'uuid';
 // import { date } from 'better-auth';
 
 type PlayerState = { id: string; progressIndex: number; wpm: number; finished: boolean; finishtime: String };
@@ -66,7 +68,7 @@ const Multiplayer = () => {
 
     const [LengthDurationSetting, SetLengthDurationSetting] = useState<string>("");
 
-
+    const User = useAuthStore((state) => state.user)
 
 
 
@@ -157,8 +159,36 @@ const Multiplayer = () => {
 
         // console.log("hey")
 
+
+        let playerID;
+        let isGuest = true;
+
+        if (User) {
+            console.log("User id is ",User.id)
+
+            playerID = User.id;
+            isGuest = false;
+        }
+        else {
+
+            playerID = localStorage.getItem("playerId")
+
+            if (!playerID) {
+                playerID = uuidv4()
+                localStorage.setItem("playerId", playerID)
+            }
+        }
+
         // const socket = io("http://localhost:3001")
-        const socket = io("192.168.1.70:3001")
+        console.log(isGuest)
+        const socket = io("192.168.1.70:3001", {
+            auth: {
+                playerID,
+            }
+
+        })
+
+
 
 
         socketRef.current = socket;
@@ -225,7 +255,7 @@ const Multiplayer = () => {
 
     //         event.preventDefault();
     //         const candidate = TypedWord.trim()
-            
+
     //         if (candidate === words[CurrentWord]) {
 
     //             console.log(CurrentWord);
@@ -262,7 +292,7 @@ const Multiplayer = () => {
             const elapsedMs = Date.now() - (startAt ?? 0);
             const totalChars = words.slice(0, engine.state.CurrentWordIndex).join(" ").length;
 
-            socketRef.current?.emit("wordDone", { nextIndex:engine.state.CurrentWordIndex , elapsedMs, totalChars });
+            socketRef.current?.emit("wordDone", { nextIndex: engine.state.CurrentWordIndex, elapsedMs, totalChars });
         }
 
 
@@ -273,8 +303,8 @@ const Multiplayer = () => {
     return (
 
         <>
-        <div>Last Key pressed {engine.state.lastkeyPressed}</div>
-        {engine.state.CurrentWordIndex}
+            <div>Last Key pressed {engine.state.lastkeyPressed}</div>
+            {engine.state.CurrentWordIndex}
 
             <div className='main bg-background max-w-7xl flex flex-col items-center m-auto'>
 
