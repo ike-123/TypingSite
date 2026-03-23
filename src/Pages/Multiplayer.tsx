@@ -73,7 +73,7 @@ const Multiplayer = () => {
 
     const [Multiplayer_Username, setMultplayerUsername] = useState()
 
-    const [ShowSetupScreen,SetShowSetupScreen] = useState(true)
+    const [ShowSetupScreen, SetShowSetupScreen] = useState(false)
 
 
     // useEffect(() => {
@@ -162,110 +162,113 @@ const Multiplayer = () => {
     useEffect(() => {
 
 
-        const DisplayName = localStorage.getItem("MultiplayerMode_Displayname");
-
-        if (!DisplayName) {
-
-            //Go back to setup page
-
-            SetShowSetupScreen(true);
-
-            console.log("Just testing this code should run so that we hit the return statement")
+        if (ShowSetupScreen === false) {
 
 
-            return
+            const DisplayName = localStorage.getItem("MultiplayerMode_Displayname");
 
-        }
+            if (!DisplayName) {
 
+                //Go back to setup page
 
-        SetShowSetupScreen(false);
+                SetShowSetupScreen(true);
 
-        // console.log("hey")
-
-
-        //if checking for playerid isnt synchronous because it waits for loading to finish then the code should be after the display name check 
-        //So that we don't wait for playerid only for us to be sent back to the setup page
-        let playerID;
-        let isGuest = true;
-
-        if (User) {
-            console.log("User id is ", User.id)
-
-            playerID = User.id;
-            isGuest = false;
-        }
-        else {
-
-            playerID = localStorage.getItem("playerId")
-
-            if (!playerID) {
-                playerID = uuidv4()
-                localStorage.setItem("playerId", playerID)
-            }
-        }
-
-        //Check for display name and avatar 
+                console.log("Just testing this code should run so that we hit the return statement")
 
 
-        
+                return
 
-
-        // const socket = io("http://localhost:3001")
-        console.log(isGuest)
-        const socket = io("192.168.1.70:3001", {
-            auth: {
-                playerID,
-                DisplayName
             }
 
-        })
+
+            SetShowSetupScreen(false);
+
+            // console.log("hey")
+
+
+            //if checking for playerid isnt synchronous because it waits for loading to finish then the code should be after the display name check 
+            //So that we don't wait for playerid only for us to be sent back to the setup page
+            let playerID;
+            let isGuest = true;
+
+            if (User) {
+                console.log("User id is ", User.id)
+
+                playerID = User.id;
+                isGuest = false;
+            }
+            else {
+
+                playerID = localStorage.getItem("playerId")
+
+                if (!playerID) {
+                    playerID = uuidv4()
+                    localStorage.setItem("playerId", playerID)
+                }
+            }
+
+            //Check for display name and avatar 
 
 
 
 
-        socketRef.current = socket;
 
-        socket.on("countdown", (n) => {
-            setCountdown(n);
-        })
-        socket.on("setWords", ({ words }) => {
+            // const socket = io("http://localhost:3001")
+            console.log(isGuest)
+            const socket = io("192.168.1.70:3001", {
+                auth: {
+                    playerID,
+                    DisplayName
+                }
 
-            // console.log("words coming")
-
-            setWords(words);
-            engine.Reset()
-
-        })
-        socket.on("start", ({ words, startAt }) => {
-
-            setWords(words)
-            engine.Reset()
-
-            //set startAt to value provided from server
-            // setStartAt(startAt)
-
-            setStartAt(Date.now());
-            SetNewCurrenetWord(0);
-            setTypedWord("");
-            setCountdown(null);
-        })
-
-        socket.on("status", (status) => {
-            setStatus(status)
-        })
-
-        socket.on("state", (ps: PlayerState[]) => {
-            setPlayers(ps);
-            // console.log(ps);
-        });
-        socket.on("NumberOfPlayers", (amount) => {
-            SetPlayersInServer(amount)
-        })
-
-        return () => { socket.disconnect(); };
+            })
 
 
-    }, [])
+
+            socketRef.current = socket;
+
+            socket.on("countdown", (n) => {
+                setCountdown(n);
+            })
+            socket.on("setWords", ({ words }) => {
+
+                // console.log("words coming")
+
+                setWords(words);
+                engine.Reset()
+
+            })
+            socket.on("start", ({ words, startAt }) => {
+
+                setWords(words)
+                engine.Reset()
+
+                //set startAt to value provided from server
+                // setStartAt(startAt)
+
+                setStartAt(Date.now());
+                SetNewCurrenetWord(0);
+                setTypedWord("");
+                setCountdown(null);
+            })
+
+            socket.on("status", (status) => {
+                setStatus(status)
+            })
+
+            socket.on("state", (ps: PlayerState[]) => {
+                setPlayers(ps);
+                // console.log(ps);
+            });
+            socket.on("NumberOfPlayers", (amount) => {
+                SetPlayersInServer(amount)
+            })
+
+            return () => { socket.disconnect(); };
+
+        }
+
+    }, [ShowSetupScreen])
 
     // console.log("Running Again")
 
@@ -278,6 +281,16 @@ const Multiplayer = () => {
         const value = event.target.value
         setTypedWord(value)
 
+    }
+
+    function EnableShowSetupScreen() {
+
+        SetShowSetupScreen(true);
+    }
+
+    function DisableShowSetupScreen() {
+
+        SetShowSetupScreen(false);
     }
 
     // function HandleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -334,123 +347,145 @@ const Multiplayer = () => {
 
     return (
 
-        <div>
-            <div>Last Key pressed {engine.state.lastkeyPressed}</div>
-            {engine.state.CurrentWordIndex}
+        <>
 
-            <Multiplayer_User_Setup></Multiplayer_User_Setup>
+            {
+                ShowSetupScreen ?
 
-            <div className='main bg-background max-w-7xl flex flex-col items-center m-auto'>
+                    <div className=' '>
+                        <Multiplayer_User_Setup disableSetupScreen={DisableShowSetupScreen}></Multiplayer_User_Setup>
 
-
-                <div className='flex justify-center gap-3'>
-
-                    <NavLink to={"/"} >
-
-                        {({ isActive }) => (
-
-                            <Button variant={isActive ? "default" : "outline"}>Solo</Button>
-
-                        )}
-
-                    </NavLink>
-
-                    <NavLink to={"/Multiplayer"} >
-
-                        {({ isActive }) => (
-
-                            <Button variant={isActive ? "default" : "outline"}>Multiplayer</Button>
-
-                        )}
-
-                    </NavLink>
-
-
-                    <NavLink to={"/Games"} >
-
-                        {({ isActive }) => (
-
-                            <Button variant={isActive ? "default" : "outline"}>Games</Button>
-
-                        )}
-
-                    </NavLink>
-
-                </div>
-
-                <div className='Multiplayer mb-10'>
-
-                    {status === "countdown" && countdown !== null && <h1 className='infotext text-2xl'>Game starts in {countdown}</h1>}
-                    {status === "waiting" ? <h1 className='infotext text-2xl'>Waiting For more Players</h1> : ""}
-                    {<h1 className='infotext'>Players in Server: {PlayersInServer}</h1>}
-
-
-                    <div className="RaceTrack">
-
-
-                        <div className={`PlayerSection ${players.find((player) => player.id === socketRef.current?.id)?.finished ? "finished" : "notfinished"}`}>
-
-                            {players.find((player) => player.id === socketRef.current?.id)?.finished ? <div className='FinshedText'>Finished</div> : ""}
-
-
-                            <div className='playerAvatar' style={{ position: "absolute", left: `${progressPercent}%` }}>
-
-                                {/* <img src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png" alt="" /> */}
-                                <img src="https://i.pinimg.com/originals/d5/96/3c/d5963c6f0bc206e3723f796e3b54fd6b.gif" alt="" />
-
-
-                                <h1 className='DisplayName'>{players.find((player) => player.id === socketRef.current?.id)?.DisplayName ?? ""}</h1>
-
-                                {status != "waiting" && status != "countdown" ? <div className='wpm'>{players.find((player) => player.id === socketRef.current?.id)?.wpm ?? 0} wpm</div> : ""}
-                                <div className='wpm'>{players.find((player) => player.id === socketRef.current?.id)?.finishtime ?? ""}</div>
-
-                            </div>
-
-                        </div>
-
-
-                        {players.filter((player) => player.id !== socketRef.current?.id)
-                            .map((player) => {
-                                const percent = words.length ? (player.progressIndex / words.length) * 100 : 0;
-                                const finished = player.finished;
-                                const DisplayName = player.DisplayName;
-
-
-
-                                return (
-                                    <div className={`PlayerSection ${finished ? "finished" : "notfinished"}`}>
-
-                                        <div className='playerAvatar' style={{ position: "absolute", left: `${percent}%` }}>
-                                            <img className='image'
-
-                                                key={player.id}
-                                                src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png"
-
-                                            />
-
-                                            <h1>{DisplayName}</h1>
-                                            {status != "waiting" && status != "countdown" ? <div className='wpm'>{player.wpm} wpm</div> : ""}
-                                            <div className='wpm'>{player.finishtime}</div>
-
-                                        </div>
-                                    </div>
-
-                                );
-                            })}
 
 
                     </div>
-                </div>
+
+                    :
+
+                    <div>
+                        <div>Last Key pressed {engine.state.lastkeyPressed}</div>
+                        {engine.state.CurrentWordIndex}
+
+                        <Button onClick={EnableShowSetupScreen}>Change Name/Avatar</Button>
+
+
+                        <div className='main bg-background max-w-7xl flex flex-col items-center m-auto'>
+
+
+                            <div className='flex justify-center gap-3'>
+
+                                <NavLink to={"/"} >
+
+                                    {({ isActive }) => (
+
+                                        <Button variant={isActive ? "default" : "outline"}>Solo</Button>
+
+                                    )}
+
+                                </NavLink>
+
+                                <NavLink to={"/Multiplayer"} >
+
+                                    {({ isActive }) => (
+
+                                        <Button variant={isActive ? "default" : "outline"}>Multiplayer</Button>
+
+                                    )}
+
+                                </NavLink>
+
+
+                                <NavLink to={"/Games"} >
+
+                                    {({ isActive }) => (
+
+                                        <Button variant={isActive ? "default" : "outline"}>Games</Button>
+
+                                    )}
+
+                                </NavLink>
+
+                            </div>
+
+                            <div className='Multiplayer mb-10'>
+
+                                {status === "countdown" && countdown !== null && <h1 className='infotext text-2xl'>Game starts in {countdown}</h1>}
+                                {status === "waiting" ? <h1 className='infotext text-2xl'>Waiting For more Players</h1> : ""}
+                                {<h1 className='infotext'>Players in Server: {PlayersInServer}</h1>}
+
+
+                                <div className="RaceTrack">
+
+
+                                    <div className={`PlayerSection ${players.find((player) => player.id === socketRef.current?.id)?.finished ? "finished" : "notfinished"}`}>
+
+                                        {players.find((player) => player.id === socketRef.current?.id)?.finished ? <div className='FinshedText'>Finished</div> : ""}
+
+
+                                        <div className='playerAvatar' style={{ position: "absolute", left: `${progressPercent}%` }}>
+
+                                            {/* <img src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png" alt="" /> */}
+                                            <img src="https://i.pinimg.com/originals/d5/96/3c/d5963c6f0bc206e3723f796e3b54fd6b.gif" alt="" />
+
+
+                                            <h1 className='DisplayName'>{players.find((player) => player.id === socketRef.current?.id)?.DisplayName ?? ""}</h1>
+
+                                            {status != "waiting" && status != "countdown" ? <div className='wpm'>{players.find((player) => player.id === socketRef.current?.id)?.wpm ?? 0} wpm</div> : ""}
+                                            <div className='wpm'>{players.find((player) => player.id === socketRef.current?.id)?.finishtime ?? ""}</div>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    {players.filter((player) => player.id !== socketRef.current?.id)
+                                        .map((player) => {
+                                            const percent = words.length ? (player.progressIndex / words.length) * 100 : 0;
+                                            const finished = player.finished;
+                                            const DisplayName = player.DisplayName;
+
+
+
+                                            return (
+                                                <div className={`PlayerSection ${finished ? "finished" : "notfinished"}`}>
+
+                                                    <div className='playerAvatar' style={{ position: "absolute", left: `${percent}%` }}>
+                                                        <img className='image'
+
+                                                            key={player.id}
+                                                            src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png"
+
+                                                        />
+
+                                                        <h1>{DisplayName}</h1>
+                                                        {status != "waiting" && status != "countdown" ? <div className='wpm'>{player.wpm} wpm</div> : ""}
+                                                        <div className='wpm'>{player.finishtime}</div>
+
+                                                    </div>
+                                                </div>
+
+                                            );
+                                        })}
+
+
+                                </div>
+                            </div>
 
 
 
 
-                <SP_TypingTest engine={engine} HighlightIncorrectCurrentWord={true} ></SP_TypingTest>
+                            <SP_TypingTest engine={engine} HighlightIncorrectCurrentWord={true} ></SP_TypingTest>
 
 
-            </div>
+                        </div>
 
-        </div>
+                    </div>
+
+            }
+
+
+
+        </>
+
 
     )
 }
