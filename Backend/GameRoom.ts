@@ -8,6 +8,7 @@ type PlayerState = {
     wpm: number;
     finished: boolean;
     finishtime: string;
+    DisplayName:string
 }
 
 type WordDoneData = {
@@ -44,17 +45,18 @@ export class GameRoom {
     }
 
 
-    addPlayer(socket: Socket): void {
+    addPlayer(socket: Socket, DisplayName:string): void {
 
         //add socket(client) to room
         socket.join(this.roomId);
 
         //Add newly joined player to the array of players
-        this.players.set(socket.id, { progressIndex: 0, wpm: 0, finished: false, finishtime: "" })
+        this.players.set(socket.id, { progressIndex: 0, wpm: 0, finished: false, finishtime: "", DisplayName})
 
         this.io.to(this.roomId).emit("setWords", { "words": this.words });
 
         // send the updated array of players back to all the clients in room
+        //To further optimise only send Displayname during player connect and disconnect and not on each state message to the client
         this.io.to(this.roomId).emit("state", Array.from(this.players.entries()).map(([id, val]) => ({ id, ...val })));
 
         //send status of game to clients in room

@@ -29,6 +29,10 @@ type WordDoneData = {
     totalChars: number;
 }
 
+type PlayerData = {
+    Socket: Socket;
+    DisplayName: string
+}
 
 
 export function setupSockets(server: HttpServer) {
@@ -43,7 +47,7 @@ export function setupSockets(server: HttpServer) {
 
     //IN the future instead of just storing a socket as the value for players you could store an object storing both socket and roomid
     //This could mean if you want to make sure a player rejoins the same room even after refreshing you could easily find their roomid
-    let players = new Map<string, Socket>()
+    let players = new Map<string, PlayerData>()
 
     let TotalPlayersInServer = 0;
 
@@ -53,7 +57,9 @@ export function setupSockets(server: HttpServer) {
         console.log(socket.id)
 
         const playerID = socket.handshake.auth.playerID;
+        const DisplayName = socket.handshake.auth.DisplayName;
 
+        console.log(DisplayName);
         console.log(playerID)
 
         //Player should always have an ID whether logged in or not so this shouldn't really be called
@@ -70,20 +76,20 @@ export function setupSockets(server: HttpServer) {
 
             console.log("existing player exists disconnect previous");
             //Let user know that they were logged out
-            ExistingSocket.emit("force_disconnect", {
+            ExistingSocket.Socket.emit("force_disconnect", {
                 reason: "You were disconnected because you logged in on another tab."
             }); 
-            ExistingSocket.disconnect(true);
+            ExistingSocket.Socket.disconnect(true);
         }
 
-        players.set(playerID, socket);
+        players.set(playerID, {Socket:socket,DisplayName:DisplayName});
 
 
         const GameRoom = FindRoom();
 
         // console.log(rooms.size);
 
-        GameRoom.addPlayer(socket);
+        GameRoom.addPlayer(socket,DisplayName);
 
         socket.emit("NumberOfPlayers", TotalPlayersInServer);
 
@@ -96,7 +102,7 @@ export function setupSockets(server: HttpServer) {
         socket.on("disconnect", () => {
 
             //Only delete if the socket disconnecting is still the current socket stored in the map
-            if (players.get(playerID) === socket) {
+            if (players.get(playerID)?.Socket === socket) {
                 players.delete(playerID);
 
             }

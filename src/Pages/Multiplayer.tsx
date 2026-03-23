@@ -10,9 +10,10 @@ import type { configID, modeID } from '@/utils/Typingmode';
 import { useTypingEnigne } from '@/Hooks/useTypingEngine';
 import { useAuthStore } from '@/Stores/AuthStore';
 import { v4 as uuidv4 } from 'uuid';
+import Multiplayer_User_Setup from '@/Components/Multiplayer_User_Setup';
 // import { date } from 'better-auth';
 
-type PlayerState = { id: string; progressIndex: number; wpm: number; finished: boolean; finishtime: String };
+type PlayerState = { id: string; progressIndex: number; wpm: number; finished: boolean; finishtime: string; DisplayName: string };
 
 type Status = "waiting" | "countdown" | "running"
 
@@ -70,6 +71,9 @@ const Multiplayer = () => {
 
     const User = useAuthStore((state) => state.user)
 
+    const [Multiplayer_Username, setMultplayerUsername] = useState()
+
+    const [ShowSetupScreen,SetShowSetupScreen] = useState(true)
 
 
     // useEffect(() => {
@@ -157,14 +161,35 @@ const Multiplayer = () => {
 
     useEffect(() => {
 
+
+        const DisplayName = localStorage.getItem("MultiplayerMode_Displayname");
+
+        if (!DisplayName) {
+
+            //Go back to setup page
+
+            SetShowSetupScreen(true);
+
+            console.log("Just testing this code should run so that we hit the return statement")
+
+
+            return
+
+        }
+
+
+        SetShowSetupScreen(false);
+
         // console.log("hey")
 
 
+        //if checking for playerid isnt synchronous because it waits for loading to finish then the code should be after the display name check 
+        //So that we don't wait for playerid only for us to be sent back to the setup page
         let playerID;
         let isGuest = true;
 
         if (User) {
-            console.log("User id is ",User.id)
+            console.log("User id is ", User.id)
 
             playerID = User.id;
             isGuest = false;
@@ -179,11 +204,18 @@ const Multiplayer = () => {
             }
         }
 
+        //Check for display name and avatar 
+
+
+        
+
+
         // const socket = io("http://localhost:3001")
         console.log(isGuest)
         const socket = io("192.168.1.70:3001", {
             auth: {
                 playerID,
+                DisplayName
             }
 
         })
@@ -302,9 +334,11 @@ const Multiplayer = () => {
 
     return (
 
-        <>
+        <div>
             <div>Last Key pressed {engine.state.lastkeyPressed}</div>
             {engine.state.CurrentWordIndex}
+
+            <Multiplayer_User_Setup></Multiplayer_User_Setup>
 
             <div className='main bg-background max-w-7xl flex flex-col items-center m-auto'>
 
@@ -365,6 +399,8 @@ const Multiplayer = () => {
                                 <img src="https://i.pinimg.com/originals/d5/96/3c/d5963c6f0bc206e3723f796e3b54fd6b.gif" alt="" />
 
 
+                                <h1 className='DisplayName'>{players.find((player) => player.id === socketRef.current?.id)?.DisplayName ?? ""}</h1>
+
                                 {status != "waiting" && status != "countdown" ? <div className='wpm'>{players.find((player) => player.id === socketRef.current?.id)?.wpm ?? 0} wpm</div> : ""}
                                 <div className='wpm'>{players.find((player) => player.id === socketRef.current?.id)?.finishtime ?? ""}</div>
 
@@ -377,6 +413,7 @@ const Multiplayer = () => {
                             .map((player) => {
                                 const percent = words.length ? (player.progressIndex / words.length) * 100 : 0;
                                 const finished = player.finished;
+                                const DisplayName = player.DisplayName;
 
 
 
@@ -391,6 +428,7 @@ const Multiplayer = () => {
 
                                             />
 
+                                            <h1>{DisplayName}</h1>
                                             {status != "waiting" && status != "countdown" ? <div className='wpm'>{player.wpm} wpm</div> : ""}
                                             <div className='wpm'>{player.finishtime}</div>
 
@@ -412,7 +450,7 @@ const Multiplayer = () => {
 
             </div>
 
-        </>
+        </div>
 
     )
 }
