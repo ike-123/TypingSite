@@ -1,26 +1,38 @@
 import React, { useEffect, useState } from 'react'
 import { Input } from "@/components/ui/input"
 import { Button } from './ui/button';
+import { useAuthStore } from '@/Stores/AuthStore';
 
 
 type SetupProps = {
-    disableSetupScreen:()=>void;
+    disableSetupScreen: () => void;
 }
 
-const Multiplayer_User_Setup = (props:SetupProps) => {
+const Multiplayer_User_Setup = (props: SetupProps) => {
+
+    const User = useAuthStore((state) => state.user)
+
 
     const [displayName, SetDisplayName] = useState("");
 
-    useEffect(()=>{
 
+    useEffect(() => {
+
+        //Check to see if we have a name stored in the local storage This will be the primary name to use
         const storedDisplayName = localStorage.getItem("MultiplayerMode_Displayname");
 
-        if(storedDisplayName){
-            
+        if (storedDisplayName) {
+
             SetDisplayName(storedDisplayName);
+            return
         }
 
-    },[])
+        // If the user is logged in we will set the Display name to be their Username
+        if (User){
+            SetDisplayName(User.name)
+        }
+
+    }, [])
 
     function OnInputchange(event: React.ChangeEvent<HTMLInputElement>) {
 
@@ -51,7 +63,7 @@ const Multiplayer_User_Setup = (props:SetupProps) => {
 
                 <div className='flex flex-col'>
                     <label htmlFor="Displayname">Display Name</label>
-                    <Input name='Displayname' className='w-60' onChange={OnInputchange} value={displayName} />
+                    <Input id="Displayname" name='Displayname' className='w-60' onChange={OnInputchange} value={displayName} />
 
                 </div>
 
