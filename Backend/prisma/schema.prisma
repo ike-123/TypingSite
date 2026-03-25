@@ -33,6 +33,8 @@ model User {
   accounts      Account[]
   typingTests   TypingTest[]
 
+  stripeCustomerId String?
+
   @@unique([email])
   @@map("user")
 }
@@ -86,7 +88,7 @@ model Verification {
 }
 
 model TypingTest {
-  id             String   @id @default(uuid())
+  id             String @id @default(uuid())
   userId         String
   wpm            Int
   accuracy       Float
@@ -94,16 +96,15 @@ model TypingTest {
   incorrectChars Int
   duration       Int
 
-  mode String
+  mode                  String
   lengthDurationSetting String
 
   configKey String?
 
-  createdAt      DateTime @default(now())
+  createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt])
   @@index([userId, configKey])
-
 }
