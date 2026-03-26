@@ -35,6 +35,10 @@ model User {
 
   stripeCustomerId String?
 
+  Keys Int @default(0)
+  Ads_Removed Boolean @default(false)
+  currency String @default("GBP")
+
   @@unique([email])
   @@map("user")
 }
