@@ -22,16 +22,17 @@ datasource db {
 // } 
 
 model User {
-  id            String       @id
+  id            String          @id
   name          String
   email         String
-  emailVerified Boolean      @default(false)
+  emailVerified Boolean         @default(false)
   image         String?
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
   sessions      Session[]
   accounts      Account[]
   typingTests   TypingTest[]
+  inventory     UserInventory[]
 
   stripeCustomerId String?
 
@@ -114,14 +115,41 @@ model TypingTest {
 }
 
 model ShopItem {
-  id          String @id
+  id          String @id @default(uuid())
   name        String
-  Description String
+  description String
   mode        String
-  item_Type   String
-  price_keys  Int
+  itemType    String
+  priceKeys   Int
 
   thumbnailUrl String
-  FBX_Model_Url     String?
+  ModelUrl     String?
   enabled      Boolean @default(true)
+
+  inventory UserInventory[]
+  
 }
+
+model UserInventory {
+  id String @id @default(uuid())
+
+  userid String
+  itemid String
+
+  user User     @relation(fields: [userid], references: [id], onDelete: Cascade)
+
+  //Dont add delete field below as If for whatever I decide to delete a shopItem It should still remain in the users inventory
+  //as they paid for it.
+  item ShopItem @relation(fields: [itemid], references: [id])
+
+  @@unique([userid, itemid])
+
+}
+
+// model UserEquippedItems {
+//   userid                           String
+//   multiplayerAvatarItem            String
+//   multiplayerFinishCelebrationItem String
+
+//   gameCharacterItem String
+// }
