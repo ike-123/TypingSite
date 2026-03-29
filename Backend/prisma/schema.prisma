@@ -22,19 +22,19 @@ datasource db {
 // } 
 
 model User {
-  id            String          @id
-  name          String
-  email         String
-  emailVerified Boolean         @default(false)
-  image         String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  typingTests   TypingTest[]
-  inventory     UserInventory[]
-
-  stripeCustomerId String?
+  id                String              @id
+  name              String
+  email             String
+  emailVerified     Boolean             @default(false)
+  image             String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  sessions          Session[]
+  accounts          Account[]
+  typingTests       TypingTest[]
+  inventory         UserInventory[]
+  UserEquippedItems UserEquippedItems[]
+  stripeCustomerId  String?
 
   Keys        Int     @default(0)
   Ads_Removed Boolean @default(false)
@@ -114,12 +114,26 @@ model TypingTest {
   @@index([userId, configKey])
 }
 
+
+enum EquipSlot {
+  avatar
+  celebration
+  character
+}
+
+enum GameMode {
+  multiplayer
+  shooterGame
+}
+
 model ShopItem {
   id          String @id @default(uuid())
   name        String
   description String
-  mode        String
-  itemType    String
+  mode        GameMode //Multiplayer, ShooterGame
+
+  slot        EquipSlot 
+
   priceKeys   Int
 
   thumbnailUrl String
@@ -127,7 +141,7 @@ model ShopItem {
   enabled      Boolean @default(true)
 
   inventory UserInventory[]
-  
+  userequippedItems UserEquippedItems[]
 }
 
 model UserInventory {
@@ -136,20 +150,27 @@ model UserInventory {
   userid String
   itemid String
 
-  user User     @relation(fields: [userid], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userid], references: [id], onDelete: Cascade)
 
   //Dont add delete field below as If for whatever I decide to delete a shopItem It should still remain in the users inventory
   //as they paid for it.
   item ShopItem @relation(fields: [itemid], references: [id])
 
   @@unique([userid, itemid])
-
 }
 
-// model UserEquippedItems {
-//   userid                           String
-//   multiplayerAvatarItem            String
-//   multiplayerFinishCelebrationItem String
+model UserEquippedItems {
+  id String @id @default(uuid())
 
-//   gameCharacterItem String
-// }
+  userid String
+  itemid String
+
+  slot        EquipSlot 
+
+
+  // equipped Json
+
+  user User @relation(fields: [userid], references: [id], onDelete: Cascade)
+  item ShopItem @relation(fields: [itemid], references: [id])
+
+}
