@@ -6,8 +6,9 @@ import cors from 'cors';
 // import { app } from "./socket.ts";
 
 import { Server } from "socket.io";
-import * as http from "http"; 
+import * as http from "http";
 
+import "dotenv/config";
 
 
 import { toNodeHandler } from "better-auth/node"
@@ -22,13 +23,17 @@ import { setupSockets } from "./socket.ts";
 import express from "express";
 import cookieParser from "cookie-parser"
 
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+
 
 
 const app = express()
 
 app.use(express.json())
 app.use(cookieParser())
-app.use(express.urlencoded({extended:true}))
+app.use(express.urlencoded({ extended: true }))
 
 
 /////
@@ -48,6 +53,11 @@ const io = setupSockets(server);
 
 const port = 3001
 
+const keyPackages: any = {
+    keys_500: { keys: 500, price: 350 },
+    keys_1200: { keys: 500, price: 700 },
+}
+
 // app.use('/api/Auth',AuthRouter)
 
 //  async function requireAuth(req: Request, res:Response, next:NextFunction) {
@@ -64,6 +74,43 @@ const port = 3001
 // }
 
 app.all('/api/auth/{*any}', toNodeHandler(auth));
+
+
+app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
+
+    const { packageId } = req.body;
+
+    const pack = keyPackages[packageId]
+
+    if (!pack)
+        return res.status(400).send("Invalid package");
+
+    const session = await stripe.checkout.sessions.create({
+        mode: "payment",
+        line_items: [
+            {
+                price_data: {
+                    currency: "gbp",
+                    product_data: {
+                        name: `${pack.keys} Keys`
+                    },
+                    unit_amount: pack.price
+                },
+                quantity: 1,
+            }
+        ],
+        success_url:"http://localhost:5173/success",
+        cancel_url: "http://localhost:5173/cancel",
+
+        metadata:{
+            userId: req.user.id,
+            keys: pack.coins.toString()
+        }
+    })
+
+    res.json({url:session.url})
+
+});
 
 app.get("/api/profile", protectRoute, (req, res) => {
     res.json(req.user);
@@ -391,6 +438,8 @@ app.get("/api/ExtraTestInfo", protectRoute, async (req, res) => {
 
 
 });
+
+
 
 server.listen(port, '0.0.0.0', () => {
 
