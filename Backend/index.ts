@@ -88,7 +88,7 @@ app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
     const session = await stripe.checkout.sessions.create({
         mode: "payment",
         line_items: [
-            {
+            {   
                 price_data: {
                     currency: "gbp",
                     product_data: {
