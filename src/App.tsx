@@ -21,6 +21,8 @@ import Login from './Pages/Login';
 import SignUp from './Pages/SignUp';
 import { useAuthStore } from './Stores/AuthStore';
 import MyStats from './Pages/MyStats';
+import Shop from './Components/Shop';
+import Success from './Pages/Success';
 
 
 
@@ -67,8 +69,17 @@ const router = createBrowserRouter([
       },
       {
         path: "/stats",
-        element: <MyStats/>
+        element: <MyStats />
+      },
+      {
+        path: "/shop",
+        element: <Shop />
+      },
+      {
+        path: "/success",
+        element: <Success />
       }
+
 
     ]
 
@@ -80,7 +91,7 @@ function App() {
   const FetchUser = useAuthStore((state) => state.getUser)
 
 
-  useEffect(()=>{
+  useEffect(() => {
 
     async function Call_FetchUser() {
       await FetchUser()
@@ -88,7 +99,7 @@ function App() {
 
     Call_FetchUser();
 
-  },[])
+  }, [])
 
   return (
     <div>

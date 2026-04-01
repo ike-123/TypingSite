@@ -43,6 +43,19 @@ export const auth = betterAuth({
             stripeClient,
             stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
             createCustomerOnSignUp: true,
+            onEvent: async (event) =>{
+                switch (event.type) {
+                    case "checkout.session.completed":
+                        const session = event.data.object;
+                        console.log(event.data);
+                        console.log("------------------------");
+                        console.log(session);
+                        break;
+                
+                    default:
+                        break;
+                }
+            }
         })
     ]
 });

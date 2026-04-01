@@ -31,6 +31,9 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 const app = express()
 
+app.all('/api/auth/{*any}', toNodeHandler(auth));
+
+
 app.use(express.json())
 app.use(cookieParser())
 app.use(express.urlencoded({ extended: true }))
@@ -73,17 +76,21 @@ const keyPackages: any = {
 //   next();
 // }
 
-app.all('/api/auth/{*any}', toNodeHandler(auth));
 
 
 app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
 
     const { packageId } = req.body;
 
+    console.log("create session reached")
+
     const pack = keyPackages[packageId]
 
-    if (!pack)
-        return res.status(400).send("Invalid package");
+    if (!pack) {
+        return console.log("no pack");
+        res.status(400).send("Invalid package");
+
+    }
 
     const session = await stripe.checkout.sessions.create({
         mode: "payment",
@@ -99,16 +106,16 @@ app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
                 quantity: 1,
             }
         ],
-        success_url:"http://localhost:5173/success",
+        success_url: "http://localhost:5173/success",
         cancel_url: "http://localhost:5173/cancel",
 
-        metadata:{
+        metadata: {
             userId: req.user.id,
-            keys: pack.coins.toString()
+            keys: pack.keys
         }
     })
 
-    res.json({url:session.url})
+    res.json({ url: session.url })
 
 });
 
