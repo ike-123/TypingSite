@@ -34,6 +34,7 @@ model User {
   typingTests       TypingTest[]
   inventory         UserInventory[]
   UserEquippedItems UserEquippedItems[]
+  purchases         Purchases[]
   stripeCustomerId  String?
 
   Keys        Int     @default(0)
@@ -114,7 +115,6 @@ model TypingTest {
   @@index([userId, configKey])
 }
 
-
 enum EquipSlot {
   avatar
   celebration
@@ -127,21 +127,33 @@ enum GameMode {
 }
 
 model ShopItem {
-  id          String @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
   description String
   mode        GameMode //Multiplayer, ShooterGame
 
-  slot        EquipSlot 
+  slot EquipSlot
 
-  priceKeys   Int
+  priceKeys Int
 
   thumbnailUrl String
   ModelUrl     String?
   enabled      Boolean @default(true)
 
-  inventory UserInventory[]
+  inventory         UserInventory[]
   userequippedItems UserEquippedItems[]
+}
+
+model KeyPackage {
+  id String @id @default(uuid())
+
+  //maybe add a type to help webhook logic identify what we are processing?
+  name       String
+  keysAmount Int //500 for example
+  price      Int // 350 (which will be £3.50)
+  imageUrl   String?
+
+  purchases Purchases[]
 }
 
 model UserInventory {
@@ -165,12 +177,38 @@ model UserEquippedItems {
   userid String
   itemid String
 
-  slot        EquipSlot 
-
+  slot EquipSlot
 
   // equipped Json
 
-  user User @relation(fields: [userid], references: [id], onDelete: Cascade)
+  user User     @relation(fields: [userid], references: [id], onDelete: Cascade)
   item ShopItem @relation(fields: [itemid], references: [id])
+}
 
+enum PurchaseType {
+  keys
+}
+
+model Purchases {
+  id String @id @default(uuid())
+
+  userId          String
+  stripeSessionID String
+
+  type PurchaseType
+
+  //Store a snapshot 
+  itemName  String
+  pricePaid Int
+  currency  String
+
+  //OptionalReferences
+
+  keyPackageId String?
+  //MerchPackageId 
+
+  user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  keypackage KeyPackage? @relation(fields: [keyPackageId], references: [id])
+
+  @@unique([stripeSessionID])
 }

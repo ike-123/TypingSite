@@ -46,10 +46,23 @@ export const auth = betterAuth({
             onEvent: async (event) =>{
                 switch (event.type) {
                     case "checkout.session.completed":
+
+                        // we can check metadata to see if this item is a Key package or something else (clothing merchandise for example)
                         const session = event.data.object;
-                        console.log(event.data);
-                        console.log("------------------------");
+                        const metadata = event.data.object.metadata;
+
                         console.log(session);
+                        console.log("------------------------");
+                        console.log(metadata);
+
+                        //Save payment to database
+
+
+
+                        
+                        //make sure function is safe to run multiple times
+                        //Save transaction to database
+                        //Fulfill keys
                         break;
                 
                     default:

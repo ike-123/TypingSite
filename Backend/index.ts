@@ -85,6 +85,7 @@ app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
     console.log("create session reached")
 
     const pack = keyPackages[packageId]
+    
 
     if (!pack) {
         return console.log("no pack");
