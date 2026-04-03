@@ -84,14 +84,23 @@ app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
 
     console.log("create session reached")
 
-    const pack = keyPackages[packageId]
-    
+    // const pack = keyPackages[packageId]
+
+    const pack = await prisma.keyPackage.findUnique({
+        where: { id: packageId }
+    }
+    )
 
     if (!pack) {
-        return console.log("no pack");
-        res.status(400).send("Invalid package");
-
+        return res.status(404).json({ error: "Key Package not found" })
     }
+
+
+    // if (!pack) {
+    //     return console.log("no pack");
+    //     res.status(400).send("Invalid package");
+
+    // }
 
     const session = await stripe.checkout.sessions.create({
         mode: "payment",
@@ -100,7 +109,7 @@ app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
                 price_data: {
                     currency: "gbp",
                     product_data: {
-                        name: `${pack.keys} Keys`
+                        name: pack.name
                     },
                     unit_amount: pack.price
                 },
@@ -112,13 +121,23 @@ app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
 
         metadata: {
             userId: req.user.id,
-            keys: pack.keys
+            itemName: pack.name ,
+            pricePaid: pack.price,
+            currency: "gbp",
+            keyPackageId: packageId,
+            keyAmount:pack.keysAmount
+
+
+
+
+            
         }
     })
 
     res.json({ url: session.url })
 
 });
+
 
 app.get("/api/profile", protectRoute, (req, res) => {
     res.json(req.user);

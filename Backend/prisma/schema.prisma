@@ -193,7 +193,7 @@ model Purchases {
   id String @id @default(uuid())
 
   userId          String
-  stripeSessionID String
+  stripeSessionId String
 
   type PurchaseType
 
@@ -201,14 +201,16 @@ model Purchases {
   itemName  String
   pricePaid Int
   currency  String
+  keysGranted Int?
 
   //OptionalReferences
 
   keyPackageId String?
+
   //MerchPackageId 
 
   user       User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   keypackage KeyPackage? @relation(fields: [keyPackageId], references: [id])
 
-  @@unique([stripeSessionID])
+  @@unique([stripeSessionId])
 }

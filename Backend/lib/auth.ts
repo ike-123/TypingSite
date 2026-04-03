@@ -8,6 +8,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 
 import { stripe } from "@better-auth/stripe"
 import Stripe from "stripe"
+import { PurchaseType } from "@prisma/client";
 
 
 const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -43,28 +44,78 @@ export const auth = betterAuth({
             stripeClient,
             stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
             createCustomerOnSignUp: true,
-            onEvent: async (event) =>{
+            onEvent: async (event) => {
                 switch (event.type) {
                     case "checkout.session.completed":
 
-                        // we can check metadata to see if this item is a Key package or something else (clothing merchandise for example)
+
+
+
                         const session = event.data.object;
                         const metadata = event.data.object.metadata;
 
-                        console.log(session);
-                        console.log("------------------------");
-                        console.log(metadata);
+                        if (!metadata) {
+                            return
+                        }
 
-                        //Save payment to database
-
+                        // we can check metadata to see if this item is a Key package
+                        // or something else (clothing merchandise for example)
 
 
                         
+                        try {
+                            await prisma.purchases.create({
+                                data: {
+                                    userId: metadata.userId,
+                                    stripeSessionId: session.id,
+                                    type: PurchaseType.keys,
+                                    itemName: metadata.itemName,
+                                    pricePaid: Number(metadata.pricePaid),
+                                    currency: metadata.currency,
+                                    keyPackageId: metadata.keyPackageId,
+                                    keysGranted:Number(metadata.keyAmount)
+                                    
+                                }
+                            })
+
+                            //handle fulfilment
+
+                            //add the keys to the users account
+
+                            //make sure you ensure the status is paid and that you check the async checkout.session.complete event
+
+
+                            await prisma.user.update({
+                                where:{ id:metadata.userId },
+                                data:{
+                                    Keys:{
+                                        increment:Number(metadata.keysAmount)
+                                    }
+                                }
+
+                            })
+                        } catch (error:any) {
+
+                            if (error.code === "P2002") {
+                                console.log("This sesionID already exists")
+                                return;
+                            }
+
+                            throw error;
+
+                        }
+
+
+                        //Save Purchase to database
+
+
+
+
                         //make sure function is safe to run multiple times
                         //Save transaction to database
                         //Fulfill keys
                         break;
-                
+
                     default:
                         break;
                 }
