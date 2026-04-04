@@ -45,81 +45,105 @@ export const auth = betterAuth({
             stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
             createCustomerOnSignUp: true,
             onEvent: async (event) => {
+
+                const session = event.data.object as Stripe.Checkout.Session;
+
+
                 switch (event.type) {
                     case "checkout.session.completed":
-
-
-
-
-                        const session = event.data.object;
-                        const metadata = event.data.object.metadata;
-
-                        if (!metadata) {
-                            return
-                        }
 
                         // we can check metadata to see if this item is a Key package
                         // or something else (clothing merchandise for example)
 
+                        FulfillCheckout_Keys(session);
 
-                        
-                        try {
-                            await prisma.purchases.create({
-                                data: {
-                                    userId: metadata.userId,
-                                    stripeSessionId: session.id,
-                                    type: PurchaseType.keys,
-                                    itemName: metadata.itemName,
-                                    pricePaid: Number(metadata.pricePaid),
-                                    currency: metadata.currency,
-                                    keyPackageId: metadata.keyPackageId,
-                                    keysGranted:Number(metadata.keyAmount)
-                                    
-                                }
-                            })
-
-                            //handle fulfilment
-
-                            //add the keys to the users account
-
-                            //make sure you ensure the status is paid and that you check the async checkout.session.complete event
-
-
-                            await prisma.user.update({
-                                where:{ id:metadata.userId },
-                                data:{
-                                    Keys:{
-                                        increment:Number(metadata.keysAmount)
-                                    }
-                                }
-
-                            })
-                        } catch (error:any) {
-
-                            if (error.code === "P2002") {
-                                console.log("This sesionID already exists")
-                                return;
-                            }
-
-                            throw error;
-
-                        }
-
-
-                        //Save Purchase to database
-
-
-
-
-                        //make sure function is safe to run multiple times
-                        //Save transaction to database
-                        //Fulfill keys
                         break;
 
-                    default:
+                    case "checkout.session.async_payment_succeeded":
+                        
+                        FulfillCheckout_Keys(session);
+
                         break;
                 }
             }
         })
     ]
 });
+
+
+async function FulfillCheckout_Keys(session: any) {
+
+    //ensure that we don't already have a purchase with the same StripeSessionId
+    //StripeSessionId is a unique value and so an error will occur if we create another item with the same Id
+
+    const metadata = session.metadata;
+
+    if (!metadata) {
+
+
+        //This is confusing because we want to send an error but we don't want to strip to retry
+        // as this the metadata won't magically appear
+        return;
+    }
+
+    try {
+
+        //Ensure the status is paid and that you check the async checkout.session.complete event
+        //I think we should check if payment is unpaid first before creating a purchase object because If the purchase later fails in the async event
+        //we will have a purchase item in the database that corresponds to a failed failed payment
+
+
+        if (session.payment_status !== "unpaid") {
+
+            await prisma.purchases.create({
+                data: {
+                    userId: metadata.userId,
+                    stripeSessionId: session.id,
+                    type: PurchaseType.keys,
+                    itemName: metadata.itemName,
+                    pricePaid: Number(metadata.pricePaid),
+                    currency: metadata.currency,
+                    keyPackageId: metadata.keyPackageId,
+                    keysGranted: Number(metadata.keyAmount)
+                }
+            })
+
+            //handle fulfilment logic
+
+            //add the keys to the users account
+
+            await prisma.user.update({
+                where: { id: metadata.userId },
+                data: {
+                    Keys: {
+                        increment: Number(metadata.keysAmount)
+                    }
+                }
+
+            })
+        }
+        //Better Auth will send a 200 web response after as we don't want to retry
+
+        // return;
+        //Apparently Better auth should automatically send a status code of 200 back to stripe??
+
+    } catch (error: any) {
+
+        if (error.code === "P2002") {
+            console.log("This sesionID already exists")
+            //return nothing which will return a 200 response back to stripe which will tell stripe 
+            //we have acknowledged and we don't need you to resend this event again.
+            return;
+        }
+
+        throw error;
+
+    }
+
+    //Save Purchase to database
+
+
+    //make sure function is safe to run multiple times
+    //Save transaction to database
+    //Fulfill keys
+}
