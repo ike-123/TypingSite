@@ -16,7 +16,7 @@ import { auth } from './lib/Auth.ts'
 import { NextFunction } from "express";
 import { protectRoute } from "./Middleware/AuthMiddleware.ts";
 import { prisma } from "./lib/prisma.ts"
-import { config, length } from "zod";
+import { config, length, string } from "zod";
 import { setupSockets } from "./socket.ts";
 
 /////
@@ -116,28 +116,63 @@ app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
                 quantity: 1,
             }
         ],
-        success_url: "http://localhost:5173/success",
+        success_url: "http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}",
         cancel_url: "http://localhost:5173/cancel",
 
         metadata: {
             userId: req.user.id,
-            itemName: pack.name ,
+            itemName: pack.name,
             pricePaid: pack.price,
             currency: "gbp",
             keyPackageId: packageId,
-            keyAmount:pack.keysAmount
-
-
-
-
-            
+            keyAmount: pack.keysAmount
         }
+
+
+        //make sure fulfillment happens when client loads the success page because webhooks can take a while.
+        //still ensure duplicate fulfillment isn't possible
     })
 
     res.json({ url: session.url })
 
 });
 
+
+app.get("/api/order", protectRoute, async (req, res) => {
+
+
+    //WHEN USING FUNCTION TO ALSO FULFILL ORDER MAKE SURE IT IS CHANGED TO A POST REQUEST
+
+    const sessionId = req.query.session_id;
+
+    //make sure sessionId belongs to the user
+
+    if (typeof sessionId !== "string") {
+
+        //Refactor res.status response to use correct code and message type
+
+        return res.status(404).json("Invalid Session")
+    }
+
+    const purchase = await prisma.purchases.findUnique({
+        where: { stripeSessionId: sessionId }
+    })
+
+    if (!purchase) {
+        return res.status(404).json("Order doesn't exist")
+    }
+
+    if (purchase.userId != req.user.id) {
+        return res.status(403).send("Forbidden");
+    }
+
+    res.json({
+        productName: purchase.itemName,
+        productPrice: purchase.pricePaid
+    })
+
+
+})
 
 app.get("/api/profile", protectRoute, (req, res) => {
     res.json(req.user);

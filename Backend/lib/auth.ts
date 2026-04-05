@@ -60,10 +60,15 @@ export const auth = betterAuth({
                         break;
 
                     case "checkout.session.async_payment_succeeded":
-                        
+
                         FulfillCheckout_Keys(session);
 
                         break;
+
+                    case "checkout.session.async_payment_failed":
+                    //Send email or notification that payment has failed
+                    
+                        break
                 }
             }
         })
