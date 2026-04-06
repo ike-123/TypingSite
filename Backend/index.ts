@@ -82,6 +82,7 @@ app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
 
     const { packageId } = req.body;
 
+    
     console.log("create session reached")
 
     // const pack = keyPackages[packageId]
@@ -125,7 +126,7 @@ app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
             pricePaid: pack.price,
             currency: "gbp",
             keyPackageId: packageId,
-            keyAmount: pack.keysAmount
+            keysAmount: pack.keysAmount,
         }
 
 
@@ -136,6 +137,25 @@ app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
     res.json({ url: session.url })
 
 });
+
+app.post("/api/BuyShopItem",protectRoute,async (req,res) =>{
+
+    //get userid 
+    //get id of shopitem
+
+    //If user already owns the shopitem then return don't proceed and send a badrequest to the user
+
+    //Check to see if the Users current key amount - shop items key price is greater than 0. If not don't proceed
+
+    //Subtract they the shopitems key price from the user account
+    //Add the shop item into the users inventory
+    //Create a new shop transaction and save it in the database
+
+    //
+
+
+    
+})
 
 
 app.get("/api/order", protectRoute, async (req, res) => {

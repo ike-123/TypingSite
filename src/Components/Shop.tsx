@@ -6,7 +6,7 @@ const Shop = () => {
 
     async function handleCheckout() {
         try {
-            const packageId = "keys_500"
+            const packageId = "key0"
 
             const res = await axios.post("http://localhost:3001/api/create-checkout-session", { packageId },
                 {

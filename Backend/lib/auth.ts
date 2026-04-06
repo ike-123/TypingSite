@@ -67,7 +67,7 @@ export const auth = betterAuth({
 
                     case "checkout.session.async_payment_failed":
                     //Send email or notification that payment has failed
-                    
+
                         break
                 }
             }
@@ -109,7 +109,8 @@ async function FulfillCheckout_Keys(session: any) {
                     pricePaid: Number(metadata.pricePaid),
                     currency: metadata.currency,
                     keyPackageId: metadata.keyPackageId,
-                    keysGranted: Number(metadata.keyAmount)
+                    keysGranted: Number(metadata.keyAmount),
+                    // newKeyAmount: // get they current user key amount here
                 }
             })
 

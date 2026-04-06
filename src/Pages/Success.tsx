@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useSearchParams } from "react-router-dom";
 
@@ -8,13 +8,15 @@ const Success = () => {
     // const location = useLocation();
 
     const [searchParams] = useSearchParams();
+    const [orderdetails,setOrderDetails] = useState<any>(null)
 
     useEffect(() => {
 
+        console.log("sucess useeffect")
         // const queryParams = new URLSearchParams(location.search);
         const sessionId = searchParams.get("session_id");
 
-        if (sessionId)
+        if (!sessionId)
             return
 
         async function GetOrder() {
@@ -31,8 +33,11 @@ const Success = () => {
 
 
             try {
-                const res = await axios.get(`http://localhost:3001/api/order?session_id=${sessionId}`)
+                //make sure all get requests have withcredentailsenabled set to true
+                const res = await axios.get(`http://localhost:3001/api/order?session_id=${sessionId}`, { withCredentials: true })
                 console.log(res.data);
+
+                setOrderDetails(res.data)
 
 
             } catch (error) {
@@ -47,7 +52,14 @@ const Success = () => {
 
 
     return (
-        <div>Success Page</div>
+        <>
+            <div>Order Confirmation</div>
+
+            <div>Price: {orderdetails?.productPrice} </div>
+            <div>Order: {orderdetails?.productName} </div>
+
+        </>
+
     )
 }
 
