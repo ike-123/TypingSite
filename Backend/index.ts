@@ -24,6 +24,9 @@ import express from "express";
 import cookieParser from "cookie-parser"
 
 import Stripe from "stripe";
+import { error } from "console";
+import { KeyTransactionType } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
@@ -82,7 +85,7 @@ app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
 
     const { packageId } = req.body;
 
-    
+
     console.log("create session reached")
 
     // const pack = keyPackages[packageId]
@@ -122,11 +125,11 @@ app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
 
         metadata: {
             userId: req.user.id,
-            itemName: pack.name,
-            pricePaid: pack.price,
+            keyPackageId: pack.id,
             currency: "gbp",
-            keyPackageId: packageId,
-            keysAmount: pack.keysAmount,
+            // itemName: pack.name,
+            // pricePaid: pack.price,
+            // keysAmount: pack.keysAmount,
         }
 
 
@@ -138,23 +141,84 @@ app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
 
 });
 
-app.post("/api/BuyShopItem",protectRoute,async (req,res) =>{
+app.post("/api/BuyShopItem", protectRoute, async (req, res) => {
 
-    //get userid 
     //get id of shopitem
+    const { shopItemId } = req.body;
 
-    //If user already owns the shopitem then return don't proceed and send a badrequest to the user
+    try {
 
-    //Check to see if the Users current key amount - shop items key price is greater than 0. If not don't proceed
+        //Check to see if the Users current key amount is greater than the price of the shop item. If not don't proceed.
 
-    //Subtract they the shopitems key price from the user account
-    //Add the shop item into the users inventory
-    //Create a new shop transaction and save it in the database
+        await prisma.$transaction(async (tx) => {
 
-    //
+            //FIND THE USER
+            const User = await prisma.user.findUnique({
+                where: { id: req.user.id }
+            });
+
+            //ENSURE SHOP ITEM EXISTS
+            const ShopItem = await prisma.shopItem.findUnique({
+                where: { id: shopItemId }
+            })
+
+            if (!User) {
+                return res.status(404).json({ error: "User not found" });
+            }
+
+            if (!ShopItem) {
+                return res.status(404).json({ error: "Shop Item doesn't exist" })
+            }
 
 
-    
+            if (User?.Keys < ShopItem.priceKeys) {
+                return res.status(402).json({ error: "Insufficient keys" });
+            }
+
+
+
+            //Add the shop item into the users inventory. Will fail if shop item already exists
+            await tx.userInventory.create({
+                data: {
+                    userid: req.user.id,
+                    itemid: ShopItem.id
+                }
+            })
+
+            //Subtract the shopitems key price from the user account
+            const user_details = await tx.user.update({
+                where: { id: req.user.id },
+                data: {
+                    Keys: {
+                        decrement: ShopItem.priceKeys
+                    }
+                }
+            })
+
+            //create a key transaction 
+            await tx.keyTransactions.create({
+                data: {
+                    userId: req.user.id,
+                    type: KeyTransactionType.spend,
+                    keyamount: ShopItem.priceKeys,
+                    shopitemId: ShopItem.id,
+                    newKeyAmount: user_details.Keys
+                }
+            })
+        })
+
+    } catch (error) {
+
+        if (error instanceof PrismaClientKnownRequestError && error.code === "P2002") {
+            return res.status(409).json({ error: "You already own this item" });
+        }
+
+        return res.status(500).json({ error: "Unable to fulfil purchase" });
+
+    }
+
+
+
 })
 
 
@@ -174,7 +238,7 @@ app.get("/api/order", protectRoute, async (req, res) => {
         return res.status(404).json("Invalid Session")
     }
 
-    const purchase = await prisma.purchases.findUnique({
+    const purchase = await prisma.payment.findUnique({
         where: { stripeSessionId: sessionId }
     })
 

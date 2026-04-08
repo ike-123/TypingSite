@@ -8,7 +8,8 @@ import { PrismaPg } from "@prisma/adapter-pg";
 
 import { stripe } from "@better-auth/stripe"
 import Stripe from "stripe"
-import { PurchaseType } from "@prisma/client";
+import { KeyTransactionType, PurchaseType } from "@prisma/client";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 
 
 const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -55,18 +56,18 @@ export const auth = betterAuth({
                         // we can check metadata to see if this item is a Key package
                         // or something else (clothing merchandise for example)
 
-                        FulfillCheckout_Keys(session);
+                        await FulfillCheckout_Keys(session);
 
                         break;
 
                     case "checkout.session.async_payment_succeeded":
 
-                        FulfillCheckout_Keys(session);
+                        await FulfillCheckout_Keys(session);
 
                         break;
 
                     case "checkout.session.async_payment_failed":
-                    //Send email or notification that payment has failed
+                        //Send email or notification that payment has failed
 
                         break
                 }
@@ -83,11 +84,12 @@ async function FulfillCheckout_Keys(session: any) {
 
     const metadata = session.metadata;
 
-    if (!metadata) {
+    if (!metadata.userId || !metadata.keyPackageId) {
 
 
         //This is confusing because we want to send an error but we don't want to strip to retry
         // as this the metadata won't magically appear
+        console.error("Missing metadata on session:", session.id, metadata);
         return;
     }
 
@@ -97,36 +99,77 @@ async function FulfillCheckout_Keys(session: any) {
         //I think we should check if payment is unpaid first before creating a purchase object because If the purchase later fails in the async event
         //we will have a purchase item in the database that corresponds to a failed failed payment
 
+        console.log("session amount_subtotal = ", session.amount_subtotal);
+        console.log("session amount_total = ", session.amount_total);
 
-        if (session.payment_status !== "unpaid") {
 
-            await prisma.purchases.create({
-                data: {
-                    userId: metadata.userId,
-                    stripeSessionId: session.id,
-                    type: PurchaseType.keys,
-                    itemName: metadata.itemName,
-                    pricePaid: Number(metadata.pricePaid),
-                    currency: metadata.currency,
-                    keyPackageId: metadata.keyPackageId,
-                    keysGranted: Number(metadata.keyAmount),
-                    // newKeyAmount: // get they current user key amount here
-                }
+        if (session.payment_status === "paid") {
+
+
+
+            const pack = await prisma.keyPackage.findUnique({
+                where: { id: metadata.keyPackageId }
             })
 
-            //handle fulfilment logic
+            if (!pack) {
 
-            //add the keys to the users account
+                throw new Error("Invalid package");
+            }
 
-            await prisma.user.update({
-                where: { id: metadata.userId },
-                data: {
-                    Keys: {
-                        increment: Number(metadata.keysAmount)
+            await prisma.$transaction(async (tx) => {
+
+                const payment = await tx.payment.create({
+                    data: {
+                        userId: metadata.userId,
+                        stripeSessionId: session.id,
+                        type: PurchaseType.keys,
+                        itemName: pack.name,
+                        pricePaid: session.amount_total,//maybe find the price from the session //AMOUNT TOTAL
+                        currency: session.currency, //USE SESSION.CURRENCY
+                        keyPackageId: pack.id,
                     }
-                }
+                })
+
+
+                //handle fulfilment logic
+
+                //add the keys to the users account
+                const user = await tx.user.update({
+                    where: { id: metadata.userId },
+                    data: {
+                        Keys: {
+                            increment: pack.keysAmount
+                        }
+                    }
+
+                })
+
+
+                //create a key transaction 
+                await tx.keyTransactions.create({
+                    data: {
+                        userId: metadata.userId,
+                        type: KeyTransactionType.earn,
+                        keyamount: pack.keysAmount,
+                        paymentId: payment.id,
+                        newKeyAmount: user.Keys
+                    }
+                })
+
+
+                //If any fails, Prisma rolls back all the previous database actions
+
+                //3 scenarios
+
+                //duplicate payment (stripeSessionId) then P2002 error will run and we acknowlege the request preventing retrires
+                //Payment is succesfful then we send a 200 response showing we have acknowldged the request
+                //Prisma transaction fails for some other reason. (Database is down) we throw an error which will make webhook retry later
 
             })
+
+
+
+
         }
         //Better Auth will send a 200 web response after as we don't want to retry
 
@@ -135,13 +178,14 @@ async function FulfillCheckout_Keys(session: any) {
 
     } catch (error: any) {
 
-        if (error.code === "P2002") {
+        if (error instanceof PrismaClientKnownRequestError && error.code === "P2002") {
             console.log("This sesionID already exists")
             //return nothing which will return a 200 response back to stripe which will tell stripe 
             //we have acknowledged and we don't need you to resend this event again.
             return;
         }
 
+        // Unexpected error — rethrow so Stripe retries the webhook
         throw error;
 
     }

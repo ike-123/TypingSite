@@ -34,8 +34,8 @@ model User {
   typingTests       TypingTest[]
   inventory         UserInventory[]
   UserEquippedItems UserEquippedItems[]
-  purchases         Purchases[]
-  adminGrantedKeys  AdminGrantedKeys[]
+  payments          Payment[]
+  keyTransactions   KeyTransactions[]
 
   stripeCustomerId String?
 
@@ -144,6 +144,7 @@ model ShopItem {
 
   inventory         UserInventory[]
   userequippedItems UserEquippedItems[]
+  keyTransactions   KeyTransactions[]
 }
 
 model KeyPackage {
@@ -155,8 +156,7 @@ model KeyPackage {
   price      Int // 350 (which will be £3.50)
   imageUrl   String?
 
-  purchases        Purchases[]
-  adminGrantedKeys AdminGrantedKeys[]
+  payment Payment[]
 }
 
 model UserInventory {
@@ -193,7 +193,7 @@ enum PurchaseType {
 }
 
 //Rename this to payments or anything that makes it clear this is dealing with real payments
-model Purchases {
+model Payment {
   // I think it might be better to separate Key purchases from other purhases (merch) by giving them their own tables
 
   id String @id @default(uuid())
@@ -204,40 +204,70 @@ model Purchases {
   type PurchaseType
 
   //Store a snapshot 
-  itemName     String
-  pricePaid    Int
-  currency     String
-  keysGranted  Int?
-  newKeyAmount Int?
+  itemName  String
+  pricePaid Int
+  currency  String
 
+  // keysGranted  Int?
+  // newKeyAmount Int?
   //Save the users current key amount after 
 
   //OptionalReferences
-
   keyPackageId String?
-
   //MerchPackageId 
 
   createdAt DateTime @default(now())
 
-  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  keypackage KeyPackage? @relation(fields: [keyPackageId], references: [id])
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  keypackage      KeyPackage?       @relation(fields: [keyPackageId], references: [id])
+  keyTransactions KeyTransactions[]
 
   @@unique([stripeSessionId])
 }
 
-model AdminGrantedKeys {
+enum KeyTransactionType {
+  earn //buying keys
+  spend // buying items in the item shop
+  admin_grant //receiving keys from admin
+}
+
+model KeyTransactions {
   id String @id @default(uuid())
 
-  userId       String
-  itemName     String
-  keysGranted  Int?
-  newKeyAmount Int?
+  userId String
 
-  keyPackageId String?
+  type KeyTransactionType
+
+  keyamount Int
+  //earn
+  paymentId String? //foreign key
+
+  //spend
+  shopitemId String?
+
+  newKeyAmount Int?
 
   createdAt DateTime @default(now())
 
-  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  keypackage KeyPackage? @relation(fields: [keyPackageId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payment  Payment?  @relation(fields: [paymentId], references: [id])
+  shopitem ShopItem? @relation(fields: [shopitemId], references: [id])
+
+  // keypackage KeyPackage? @relation(fields: [keyPackageId], references: [id])
 }
+
+// model AdminGrantedKeys {
+//   id String @id @default(uuid())
+
+//   userId       String
+//   itemName     String
+//   keysGranted  Int?
+//   newKeyAmount Int?
+
+//   keyPackageId String?
+
+//   createdAt DateTime @default(now())
+
+//   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+//   keypackage KeyPackage? @relation(fields: [keyPackageId], references: [id])
+// }
