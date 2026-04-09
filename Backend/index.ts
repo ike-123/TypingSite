@@ -141,40 +141,56 @@ app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
 
 });
 
+app.get("/api/shopItems", async (req,res) =>{
+
+    //
+
+    const shopItems = await prisma.shopItem.findMany({
+        where:{enabled:true}
+    })
+
+    if(!shopItems){
+        return res.status(404).json()
+    }
+    else{
+        return res.status(404).json(shopItems)
+    }
+})
+
 app.post("/api/BuyShopItem", protectRoute, async (req, res) => {
 
-    //get id of shopitem
-    const { shopItemId } = req.body;
+
 
     try {
+
+        //get id of shopitem
+        const { shopItemId } = req.body;
 
         //Check to see if the Users current key amount is greater than the price of the shop item. If not don't proceed.
 
         await prisma.$transaction(async (tx) => {
 
             //FIND THE USER
-            const User = await prisma.user.findUnique({
+            const User = await tx.user.findUnique({
                 where: { id: req.user.id }
             });
 
             //ENSURE SHOP ITEM EXISTS
-            const ShopItem = await prisma.shopItem.findUnique({
+            const ShopItem = await tx.shopItem.findUnique({
                 where: { id: shopItemId }
             })
 
             if (!User) {
-                return res.status(404).json({ error: "User not found" });
+                throw new Error("USER_NOT_FOUND");
             }
 
             if (!ShopItem) {
-                return res.status(404).json({ error: "Shop Item doesn't exist" })
+                throw new Error("ITEM_NOT_FOUND");
             }
 
-
-            if (User?.Keys < ShopItem.priceKeys) {
-                return res.status(402).json({ error: "Insufficient keys" });
+            if (User.Keys < ShopItem.priceKeys) {
+                throw new Error("INSUFFICIENT_KEYS");
             }
-
 
 
             //Add the shop item into the users inventory. Will fail if shop item already exists
@@ -195,6 +211,10 @@ app.post("/api/BuyShopItem", protectRoute, async (req, res) => {
                 }
             })
 
+            // if (user_details.Keys < 0) {
+            //     throw new Error("INSUFFICIENT_KEYS"); // Should prevent race condidtions if 2 requests fire simulatneously not sure how necessary it is though
+            // }
+
             //create a key transaction 
             await tx.keyTransactions.create({
                 data: {
@@ -207,10 +227,27 @@ app.post("/api/BuyShopItem", protectRoute, async (req, res) => {
             })
         })
 
-    } catch (error) {
+        return res.status(200).json({ message: "Purchase successful" });
+
+    } catch (error: unknown) {
 
         if (error instanceof PrismaClientKnownRequestError && error.code === "P2002") {
             return res.status(409).json({ error: "You already own this item" });
+        }
+
+        if (error instanceof Error) {
+
+            if (error.message === "USER_NOT_FOUND") {
+                return res.status(404).json({ error: "User not found" });
+            }
+
+            if (error.message === "ITEM_NOT_FOUND") {
+                return res.status(404).json({ error: "Item doesn't exist" });
+            }
+
+            if (error.message === "INSUFFICIENT_KEYS") {
+                return res.status(400).json({ error: "Not enough keys" });
+            }
         }
 
         return res.status(500).json({ error: "Unable to fulfil purchase" });
