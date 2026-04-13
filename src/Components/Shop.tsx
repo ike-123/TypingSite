@@ -25,8 +25,40 @@ const Shop = () => {
 
     return (
         <div>
-            <Button onClick={handleCheckout}>Buy Item</Button>
+
+            <div className='mx-auto flex justify-around max-w-7xl'>
+
+                <div className='bg-indigo-500 w-60 h-70'>
+                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+
+                </div>
+
+
+    <div className='bg-indigo-500 w-60 h-70'>
+                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+
+                </div>
+
+
+    <div className='bg-indigo-500 w-60 h-70'>
+                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+
+                </div>
+
+
+    <div className='bg-indigo-500 w-60 h-70'>
+                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+
+                </div>
+
+
+
+
+
+
+            </div>
         </div>
+
     )
 }
 

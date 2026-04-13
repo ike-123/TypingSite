@@ -143,7 +143,6 @@ app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
 
 app.get("/api/shopItems", async (req,res) =>{
 
-    //
 
     const shopItems = await prisma.shopItem.findMany({
         where:{enabled:true}
