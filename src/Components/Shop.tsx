@@ -24,47 +24,182 @@ const Shop = () => {
 
 
     return (
-        <div>
+        <div className='mx-auto max-w-7xl'>
 
-            <div className='mx-auto flex justify-around max-w-7xl'>
 
-                <div className='bg-indigo-500 w-60 h-70 rounded-2xl'>
-                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+            {/* Section */}
+            <div className='mb-30'>
 
-                    <img src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
+                <h1 className='text-6xl mb-5 font-bold'>Featured</h1>
+
+                <div className=' flex flex-wrap gap-3'>
+
+                    <div className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl'>
+                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+
+                        <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
+
+                        <h1 className='text-4xl font-bold pl-2'>Disney Car</h1>
+                        <h2 className='pl-2'>Keys 100</h2>
+
+
+                    </div>
+
+
+                    <div className='flex flex-col items-center justify-around bg-indigo-500 w-60 h-70 rounded-2xl'>
+                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+                        <img className='w-3/4 h-50 ' src="https://cdn3d.iconscout.com/3d/premium/thumb/car-3d-icon-png-download-8650446.png" alt="" />
+
+
+
+                        <h1 className='text-4xl font-bold self-start pl-2'>Car</h1>
+
+                    </div>
+
+
+                    <div className='flex flex-col items-center justify-around bg-indigo-500 w-60 h-70 rounded-2xl'>
+                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+                        <img className='w-3/4 h-50' src="https://unblast.com/wp-content/uploads/2021/01/Space-Background-Images.jpg" alt="" />
+
+
+                        <h1 className='text-4xl font-bold self-start pl-2'>Car</h1>
+
+                    </div>
+
+
+
+                    <div className='bg-indigo-500 w-60 h-70 rounded-2xl'>
+                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+
+                        <img src="https://static.vecteezy.com/system/resources/previews/056/090/137/non_2x/cute-leopard-jungle-avatar-3d-render-png.png" alt="" />
+                    </div>
+
+                    <div className='bg-indigo-500 w-60 h-70 rounded-2xl'>
+                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+
+                        <img src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
+
+                    </div>
+
+
+                    <div className='flex flex-col items-center justify-around bg-indigo-500 w-60 h-70 rounded-2xl'>
+                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+                        <img className='w-3/4 h-50 ' src="https://cdn3d.iconscout.com/3d/premium/thumb/car-3d-icon-png-download-8650446.png" alt="" />
+
+
+
+                        <h1 className='text-4xl font-bold self-start pl-2'>Car</h1>
+
+                    </div>
+
+
+                    <div className='flex flex-col items-center justify-around bg-indigo-500 w-60 h-70 rounded-2xl'>
+                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+                        <img className='w-3/4 h-50' src="https://unblast.com/wp-content/uploads/2021/01/Space-Background-Images.jpg" alt="" />
+
+
+                        <h1 className='text-4xl font-bold self-start pl-2'>Car</h1>
+
+                    </div>
+
+
+
+                    <div className='bg-indigo-500 w-60 h-70 rounded-2xl'>
+                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+
+                        <img src="https://static.vecteezy.com/system/resources/previews/056/090/137/non_2x/cute-leopard-jungle-avatar-3d-render-png.png" alt="" />
+                    </div>
 
                 </div>
-
-
-                <div className='bg-indigo-500 w-60 h-70 rounded-2xl'>
-                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-                    <img src="https://cdn3d.iconscout.com/3d/premium/thumb/car-3d-icon-png-download-8650446.png" alt="" />
-                    
-                    <h1 className='text-4xl font-bold pl-2'>Car</h1>
-
-                </div>
-
-
-                <div className='bg-indigo-500 w-60 h-70 rounded-2xl'>
-                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-
-                    <img src="https://png.pngtree.com/png-clipart/20240115/original/pngtree-rabies-day-pet-dog-world-rabies-cute-3d-dog-png-image_14120145.png" alt="" />
-
-                </div>
-
-
-                <div className='bg-indigo-500 w-60 h-70 rounded-2xl'>
-                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-
-                    <img src="https://static.vecteezy.com/system/resources/previews/056/090/137/non_2x/cute-leopard-jungle-avatar-3d-render-png.png" alt="" />
-                </div>
-
-
-
-
-
-
             </div>
+
+
+
+            <div className='mb-30'>
+
+                <h1 className='text-6xl mb-5 font-bold'>Multiplayer</h1>
+
+                <div className=' flex flex-wrap gap-3'>
+
+                    <div className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl'>
+                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+
+                        <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
+
+                        <h1 className='text-4xl font-bold pl-2'>Disney Car</h1>
+                        <h2 className='pl-2'>Keys 100</h2>
+
+
+                    </div>
+
+
+                    <div className='flex flex-col items-center justify-around bg-indigo-500 w-60 h-70 rounded-2xl'>
+                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+                        <img className='w-3/4 h-50 ' src="https://cdn3d.iconscout.com/3d/premium/thumb/car-3d-icon-png-download-8650446.png" alt="" />
+
+
+
+                        <h1 className='text-4xl font-bold self-start pl-2'>Car</h1>
+
+                    </div>
+
+
+                    <div className='flex flex-col items-center justify-around bg-indigo-500 w-60 h-70 rounded-2xl'>
+                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+                        <img className='w-3/4 h-50' src="https://unblast.com/wp-content/uploads/2021/01/Space-Background-Images.jpg" alt="" />
+
+
+                        <h1 className='text-4xl font-bold self-start pl-2'>Car</h1>
+
+                    </div>
+
+
+
+                    <div className='bg-indigo-500 w-60 h-70 rounded-2xl'>
+                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+
+                        <img src="https://static.vecteezy.com/system/resources/previews/056/090/137/non_2x/cute-leopard-jungle-avatar-3d-render-png.png" alt="" />
+                    </div>
+
+                    <div className='bg-indigo-500 w-60 h-70 rounded-2xl'>
+                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+
+                        <img src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
+
+                    </div>
+
+
+                    <div className='flex flex-col items-center justify-around bg-indigo-500 w-60 h-70 rounded-2xl'>
+                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+                        <img className='w-3/4 h-50 ' src="https://cdn3d.iconscout.com/3d/premium/thumb/car-3d-icon-png-download-8650446.png" alt="" />
+
+
+
+                        <h1 className='text-4xl font-bold self-start pl-2'>Car</h1>
+
+                    </div>
+
+
+                    <div className='flex flex-col items-center justify-around bg-indigo-500 w-60 h-70 rounded-2xl'>
+                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+                        <img className='w-3/4 h-50' src="https://unblast.com/wp-content/uploads/2021/01/Space-Background-Images.jpg" alt="" />
+
+
+                        <h1 className='text-4xl font-bold self-start pl-2'>Car</h1>
+
+                    </div>
+
+
+
+                    <div className='bg-indigo-500 w-60 h-70 rounded-2xl'>
+                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+
+                        <img src="https://static.vecteezy.com/system/resources/previews/056/090/137/non_2x/cute-leopard-jungle-avatar-3d-render-png.png" alt="" />
+                    </div>
+
+                </div>
+            </div>
+
         </div>
 
     )
