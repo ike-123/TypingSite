@@ -34,6 +34,12 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
 const app = express()
 
+app.use(cors({
+    origin: 'http://localhost:5173', // Replace with your frontend URL
+    // origin: "*",
+    credentials: true
+}));
+
 app.all('/api/auth/{*any}', toNodeHandler(auth));
 
 
@@ -45,11 +51,7 @@ app.use(express.urlencoded({ extended: true }))
 /////
 
 
-app.use(cors({
-    origin: 'http://localhost:5173', // Replace with your frontend URL
-    // origin: "*",
-    credentials: true
-}));
+
 
 
 const server = http.createServer(app);
@@ -141,18 +143,26 @@ app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
 
 });
 
-app.get("/api/shopItems", async (req,res) =>{
+app.get("/api/shopItems", async (req, res) => {
 
 
     const shopItems = await prisma.shopItem.findMany({
-        where:{enabled:true}
+        where: { enabled: true }
     })
 
-    if(!shopItems){
+    //return key packages as well
+
+    // const keyPackages = await prisma.keyPackage.findMany({
+    //     where: { enabled: true }
+    // })
+
+
+
+    if (!shopItems) {
         return res.status(404).json()
     }
-    else{
-        return res.status(404).json(shopItems)
+    else {
+        return res.status(200).json(shopItems)
     }
 })
 
@@ -241,10 +251,13 @@ app.post("/api/BuyShopItem", protectRoute, async (req, res) => {
             }
 
             if (error.message === "ITEM_NOT_FOUND") {
+                console.log("Item Not found");
+
                 return res.status(404).json({ error: "Item doesn't exist" });
             }
 
             if (error.message === "INSUFFICIENT_KEYS") {
+                console.log("not enough keys");
                 return res.status(400).json({ error: "Not enough keys" });
             }
         }

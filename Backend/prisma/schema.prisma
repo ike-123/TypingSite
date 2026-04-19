@@ -140,6 +140,7 @@ model ShopItem {
 
   thumbnailUrl String
   ModelUrl     String?
+  featured     Boolean @default(false)
   enabled      Boolean @default(true)
 
   inventory         UserInventory[]
@@ -155,6 +156,9 @@ model KeyPackage {
   keysAmount Int //500 for example
   price      Int // 350 (which will be £3.50)
   imageUrl   String?
+
+  enabled      Boolean @default(true)
+
 
   payment Payment[]
 }
@@ -249,7 +253,7 @@ model KeyTransactions {
 
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   payment  Payment?  @relation(fields: [paymentId], references: [id])
   shopitem ShopItem? @relation(fields: [shopitemId], references: [id])
 
