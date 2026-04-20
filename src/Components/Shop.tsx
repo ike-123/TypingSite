@@ -6,6 +6,12 @@ import { useInView, InView } from "react-intersection-observer";
 
 const Shop = () => {
 
+    const [visibleSection, setVisibleSection] = useState("featured");
+
+    const [shopItems, setShopItems] = useState([]);
+    const [keyPackages, SetKeyPackages] = useState([]);
+
+
     useEffect(() => {
 
         //should I always use a try catch block with axios requests?
@@ -17,7 +23,9 @@ const Shop = () => {
                 const res = await axios.get("http://localhost:3001/api/shopItems");
 
                 console.log(res?.data);
-                setShopItems(res?.data);
+                setShopItems(res?.data.shopItems);
+                SetKeyPackages(res?.data.keyPackages)
+
 
             }
 
@@ -30,9 +38,7 @@ const Shop = () => {
 
     }, [])
 
-    const [visibleSection, setVisibleSection] = useState("featured");
 
-    const [shopItems, setShopItems] = useState([]);
 
 
     async function handleCheckout() {
@@ -55,7 +61,7 @@ const Shop = () => {
     }
 
 
-    async function BuyShopItem(shopItemId:number) {
+    async function BuyShopItem(shopItemId: number) {
         try {
 
 
@@ -108,9 +114,101 @@ const Shop = () => {
 
             </div>
 
+
             <div className='mx-auto max-w-7xl'>
 
                 <h1 className='text-7xl font-bold text-cyan-700 fixed'>{visibleSection}</h1>
+
+                <InView
+                    key={"featured"}
+                    threshold={0}
+                    rootMargin="-40% 0px -55% 0px"
+                    onChange={(inView, entry) => {
+                        if (inView) {
+                            setVisibleSection(entry.target.id);
+                        }
+                    }}
+                >
+                    {({ ref }) => (
+                        <div
+                            ref={ref} id='featured' className='mb-30 bg-orange-100 pt-5'
+                        >
+                            <h1 className='text-6xl mb-5 font-bold'>Featured</h1>
+
+                            <div className=' flex flex-wrap gap-3'>
+
+
+
+                                {
+                                    shopItems.map((item: any) => (
+
+
+                                        <>
+                                            {
+                                                item.featured === true ?
+
+                                                    <div className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl'>
+                                                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+
+                                                        <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
+
+                                                        <h1 className='text-4xl font-bold pl-2'>{item.name}</h1>
+                                                        <h2 className='pl-2'>Keys {item.priceKeys}</h2>
+
+                                                        <Button onClick={() => { BuyShopItem(item.id) }}>Buy</Button>
+
+
+
+
+
+                                                    </div> : ""
+
+                                            }
+
+                                        </>
+
+
+                                    ))
+                                }
+
+                                {
+                                    keyPackages.map((item: any) => (
+
+
+                                        <>
+                                            {
+                                                item.featured === true ?
+
+                                                    <div id={item.id} className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl'>
+                                                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+
+                                                        <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/022/187/081/non_2x/3d-key-caps-or-keyboard-icon-rendering-free-png.png" alt="" />
+
+                                                        <h1 className='text-4xl font-bold pl-2'>{item.name}</h1>
+                                                        <h2 className='pl-2'>Keys {item.price}</h2>
+
+                                                        <Button onClick={() => { BuyShopItem(item.id) }}>Buy</Button>
+
+
+
+
+
+                                                    </div> : ""
+
+                                            }
+
+                                        </>
+
+
+                                    ))
+                                }
+
+                            </div>
+
+
+                        </div>
+                    )}
+                </InView>
 
 
                 <InView
@@ -129,225 +227,52 @@ const Shop = () => {
                         >
                             <h1 className='text-6xl mb-5 font-bold'>Multiplayer</h1>
 
-                            {
-                                shopItems.map((item: any) => (
-
-
-                                    <>
-                                        {
-                                            item.mode === "multiplayer" ? <div className=' flex flex-wrap gap-3'>
-
-                                                <div className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-
-                                                    <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
-
-                                                    <h1 className='text-4xl font-bold pl-2'>{item.name}</h1>
-                                                    <h2 className='pl-2'>Keys {item.priceKeys}</h2>
-
-                                                    <Button onClick={()=>{BuyShopItem(item.id)}}>Buy</Button>
-
-
-                                                </div>
-
-
-                                            </div> : "nothing"
-
-                                        }
-
-                                    </>
-
-
-                                ))
-                            }
-
-                        </div>
-                    )}
-                </InView>
-
-
-                <InView
-
-                    key={"Mulitplayer"}
-                    threshold={0}
-                    rootMargin="-40% 0px -55% 0px"
-                    onChange={(inView, entry) => {
-                        console.log("hey view")
-                        if (inView) {
-                            setVisibleSection(entry.target.id);
-                        }
-                    }}
-                >
-                    {({ ref }) => (
-                        <div
-                            ref={ref} id='multiplayer' className='mb-30 pt-5j'
-                        >
-                            <h1 className='text-6xl mb-5 font-bold'>Mulitplayer</h1>
-
                             <div className=' flex flex-wrap gap-3'>
 
-                                <div className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
 
-                                    <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
 
-                                    <h1 className='text-4xl font-bold pl-2'>Disney Car</h1>
-                                    <h2 className='pl-2'>Keys 100</h2>
+                                {
+                                    shopItems.map((item: any) => (
 
 
-                                </div>
+                                        <>
+                                            {
+                                                item.mode === "multiplayer" ?
 
+                                                    <div className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl'>
+                                                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
 
-                                <div className='flex flex-col items-center justify-around bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-                                    <img className='w-3/4 h-50 ' src="https://cdn3d.iconscout.com/3d/premium/thumb/car-3d-icon-png-download-8650446.png" alt="" />
+                                                        <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
 
+                                                        <h1 className='text-4xl font-bold pl-2'>{item.name}</h1>
+                                                        <h2 className='pl-2'>Keys {item.priceKeys}</h2>
 
+                                                        <Button onClick={() => { BuyShopItem(item.id) }}>Buy</Button>
 
-                                    <h1 className='text-4xl font-bold self-start pl-2'>Car</h1>
 
-                                </div>
 
 
-                                <div className='flex flex-col items-center justify-around bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-                                    <img className='w-3/4 h-50' src="https://unblast.com/wp-content/uploads/2021/01/Space-Background-Images.jpg" alt="" />
 
+                                                    </div> : "nothing"
 
-                                    <h1 className='text-4xl font-bold self-start pl-2'>Car</h1>
+                                            }
 
-                                </div>
+                                        </>
 
 
-
-                                <div className='bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-
-                                    <img src="https://static.vecteezy.com/system/resources/previews/056/090/137/non_2x/cute-leopard-jungle-avatar-3d-render-png.png" alt="" />
-                                </div>
-
-                                <div className='bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-
-                                    <img src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
-
-                                </div>
-
-
-                                <div className='flex flex-col items-center justify-around bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-                                    <img className='w-3/4 h-50 ' src="https://cdn3d.iconscout.com/3d/premium/thumb/car-3d-icon-png-download-8650446.png" alt="" />
-
-
-
-                                    <h1 className='text-4xl font-bold self-start pl-2'>Car</h1>
-
-                                </div>
-
-
-                                <div className='flex flex-col items-center justify-around bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-                                    <img className='w-3/4 h-50' src="https://unblast.com/wp-content/uploads/2021/01/Space-Background-Images.jpg" alt="" />
-
-
-                                    <h1 className='text-4xl font-bold self-start pl-2'>Car</h1>
-
-                                </div>
-
-
-
-                                <div className='bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-
-                                    <img src="https://static.vecteezy.com/system/resources/previews/056/090/137/non_2x/cute-leopard-jungle-avatar-3d-render-png.png" alt="" />
-                                </div>
-
-                                <div className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-
-                                    <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
-
-                                    <h1 className='text-4xl font-bold pl-2'>Disney Car</h1>
-                                    <h2 className='pl-2'>Keys 100</h2>
-
-
-                                </div>
-
-
-                                <div className='flex flex-col items-center justify-around bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-                                    <img className='w-3/4 h-50 ' src="https://cdn3d.iconscout.com/3d/premium/thumb/car-3d-icon-png-download-8650446.png" alt="" />
-
-
-
-                                    <h1 className='text-4xl font-bold self-start pl-2'>Car</h1>
-
-                                </div>
-
-
-                                <div className='flex flex-col items-center justify-around bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-                                    <img className='w-3/4 h-50' src="https://unblast.com/wp-content/uploads/2021/01/Space-Background-Images.jpg" alt="" />
-
-
-                                    <h1 className='text-4xl font-bold self-start pl-2'>Car</h1>
-
-                                </div>
-
-
-
-                                <div className='bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-
-                                    <img src="https://static.vecteezy.com/system/resources/previews/056/090/137/non_2x/cute-leopard-jungle-avatar-3d-render-png.png" alt="" />
-                                </div>
-
-                                <div className='bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-
-                                    <img src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
-
-                                </div>
-
-
-                                <div className='flex flex-col items-center justify-around bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-                                    <img className='w-3/4 h-50 ' src="https://cdn3d.iconscout.com/3d/premium/thumb/car-3d-icon-png-download-8650446.png" alt="" />
-
-
-
-                                    <h1 className='text-4xl font-bold self-start pl-2'>Car</h1>
-
-                                </div>
-
-
-                                <div className='flex flex-col items-center justify-around bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-                                    <img className='w-3/4 h-50' src="https://unblast.com/wp-content/uploads/2021/01/Space-Background-Images.jpg" alt="" />
-
-
-                                    <h1 className='text-4xl font-bold self-start pl-2'>Car</h1>
-
-                                </div>
-
-
-
-                                <div className='bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-
-                                    <img src="https://static.vecteezy.com/system/resources/previews/056/090/137/non_2x/cute-leopard-jungle-avatar-3d-render-png.png" alt="" />
-                                </div>
+                                    ))
+                                }
 
                             </div>
+
+
                         </div>
                     )}
                 </InView>
 
 
-
-
                 <InView
-                    key={"Merch"}
+                    key={"featured"}
                     threshold={0}
                     rootMargin="-40% 0px -55% 0px"
                     onChange={(inView, entry) => {
@@ -358,87 +283,90 @@ const Shop = () => {
                 >
                     {({ ref }) => (
                         <div
-                            ref={ref} id='merch' className='mb-30'
+                            ref={ref} id='featured' className='mb-30 bg-orange-100 pt-5'
                         >
-                            <h1 className='text-6xl mb-5 font-bold'>Merch</h1>
+                            <h1 className='text-6xl mb-5 font-bold'>Game</h1>
 
                             <div className=' flex flex-wrap gap-3'>
 
-                                <div className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-
-                                    <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
-
-                                    <h1 className='text-4xl font-bold pl-2'>Disney Car</h1>
-                                    <h2 className='pl-2'>Keys 100</h2>
+                                {
+                                    shopItems.map((item: any) => (
 
 
-                                </div>
+                                        <>
+                                            {
+                                                item.mode === "game" ?
 
+                                                    <div className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl'>
+                                                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
 
-                                <div className='flex flex-col items-center justify-around bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-                                    <img className='w-3/4 h-50 ' src="https://cdn3d.iconscout.com/3d/premium/thumb/car-3d-icon-png-download-8650446.png" alt="" />
+                                                        <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
 
+                                                        <h1 className='text-4xl font-bold pl-2'>{item.name}</h1>
+                                                        <h2 className='pl-2'>Keys {item.priceKeys}</h2>
 
-
-                                    <h1 className='text-4xl font-bold self-start pl-2'>Car</h1>
-
-                                </div>
-
-
-                                <div className='flex flex-col items-center justify-around bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-                                    <img className='w-3/4 h-50' src="https://unblast.com/wp-content/uploads/2021/01/Space-Background-Images.jpg" alt="" />
-
-
-                                    <h1 className='text-4xl font-bold self-start pl-2'>Car</h1>
-
-                                </div>
+                                                        <Button onClick={() => { BuyShopItem(item.id) }}>Buy</Button>
 
 
 
-                                <div className='bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-
-                                    <img src="https://static.vecteezy.com/system/resources/previews/056/090/137/non_2x/cute-leopard-jungle-avatar-3d-render-png.png" alt="" />
-                                </div>
-
-                                <div className='bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-
-                                    <img src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
-
-                                </div>
 
 
-                                <div className='flex flex-col items-center justify-around bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-                                    <img className='w-3/4 h-50 ' src="https://cdn3d.iconscout.com/3d/premium/thumb/car-3d-icon-png-download-8650446.png" alt="" />
+                                                    </div> : "nothing"
+
+                                            }
+
+                                        </>
 
 
+                                    ))
+                                }
 
-                                    <h1 className='text-4xl font-bold self-start pl-2'>Car</h1>
+                            </div>
 
-                                </div>
-
-
-                                <div className='flex flex-col items-center justify-around bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-                                    <img className='w-3/4 h-50' src="https://unblast.com/wp-content/uploads/2021/01/Space-Background-Images.jpg" alt="" />
-
-
-                                    <h1 className='text-4xl font-bold self-start pl-2'>Car</h1>
-
-                                </div>
+                        </div>
+                    )}
+                </InView>
 
 
 
-                                <div className='bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                    {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
 
-                                    <img src="https://static.vecteezy.com/system/resources/previews/056/090/137/non_2x/cute-leopard-jungle-avatar-3d-render-png.png" alt="" />
-                                </div>
+                <InView
+                    key={"Keys"}
+                    threshold={0}
+                    rootMargin="-40% 0px -55% 0px"
+                    onChange={(inView, entry) => {
+                        if (inView) {
+                            setVisibleSection(entry.target.id);
+                        }
+                    }}
+                >
+                    {({ ref }) => (
+                        <div
+                            ref={ref} id='keys' className='mb-30'
+                        >
+                            <h1 className='text-6xl mb-5 font-bold'>Keys</h1>
+
+                            <div className=' flex flex-wrap gap-3'>
+
+                                {
+                                    keyPackages.map((item: any) => (
+
+                                        <div id={item.id} className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl'>
+                                            {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+
+                                            <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/022/187/081/non_2x/3d-key-caps-or-keyboard-icon-rendering-free-png.png" alt="" />
+
+                                            <h1 className='text-4xl font-bold pl-2'>{item.name}</h1>
+                                            <h2 className='pl-2'>{item.price}</h2>
+
+                                        </div>
+
+                                    ))
+                                }
+
+
+
+
 
                             </div>
                         </div>

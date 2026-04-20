@@ -16,7 +16,7 @@ import { auth } from './lib/Auth.ts'
 import { NextFunction } from "express";
 import { protectRoute } from "./Middleware/AuthMiddleware.ts";
 import { prisma } from "./lib/prisma.ts"
-import { config, length, string } from "zod";
+import { config, length, promise, string } from "zod";
 import { setupSockets } from "./socket.ts";
 
 /////
@@ -146,24 +146,29 @@ app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
 app.get("/api/shopItems", async (req, res) => {
 
 
-    const shopItems = await prisma.shopItem.findMany({
-        where: { enabled: true }
-    })
+    const [shopItems, keyPackages] = await Promise.all([
+
+        prisma.shopItem.findMany({
+            where: { enabled: true }
+        }),
+
+        prisma.keyPackage.findMany({
+            where: { enabled: true }
+        })
+    ])
+
 
     //return key packages as well
 
-    // const keyPackages = await prisma.keyPackage.findMany({
-    //     where: { enabled: true }
-    // })
-
-
-
-    if (!shopItems) {
-        return res.status(404).json()
+    const data = {
+        shopItems,
+        keyPackages
     }
-    else {
-        return res.status(200).json(shopItems)
-    }
+
+
+
+    return res.status(200).json(data)
+
 })
 
 app.post("/api/BuyShopItem", protectRoute, async (req, res) => {
