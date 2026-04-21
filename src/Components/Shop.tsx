@@ -103,9 +103,12 @@ const Shop = () => {
                         Multiplayer
                     </Button>
 
-                    <Button className={`text-2xl rounded-sm p-2 ${visibleSection === "merch" ? "bg-blue-900" : "bg-blue-500 "}`} onClick={() => { scrollToSection("merch") }}>
+                    <Button className={`text-2xl rounded-sm p-2 ${visibleSection === "game" ? "bg-blue-900" : "bg-blue-500 "}`} onClick={() => { scrollToSection("game") }}>
+                        Game
+                    </Button>
 
-                        Merch
+                    <Button className={`text-2xl rounded-sm p-2 ${visibleSection === "keys" ? "bg-blue-900" : "bg-blue-500 "}`} onClick={() => { scrollToSection("keys") }}>
+                        Keys
                     </Button>
 
 
@@ -117,7 +120,7 @@ const Shop = () => {
 
             <div className='mx-auto max-w-7xl'>
 
-                <h1 className='text-7xl font-bold text-cyan-700 fixed'>{visibleSection}</h1>
+                {/* <h1 className='text-7xl font-bold text-cyan-700 fixed'>{visibleSection}</h1> */}
 
                 <InView
                     key={"featured"}
@@ -185,7 +188,7 @@ const Shop = () => {
                                                         <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/022/187/081/non_2x/3d-key-caps-or-keyboard-icon-rendering-free-png.png" alt="" />
 
                                                         <h1 className='text-4xl font-bold pl-2'>{item.name}</h1>
-                                                        <h2 className='pl-2'>Keys {item.price}</h2>
+                                                        <h2 className='pl-2'>£{item.price}</h2>
 
                                                         <Button onClick={() => { BuyShopItem(item.id) }}>Buy</Button>
 
@@ -212,7 +215,7 @@ const Shop = () => {
 
 
                 <InView
-                    key={"featured"}
+                    key={"multiplayer"}
                     threshold={0}
                     rootMargin="-40% 0px -55% 0px"
                     onChange={(inView, entry) => {
@@ -223,7 +226,7 @@ const Shop = () => {
                 >
                     {({ ref }) => (
                         <div
-                            ref={ref} id='featured' className='mb-30 bg-orange-100 pt-5'
+                            ref={ref} id='multiplayer' className='mb-30 bg-gray-700 pt-5'
                         >
                             <h1 className='text-6xl mb-5 font-bold'>Multiplayer</h1>
 
@@ -250,9 +253,6 @@ const Shop = () => {
                                                         <Button onClick={() => { BuyShopItem(item.id) }}>Buy</Button>
 
 
-
-
-
                                                     </div> : "nothing"
 
                                             }
@@ -272,7 +272,7 @@ const Shop = () => {
 
 
                 <InView
-                    key={"featured"}
+                    key={"game"}
                     threshold={0}
                     rootMargin="-40% 0px -55% 0px"
                     onChange={(inView, entry) => {
@@ -283,7 +283,7 @@ const Shop = () => {
                 >
                     {({ ref }) => (
                         <div
-                            ref={ref} id='featured' className='mb-30 bg-orange-100 pt-5'
+                            ref={ref} id='game' className='mb-30 bg-orange-100 pt-5'
                         >
                             <h1 className='text-6xl mb-5 font-bold'>Game</h1>
 
@@ -357,7 +357,7 @@ const Shop = () => {
                                             <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/022/187/081/non_2x/3d-key-caps-or-keyboard-icon-rendering-free-png.png" alt="" />
 
                                             <h1 className='text-4xl font-bold pl-2'>{item.name}</h1>
-                                            <h2 className='pl-2'>{item.price}</h2>
+                                            <h2 className='pl-2'>£{item.price}</h2>
 
                                         </div>
 

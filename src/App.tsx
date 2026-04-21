@@ -23,6 +23,7 @@ import { useAuthStore } from './Stores/AuthStore';
 import MyStats from './Pages/MyStats';
 import Shop from './Components/Shop';
 import Success from './Pages/Success';
+import Product from './Pages/Product';
 
 
 
@@ -78,6 +79,10 @@ const router = createBrowserRouter([
       {
         path: "/success",
         element: <Success />
+      },
+      {
+        path: "/product",
+        element: <Product />
       }
 
 
