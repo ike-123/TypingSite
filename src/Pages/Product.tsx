@@ -5,6 +5,9 @@ import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader"
 import * as THREE from 'three';
 import { OrbitControls } from "@react-three/drei";
 import ItemModel from '@/Components/Item3dModel';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import { useLocation } from "react-router-dom"
 
 // import robotUrl from '../assets/robot.fbx';
 
@@ -29,9 +32,53 @@ const Product = () => {
 
     // const [model, SetModel] = useState<any>();
 
+    const location = useLocation();
+    const passedItemFromShopPage = location.state?.item
+
+
+    const { id } = useParams()
+
+    const [shopItem, setShopItem] = useState<any>();
+
     const model = useLoader(FBXLoader, '/robot.fbx');
 
     const Modelref = useRef<any>(null);
+
+
+
+
+
+
+    useEffect(() => {
+
+        try {
+
+            async function getShopItem() {
+
+                console.log(id)
+                const res = await axios.get("http://localhost:3001/api/singleShopItem", { params: { productId: id } });
+
+                console.log(res?.data);
+                setShopItem(res?.data);
+
+
+
+            }
+
+            if (!passedItemFromShopPage) {
+                // getShopItem();
+            }
+            else{
+                console.log("passeditemfromshop")
+                setShopItem(passedItemFromShopPage);
+            }
+
+
+        } catch (error) {
+
+            console.log(error)
+        }
+    }, [id])
 
     useEffect(() => {
         model.traverse((child: any) => {
@@ -75,7 +122,7 @@ const Product = () => {
                     </mesh> */}
 
                     <Suspense>
-                   
+
                         {/* We need to make sure that we rotate the item and not the camera when we click and drag */}
                         <ItemModel></ItemModel>
 
@@ -93,12 +140,12 @@ const Product = () => {
             </div>
 
             <div className='flex flex-col flex-3 p-10'>
-                <h1 className='text-4xl font-bold'>Product Name</h1>
+                <h1 className='text-4xl font-bold'>{shopItem?.name}</h1>
 
 
                 <div className='flex h-15 gap-1 items-center mt-5'>
                     <img className='h-15' src="https://static.vecteezy.com/system/resources/previews/022/187/081/non_2x/3d-key-caps-or-keyboard-icon-rendering-free-png.png" alt="" />
-                    <h2 className='text-3xl font-bold'>500</h2>
+                    <h2 className='text-3xl font-bold'>{shopItem?.priceKeys}</h2>
                 </div>
 
 

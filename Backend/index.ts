@@ -171,6 +171,26 @@ app.get("/api/shopItems", async (req, res) => {
 
 })
 
+app.get("/api/singleShopItem", async (req, res) => {
+
+    const ProductId = req.query.productId;
+
+    if (typeof ProductId !== "string") {
+        return res.status(404).json("Invalid Product Id")
+    }
+
+
+
+    const Product = await prisma.shopItem.findUnique({
+        where: { id: ProductId }
+    })
+
+
+
+    return res.status(200).json(Product)
+
+})
+
 app.post("/api/BuyShopItem", protectRoute, async (req, res) => {
 
 

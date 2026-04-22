@@ -2,9 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import axios from 'axios'
 import { useInView, InView } from "react-intersection-observer";
+import { useNavigate } from 'react-router-dom';
 
 
 const Shop = () => {
+
+    const navigate = useNavigate();
 
     const [visibleSection, setVisibleSection] = useState("featured");
 
@@ -85,6 +88,11 @@ const Shop = () => {
         });
     };
 
+    function handleClick(item:any){
+
+        console.log("clicked");
+        navigate(`/product/${item.id}`,{state:{item}})
+    }
 
 
     return (
@@ -150,7 +158,7 @@ const Shop = () => {
                                             {
                                                 item.featured === true ?
 
-                                                    <div className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl'>
+                                                    <div className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl' onClick={()=>{handleClick(item)}}>
                                                         {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
 
                                                         <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
@@ -242,7 +250,7 @@ const Shop = () => {
                                             {
                                                 item.mode === "multiplayer" ?
 
-                                                    <div className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl'>
+                                                    <div className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl' onClick={()=>{handleClick(item)}}>
                                                         {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
 
                                                         <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
