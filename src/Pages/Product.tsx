@@ -9,6 +9,18 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useLocation } from "react-router-dom"
 
+
+import {
+    Application,
+    extend,
+} from '@pixi/react';
+import {
+    Container,
+    Graphics,
+    Sprite,
+} from 'pixi.js';
+
+
 // import robotUrl from '../assets/robot.fbx';
 
 // function SpinningModel() {
@@ -45,15 +57,21 @@ const Product = () => {
     const Modelref = useRef<any>(null);
 
 
+    const [loading, setLoading] = useState(true)
+
 
 
 
 
     useEffect(() => {
 
-        try {
 
-            async function getShopItem() {
+
+        async function getShopItem() {
+
+
+            try {
+                setLoading(true)
 
                 console.log(id)
                 const res = await axios.get("http://localhost:3001/api/singleShopItem", { params: { productId: id } });
@@ -61,24 +79,27 @@ const Product = () => {
                 console.log(res?.data);
                 setShopItem(res?.data);
 
-
-
+            } catch (error) {
+                console.log(error);
+            }
+            finally {
+                setLoading(false)
             }
 
-            if (!passedItemFromShopPage) {
-                // getShopItem();
-            }
-            else{
-                console.log("passeditemfromshop")
-                setShopItem(passedItemFromShopPage);
-            }
-
-
-        } catch (error) {
-
-            console.log(error)
         }
-    }, [id])
+
+        if (passedItemFromShopPage) {
+            console.log("passeditemfromshop")
+            setShopItem(passedItemFromShopPage);
+            setLoading(false);
+        }
+        else {
+            getShopItem();
+        }
+
+
+
+    }, [id, passedItemFromShopPage])
 
     useEffect(() => {
         model.traverse((child: any) => {
@@ -110,6 +131,8 @@ const Product = () => {
             {/* Item view */}
             <div className='bg-amber-300 flex-4 h-150'>
 
+                {/* Conditonally render based on shopItemType */}
+
                 {/* <img src="https://static.vecteezy.com/system/resources/thumbnails/035/576/135/small_2x/ai-generated-3d-rendering-of-a-beautiful-car-on-transparent-background-ai-generated-free-png.png" alt="" /> */}
 
                 <Canvas camera={{ position: [0, .5, 1.5], rotation: [0, 0, 0] }}>
@@ -137,6 +160,8 @@ const Product = () => {
                     />
 
                 </Canvas>
+
+                <Application background={"#1099bb"}/>
             </div>
 
             <div className='flex flex-col flex-3 p-10'>
