@@ -15,10 +15,18 @@ import {
     extend,
 } from '@pixi/react';
 import {
+    Assets,
     Container,
     Graphics,
     Sprite,
+    Texture,
 } from 'pixi.js';
+
+extend({
+    Container,
+    Graphics,
+    Sprite,
+});
 
 
 // import robotUrl from '../assets/robot.fbx';
@@ -61,11 +69,26 @@ const Product = () => {
 
 
 
+    const sprite = new Sprite({
+        texture: Texture.from('https://pixijs.com/assets/bunny.png')
+    });
+
+
+    const [texture, setTexture] = useState(null)
 
 
     useEffect(() => {
 
+        async function loadAsset() {
+            const texture = await Assets.load('/profile.jpeg');
 
+            setTexture(texture);
+
+            //  const texture = await Assets.load('https://pixijs.com/assets/bunny.png');
+
+        }
+
+        loadAsset();
 
         async function getShopItem() {
 
@@ -161,7 +184,21 @@ const Product = () => {
 
                 </Canvas>
 
-                <Application background={"#1099bb"}/>
+                <Application  autoStart sharedTicker  background={"#1099bb"}>
+
+                   {texture && <pixiSprite anchor={.5} x={400} y={300} texture={texture} />} 
+
+                    {/* <pixiSprite
+                        texture="https://pixijs.io/pixi-react/img/bunny.png"
+                        x={400}
+                        y={300}
+                        anchor={{ x: 0.5, y: 0.5 }}
+                    /> */}
+
+
+
+
+                </Application>
             </div>
 
             <div className='flex flex-col flex-3 p-10'>
@@ -176,6 +213,8 @@ const Product = () => {
 
 
                 <Button size={"lg"} className='mt-20 w-full h-12 text-xl self-center'>Purchase</Button>
+
+                {/* <img src="/profile.jop" alt="" /> */}
 
             </div>
         </div>
