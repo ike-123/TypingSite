@@ -21,6 +21,7 @@ import {
     Sprite,
     Texture,
 } from 'pixi.js';
+import AnimatedSpriteAvatar from '@/Components/AnimatedSpriteAvatar';
 
 extend({
     Container,
@@ -69,9 +70,9 @@ const Product = () => {
 
 
 
-    const sprite = new Sprite({
-        texture: Texture.from('https://pixijs.com/assets/bunny.png')
-    });
+    // const sprite = new Sprite({
+    //     texture: Texture.from('https://pixijs.com/assets/bunny.png')
+    // });
 
 
     const [texture, setTexture] = useState(null)
@@ -186,7 +187,9 @@ const Product = () => {
 
                 <Application  autoStart sharedTicker  background={"#1099bb"}>
 
-                   {texture && <pixiSprite anchor={.5} x={400} y={300} texture={texture} />} 
+                   {/* {texture && <pixiSprite anchor={.5} x={400} y={300} texture={texture} />}  */}
+
+                   <AnimatedSpriteAvatar/>
 
                     {/* <pixiSprite
                         texture="https://pixijs.io/pixi-react/img/bunny.png"
@@ -194,9 +197,6 @@ const Product = () => {
                         y={300}
                         anchor={{ x: 0.5, y: 0.5 }}
                     /> */}
-
-
-
 
                 </Application>
             </div>

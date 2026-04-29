@@ -54,6 +54,7 @@ export function setupSockets(server: HttpServer) {
 
     io.on("connection", (socket) => {
 
+        console.log("testing")
         console.log(socket.id)
 
         const playerID = socket.handshake.auth.playerID;

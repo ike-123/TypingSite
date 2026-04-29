@@ -113,92 +113,92 @@
     border-radius: 2px;
 }
 
-.Multiplayer{
+// .Multiplayer{
 
-    .RaceTrack{
+//     .RaceTrack{
 
-        background-color: #376783;
-        height: 350px;
-        width: 1000px;
-        margin: auto;
-        border-radius: 10px;
-        position: relative;
+//         background-color: #376783;
+//         height: 350px;
+//         width: 1000px;
+//         margin: auto;
+//         border-radius: 10px;
+//         position: relative;
 
        
 
-        .PlayerSection{
+//         .PlayerSection{
 
             
-            height: 70px;
-            border-width: 1px;
-            border-style: solid;
-            border-radius: 10px;
-            display: flex;
-            align-items:end;
-            justify-content: center;
-            padding-bottom: 4px;
-            padding-left: 4px;
-            position: relative;
+//             height: 70px;
+//             border-width: 1px;
+//             border-style: solid;
+//             border-radius: 10px;
+//             display: flex;
+//             align-items:end;
+//             justify-content: center;
+//             padding-bottom: 4px;
+//             padding-left: 4px;
+//             position: relative;
 
             
-            .FinshedText{
-                color: #b5c4c5;
-                position: absolute;
-                display: flex;
-                align-self: center;
-                font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-                font-size: 25px;
+//             .FinshedText{
+//                 color: #b5c4c5;
+//                 position: absolute;
+//                 display: flex;
+//                 align-self: center;
+//                 font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+//                 font-size: 25px;
 
-            }
+//             }
 
             
-            .playerAvatar{
+//             .playerAvatar{
            
               
-                display: flex;
+//                 display: flex;
                
-                width: 60px;
+//                 width: 60px;
             
-                transition: left 150ms linear;
-                img{
-                   width: 60px;
+//                 transition: left 150ms linear;
+//                 img{
+//                    width: 60px;
                 
-                }
+//                 }
 
                 
-                .wpm{
-                    font-size: 25px;
-                    color: rgb(244, 231, 208);
-                }
-            }
-            .WPM{
-                position: absolute;
-                right: 0;
-                color: wheat;
-                font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+//                 .wpm{
+//                     font-size: 25px;
+//                     color: rgb(244, 231, 208);
+//                 }
+//             }
+//             .WPM{
+//                 position: absolute;
+//                 right: 0;
+//                 color: wheat;
+//                 font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 
-            }
+//             }
 
-        }
+//         }
 
-    }
+//     }
 
-     .finished{
-        background-color: green;
+//      .finished{
+//         background-color: green;
             
             
-        }
+//         }
 
        
 
-    .notfinished{
-        background-color:#0E3044;
+//     .notfinished{
+//         background-color:#0E3044;
 
-    }
+//     }
 
-    .waitingtext{
+//     .waitingtext{
         
-        color: rgb(237, 229, 213);
-        text-align: center;
-    }
-}
+//         color: rgb(237, 229, 213);
+//         text-align: center;
+//     }
+// }

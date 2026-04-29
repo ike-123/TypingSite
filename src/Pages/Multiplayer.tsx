@@ -11,6 +11,9 @@ import { useTypingEnigne } from '@/Hooks/useTypingEngine';
 import { useAuthStore } from '@/Stores/AuthStore';
 import { v4 as uuidv4 } from 'uuid';
 import Multiplayer_User_Setup from '@/Components/Multiplayer_User_Setup';
+import { Application } from '@pixi/react';
+import { AnimatedSprite } from 'pixi.js';
+import AnimatedSpriteAvatar from '@/Components/AnimatedSpriteAvatar';
 // import { date } from 'better-auth';
 
 type PlayerState = { id: string; progressIndex: number; wpm: number; finished: boolean; finishtime: string; DisplayName: string };
@@ -75,6 +78,7 @@ const Multiplayer = () => {
 
     const [ShowSetupScreen, SetShowSetupScreen] = useState(false)
 
+    const parentRef = useRef<HTMLDivElement>(null);
 
     // useEffect(() => {
 
@@ -180,10 +184,10 @@ const Multiplayer = () => {
 
             }
 
-
+            //im not sure if this is necessary
             SetShowSetupScreen(false);
 
-            // console.log("hey")
+            console.log("ShowSetUpScreen")
 
 
             //if checking for playerid isnt synchronous because it waits for loading to finish then the code should be after the display name check 
@@ -214,14 +218,16 @@ const Multiplayer = () => {
 
 
             // const socket = io("http://localhost:3001")
-            console.log(isGuest)
-            const socket = io("192.168.1.70:3001", {
+            // console.log(isGuest)
+            const socket = io("192.168.1.186:3001", {
                 auth: {
                     playerID,
                     DisplayName
                 }
 
             })
+
+            console.log(socket);
 
 
 
@@ -406,27 +412,38 @@ const Multiplayer = () => {
 
                             </div>
 
-                            <div className='Multiplayer mb-10'>
+                            <div className='mb-10'>
 
                                 {status === "countdown" && countdown !== null && <h1 className='infotext text-2xl'>Game starts in {countdown}</h1>}
                                 {status === "waiting" ? <h1 className='infotext text-2xl'>Waiting For more Players</h1> : ""}
                                 {<h1 className='infotext'>Players in Server: {PlayersInServer}</h1>}
 
 
-                                <div className="RaceTrack">
+                                {/* Race Track */}
+                                <div className=" bg-[#376783] m-auto h-[350px] w-[1000px] relative">
+
+                                    {/* Player Section */}
+                                    <div className={`h-[70px] border border-solid rounded-[10px] flex items-end justify-center relative ${players.find((player) => player.id === socketRef.current?.id)?.finished ? "bg-green-400" : "bg-[#0E3044]"}`}>
+
+                                        {players.find((player) => player.id === socketRef.current?.id)?.finished ? <div className='absoulte flex text-[#b5c4c5] text-[25px] self-center font-[Trebuchet_MS,_Lucida_Sans_Unicode,_Lucida_Grande,_Lucida_Sans,_Arial,_sans-serif] '>Finished</div> : ""}
 
 
-                                    <div className={`PlayerSection ${players.find((player) => player.id === socketRef.current?.id)?.finished ? "finished" : "notfinished"}`}>
-
-                                        {players.find((player) => player.id === socketRef.current?.id)?.finished ? <div className='FinshedText'>Finished</div> : ""}
-
-
-                                        <div className='playerAvatar' style={{ position: "absolute", left: `${progressPercent}%` }}>
+                                        {/* Player Avatar */}
+                                        <div ref={parentRef} className='flex bg-amber-200 w-20 h-full ml-2 transition-[left] duration-150 ease-linear' style={{ position: "absolute", left: `${progressPercent}%` }}>
 
                                             {/* <img src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png" alt="" /> */}
-                                            <img src="https://i.pinimg.com/originals/d5/96/3c/d5963c6f0bc206e3723f796e3b54fd6b.gif" alt="" />
+                                            {/* 
+                                          
 
+                                            {/* <img className='h-20 w-40' src="https://i.pinimg.com/originals/d5/96/3c/d5963c6f0bc206e3723f796e3b54fd6b.gif" alt="" /> */}
 
+                                            <div className='w-full h-full bg-purple-400'>
+
+                                                <Application backgroundAlpha={0} resizeTo={parentRef} autoStart sharedTicker>
+
+                                                    <AnimatedSpriteAvatar />
+                                                </Application>
+                                            </div>
                                             <h1 className='DisplayName'>{players.find((player) => player.id === socketRef.current?.id)?.DisplayName ?? ""}</h1>
 
                                             {status != "waiting" && status != "countdown" ? <div className='wpm'>{players.find((player) => player.id === socketRef.current?.id)?.wpm ?? 0} wpm</div> : ""}
@@ -446,15 +463,23 @@ const Multiplayer = () => {
 
 
                                             return (
-                                                <div className={`PlayerSection ${finished ? "finished" : "notfinished"}`}>
+                                                <div className={`h-[70px] border border-solid rounded-[10px] flex items-end justify-center relative ${finished ? "bg-green-400" : "bg-[#0E3044]"}`}>
 
-                                                    <div className='playerAvatar' style={{ position: "absolute", left: `${percent}%` }}>
-                                                        <img className='image'
+                                                    <div className='flex bg-amber-200 w-20 h-full ml-2 transition-[left] duration-150 ease-linear' style={{ position: "absolute", left: `${percent}%` }}>
+                                                        {/* <img className='image'
 
                                                             key={player.id}
                                                             src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png"
 
-                                                        />
+                                                        /> */}
+
+                                                        <div className='w-full h-full bg-purple-400'>
+
+                                                            <Application backgroundAlpha={0} resizeTo={parentRef} autoStart sharedTicker>
+
+                                                                <AnimatedSpriteAvatar />
+                                                            </Application>
+                                                        </div>
 
                                                         <h1>{DisplayName}</h1>
                                                         {status != "waiting" && status != "countdown" ? <div className='wpm'>{player.wpm} wpm</div> : ""}
