@@ -14,9 +14,10 @@ import Multiplayer_User_Setup from '@/Components/Multiplayer_User_Setup';
 import { Application } from '@pixi/react';
 import { AnimatedSprite } from 'pixi.js';
 import AnimatedSpriteAvatar from '@/Components/AnimatedSpriteAvatar';
+import MultiplayerRaceTrack from '@/Components/MultiplayerRaceTrack';
 // import { date } from 'better-auth';
 
-type PlayerState = { id: string; progressIndex: number; wpm: number; finished: boolean; finishtime: string; DisplayName: string };
+export type PlayerState = { id: string; progressIndex: number; wpm: number; finished: boolean; finishtime: string; DisplayName: string };
 
 type Status = "waiting" | "countdown" | "running"
 
@@ -367,6 +368,8 @@ const Multiplayer = () => {
 
                     :
 
+
+
                     <div>
                         <div>Last Key pressed {engine.state.lastkeyPressed}</div>
                         {engine.state.CurrentWordIndex}
@@ -423,13 +426,13 @@ const Multiplayer = () => {
                                 <div className=" bg-[#376783] m-auto h-[350px] w-[1000px] relative">
 
                                     {/* Player Section */}
-                                    <div className={`h-[70px] border border-solid rounded-[10px] flex items-end justify-center relative ${players.find((player) => player.id === socketRef.current?.id)?.finished ? "bg-green-400" : "bg-[#0E3044]"}`}>
+                                    {/* <div className={`h-[70px] border border-solid rounded-[10px] flex items-end justify-center relative ${players.find((player) => player.id === socketRef.current?.id)?.finished ? "bg-green-400" : "bg-[#0E3044]"}`}> */}
 
-                                        {players.find((player) => player.id === socketRef.current?.id)?.finished ? <div className='absoulte flex text-[#b5c4c5] text-[25px] self-center font-[Trebuchet_MS,_Lucida_Sans_Unicode,_Lucida_Grande,_Lucida_Sans,_Arial,_sans-serif] '>Finished</div> : ""}
+                                        {/* {players.find((player) => player.id === socketRef.current?.id)?.finished ? <div className='absoulte flex text-[#b5c4c5] text-[25px] self-center font-[Trebuchet_MS,_Lucida_Sans_Unicode,_Lucida_Grande,_Lucida_Sans,_Arial,_sans-serif] '>Finished</div> : ""} */}
 
 
                                         {/* Player Avatar */}
-                                        <div ref={parentRef} className='flex bg-amber-200 w-20 h-full ml-2 transition-[left] duration-150 ease-linear' style={{ position: "absolute", left: `${progressPercent}%` }}>
+                                        {/* <div ref={parentRef} className='flex bg-amber-200 w-20 h-full ml-2 transition-[left] duration-150 ease-linear' style={{ position: "absolute", left: `${progressPercent}%` }}> */}
 
                                             {/* <img src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png" alt="" /> */}
                                             {/* 
@@ -437,59 +440,55 @@ const Multiplayer = () => {
 
                                             {/* <img className='h-20 w-40' src="https://i.pinimg.com/originals/d5/96/3c/d5963c6f0bc206e3723f796e3b54fd6b.gif" alt="" /> */}
 
-                                            <div className='w-full h-full bg-purple-400'>
+                                            {/* <div className='w-full h-full bg-purple-400'>
 
                                                 <Application backgroundAlpha={0} resizeTo={parentRef} autoStart sharedTicker>
 
                                                     <AnimatedSpriteAvatar />
                                                 </Application>
-                                            </div>
-                                            <h1 className='DisplayName'>{players.find((player) => player.id === socketRef.current?.id)?.DisplayName ?? ""}</h1>
+                                            </div> */}
+                                            {/* <h1 className='DisplayName'>{players.find((player) => player.id === socketRef.current?.id)?.DisplayName ?? ""}</h1>
 
                                             {status != "waiting" && status != "countdown" ? <div className='wpm'>{players.find((player) => player.id === socketRef.current?.id)?.wpm ?? 0} wpm</div> : ""}
-                                            <div className='wpm'>{players.find((player) => player.id === socketRef.current?.id)?.finishtime ?? ""}</div>
+                                            <div className='wpm'>{players.find((player) => player.id === socketRef.current?.id)?.finishtime ?? ""}</div> */}
 
-                                        </div>
+                                        {/* </div> */}
 
-                                    </div>
-
-
-                                    {players.filter((player) => player.id !== socketRef.current?.id)
-                                        .map((player) => {
-                                            const percent = words.length ? (player.progressIndex / words.length) * 100 : 0;
-                                            const finished = player.finished;
-                                            const DisplayName = player.DisplayName;
+                                    {/* </div> */}
 
 
+                                    
+                                    {/* {players.filter((player) => player.id !== socketRef.current?.id)
+                                            .map((player) => {
+                                                const percent = words.length ? (player.progressIndex / words.length) * 100 : 0;
+                                                const finished = player.finished;
+                                                const DisplayName = player.DisplayName;
 
-                                            return (
-                                                <div className={`h-[70px] border border-solid rounded-[10px] flex items-end justify-center relative ${finished ? "bg-green-400" : "bg-[#0E3044]"}`}>
 
-                                                    <div className='flex bg-amber-200 w-20 h-full ml-2 transition-[left] duration-150 ease-linear' style={{ position: "absolute", left: `${percent}%` }}>
-                                                        {/* <img className='image'
 
-                                                            key={player.id}
-                                                            src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png"
+                                                return (
+                                                    <div className={`h-[70px] border border-solid rounded-[10px] flex items-end justify-center relative ${finished ? "bg-green-400" : "bg-[#0E3044]"}`}>
 
-                                                        /> */}
+                                                        <div className='flex bg-amber-200 w-20 h-full ml-2 transition-[left] duration-150 ease-linear' style={{ position: "absolute", left: `${percent}%` }}>
+                                                            <img className='image'key={player.id}  src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png"/>
 
-                                                        <div className='w-full h-full bg-purple-400'>
+                                                            <div className='w-full h-full bg-purple-400'>
 
-                                                            <Application backgroundAlpha={0} resizeTo={parentRef} autoStart sharedTicker>
+                                                                <Application backgroundAlpha={0} resizeTo={parentRef} autoStart sharedTicker>
 
-                                                                <AnimatedSpriteAvatar />
-                                                            </Application>
+                                                                    <AnimatedSpriteAvatar />
+                                                                </Application>
+                                                            </div>
+
+                                                            <h1>{DisplayName}</h1>
+                                                            {status != "waiting" && status != "countdown" ? <div className='wpm'>{player.wpm} wpm</div> : ""}
+                                                            <div className='wpm'>{player.finishtime}</div>
+
                                                         </div>
-
-                                                        <h1>{DisplayName}</h1>
-                                                        {status != "waiting" && status != "countdown" ? <div className='wpm'>{player.wpm} wpm</div> : ""}
-                                                        <div className='wpm'>{player.finishtime}</div>
-
                                                     </div>
-                                                </div>
 
-                                            );
-                                        })}
+                                                );
+                                            })} */}
 
 
                                 </div>
@@ -502,6 +501,11 @@ const Multiplayer = () => {
 
 
                         </div>
+
+                        <Application className='max-w-7xl w-full m-auto'>
+                            <MultiplayerRaceTrack Players={players} wordsLength={words.length}/>
+
+                        </Application>
 
                     </div>
 

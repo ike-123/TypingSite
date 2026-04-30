@@ -13,6 +13,7 @@ import { useLocation } from "react-router-dom"
 import {
     Application,
     extend,
+    useApplication,
 } from '@pixi/react';
 import {
     Assets,
@@ -22,6 +23,7 @@ import {
     Texture,
 } from 'pixi.js';
 import AnimatedSpriteAvatar from '@/Components/AnimatedSpriteAvatar';
+import MultiplayerRaceTrack from '@/Components/MultiplayerRaceTrack';
 
 extend({
     Container,
@@ -149,6 +151,7 @@ const Product = () => {
 
     // }, [])
 
+
     return (
         <div className='flex mx-auto max-w-7xl bg-teal-900 '>
 
@@ -185,11 +188,12 @@ const Product = () => {
 
                 </Canvas>
 
-                <Application  autoStart sharedTicker  background={"#1099bb"}>
+                
+                <Application autoStart sharedTicker background={"#1099bb"}>
 
-                   {/* {texture && <pixiSprite anchor={.5} x={400} y={300} texture={texture} />}  */}
+                    {/* {texture && <pixiSprite anchor={.5} x={400} y={300} texture={texture} />}  */}
 
-                   <AnimatedSpriteAvatar/>
+                    {/* <AnimatedSpriteAvatar/> */}
 
                     {/* <pixiSprite
                         texture="https://pixijs.io/pixi-react/img/bunny.png"
@@ -197,6 +201,10 @@ const Product = () => {
                         y={300}
                         anchor={{ x: 0.5, y: 0.5 }}
                     /> */}
+
+                        <MultiplayerRaceTrack/>
+                
+
 
                 </Application>
             </div>
