@@ -14,6 +14,7 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
     const playerRef = useRef<any>(null);
 
     const app = useApplication();
+
     // const width = app.app.screen.width;
     const [width, setWidth] = React.useState(app.app.screen.width);
 
@@ -24,21 +25,28 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
         }
     })
 
-    // useEffect(() => {
+    useEffect(() => {
 
-    //     const onResize = () => {
-    //         console.log(app.app.screen.width)
-    //         setWidth(app.app.screen.width);
-    //         console.log("setting")
-    //     };
+        // const onResize = () => {
+        //     console.log(app.app.screen.width)
+        //     setWidth(app.app.screen.width);
+        //     console.log("setting")
+        // };
 
-    //     window.addEventListener('resize', onResize);
+        // window.addEventListener('resize', onResize);
 
-    //     return () => window.removeEventListener('resize', onResize);
+        // return () => window.removeEventListener('resize', onResize);
 
-    // }, [app])
+        const newheight = props.Players.length * rectangleheight;
+
+        app.app.renderer.resize(app.app.screen.width, newheight);
+
+
+    }, [app, props.Players])
 
     const rectangleheight = 50;
+
+    const characterWidth = 336 / 7.76;
 
     return (
 
@@ -56,32 +64,54 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
                     return (
                         <pixiGraphics key={player.id} y={index * (rectangleheight + 1)} draw={(graphics) => {
                             graphics.clear();
-                            graphics.setFillStyle({ color: 'blue' });
-                            graphics.rect(0, 0, width, rectangleheight);
+                            graphics.setFillStyle({ color: '0E3044' });
+                            graphics.rect(0, 0, width * .95, rectangleheight);
                             graphics.fill();
                         }} >
 
+
+
+                            <pixiContainer x={playerXPosition} ref={playerRef}>
+                                <AnimatedSpriteAvatar />
+
+                                <pixiText text={player.DisplayName} style={{
+                                    fill: 'white',
+                                    fontSize: 12,
+                                }}
+
+                                    x={characterWidth + 2}
+                                    y={15}
+                                    zIndex={2}
+
+                                >
+
+                                </pixiText>
+
+
+
+                            </pixiContainer>
+
+
                             <pixiGraphics draw={(graphics) => {
                                 graphics.clear();
-                                graphics.setFillStyle({ color: 'purple' });
-                                graphics.rect(0, 0, width * .95, rectangleheight);
+                                graphics.setFillStyle({ color: '#081f30' });
+                                graphics.rect(width * .95, 0, width * .5, rectangleheight);
                                 graphics.fill();
+                                graphics.zIndex = 1;
+
                             }} >
-
-                                <pixiContainer x={playerXPosition} ref={playerRef}>
-                                    <AnimatedSpriteAvatar />
-
-                                </pixiContainer>
-
 
                             </pixiGraphics>
 
 
-                            <pixiText text={"100WPM"} style={{
+
+                            <pixiText text={player.wpm + " wpm"} style={{
                                 fill: 'white',
                                 fontSize: 12,
-                            }} 
-                            x={width*.95}
+                            }}
+                                x={width * .95}
+                                y={15}
+                                zIndex={2}
                             >
 
                             </pixiText>

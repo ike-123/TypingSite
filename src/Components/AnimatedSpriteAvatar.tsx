@@ -82,7 +82,7 @@ const AnimatedSpriteAvatar = () => {
     return (
 
 
-        <pixiAnimatedSprite ref={spriteRef} textures={frames} animationSpeed={.15} anchor={{ x: 0, y: 0 }} scale={{ x: 0.18, y: 0.18 }} loop={true} />
+        <pixiAnimatedSprite ref={spriteRef} textures={frames} animationSpeed={.15} anchor={{ x: 0, y: 0 }}  scale={50 / 388} loop={true} />
 
 
     )
