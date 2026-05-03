@@ -115,7 +115,7 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
                         <pixiGraphics key={player.id} y={index * (rectangleheight + 1)} draw={(graphics) => {
                             graphics.clear();
                             graphics.setFillStyle({ color: trackColour });
-                            graphics.rect(0, 0, width * .95, rectangleheight);
+                            graphics.rect(0, 0, width * .9, rectangleheight);
                             graphics.fill();
                         }} >
 
@@ -172,7 +172,7 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
                                     </pixiContainer>
 
 
-                                    <pixiContainer x={(width * 0.95) * 0.75} y={5}>
+                                    <pixiContainer x={(width * 0.9) * 0.85} y={5}>
                                         {/* <pixiText
                                     text="97 WPM"
                                     anchor={.5}
@@ -207,7 +207,7 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
 
                                             <VBox>
                                                 <pixiText text="Time" style={{ fill: 'gray', fontSize: 9 }} />
-                                                <pixiText text="00:39" style={{ fill: 'white', fontSize: 14 }} />
+                                                <pixiText text={player.finishtime} style={{ fill: 'white', fontSize: 14 }} />
                                             </VBox>
 
                                             {goldmedaltexture && <pixiSprite zIndex={2} scale={50 / 750} y={22} x={width * .95 + ((width - width * .95) / 2)} anchor={0.5} texture={goldmedaltexture} />}
@@ -256,7 +256,7 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
                                     </pixiContainer>
                             } */}
 
-                            <pixiContainer zIndex={2} x={width * .895 + ((width - width * .95) / 2)} y={7} >
+                            <pixiContainer zIndex={2} x={width * .9 + ((width - width * .95) / 2)} y={7} >
 
                                 <HBox gap={18}>
                                     <VBox>
@@ -266,13 +266,14 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
 
                                     {
 
-                                        player.finished ??
+                                        player.finished ?
 
                                         <VBox>
                                             <pixiText anchor={{ x: .5, y: 0 }} zIndex={3} text="Accuracy" style={{ fill: 'gray', fontSize: 9 }} />
-                                            <pixiText anchor={{ x: .5, y: 0 }} zIndex={3} text={"100%"} style={{ fill: 'white', fontSize: 12 }} />
+                                            <pixiText anchor={{ x: .5, y: 0 }} zIndex={3} text={player.accuracy + "%"} style={{ fill: 'white', fontSize: 12 }} />
                                         </VBox>
 
+:""
                                     }
 
 

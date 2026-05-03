@@ -50,9 +50,9 @@ const AnimatedSpriteAvatar = () => {
 
         const loadtextures = async () => {
 
-            Assets.load('/character.json').then((sheet: Spritesheet) => {
+            Assets.load('/Zombie.json').then((sheet: Spritesheet) => {
                 // Use a named animation group directly
-                const walkFrames = sheet.animations['RunSprite'];
+                const walkFrames = sheet.animations['Idle'];
                 SetFrames(walkFrames);
             });
 

@@ -1309,6 +1309,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
         if(state.stopTest === true){
 
+            console.log("test stopped")
+
             dispatch({ type: "FinishTest", payload: {} })
 
         }

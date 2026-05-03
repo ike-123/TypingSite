@@ -17,7 +17,7 @@ import AnimatedSpriteAvatar from '@/Components/AnimatedSpriteAvatar';
 import MultiplayerRaceTrack from '@/Components/MultiplayerRaceTrack';
 // import { date } from 'better-auth';
 
-export type PlayerState = { id: string; progressIndex: number; wpm: number; finished: boolean; finishtime: string; DisplayName: string };
+export type PlayerState = { id: string; progressIndex: number; wpm: number; accuracy: number, finished: boolean; finishtime: string; DisplayName: string; lastWordIndexIncreaseTime: Date | null };
 
 type Status = "waiting" | "countdown" | "running"
 
@@ -264,9 +264,25 @@ const Multiplayer = () => {
             })
 
             socket.on("state", (ps: PlayerState[]) => {
-                setPlayers(ps);
-                console.log(ps.length);
-                // console.log(ps);
+
+                //loop through each player in the array and check if the currentwordIndex has increased.
+
+                // if (!players) {
+
+                //     setPlayers(ps);
+
+                // }
+
+                // ps.map((player,index) => {
+
+
+                //     if(player.progressIndex > players[player.id].progressIndex)
+                // })
+
+                //If so set lastWordIndexIncreaseTime to now
+                // If so increase the timer
+
+                // console.log(ps.length);
             });
             socket.on("NumberOfPlayers", (amount) => {
                 SetPlayersInServer(amount)
@@ -346,10 +362,29 @@ const Multiplayer = () => {
             const totalChars = words.slice(0, engine.state.CurrentWordIndex).join(" ").length;
 
             socketRef.current?.emit("wordDone", { nextIndex: engine.state.CurrentWordIndex, elapsedMs, totalChars });
+
+            console.log("test finished = " + engine.state.TestFinished)
         }
 
 
     }, [engine.state.CurrentWordIndex])
+
+
+    useEffect(() => {
+
+        if (engine.state.TestFinished === true) {
+
+            socketRef.current?.emit("accuracy", { accuracy: engine.state.Accuracy });
+
+        }
+
+    }, [engine.state.TestFinished])
+
+
+    useEffect(() => {
+
+
+    }, [players])
 
 
 
@@ -434,40 +469,40 @@ const Multiplayer = () => {
                                 {/* Race Track */}
                                 {/* <div className=" bg-[#376783] m-auto h-[350px] w-[1000px] relative"> */}
 
-                                    {/* Player Section */}
-                                    {/* <div className={`h-[70px] border border-solid rounded-[10px] flex items-end justify-center relative ${players.find((player) => player.id === socketRef.current?.id)?.finished ? "bg-green-400" : "bg-[#0E3044]"}`}> */}
+                                {/* Player Section */}
+                                {/* <div className={`h-[70px] border border-solid rounded-[10px] flex items-end justify-center relative ${players.find((player) => player.id === socketRef.current?.id)?.finished ? "bg-green-400" : "bg-[#0E3044]"}`}> */}
 
-                                    {/* {players.find((player) => player.id === socketRef.current?.id)?.finished ? <div className='absoulte flex text-[#b5c4c5] text-[25px] self-center font-[Trebuchet_MS,_Lucida_Sans_Unicode,_Lucida_Grande,_Lucida_Sans,_Arial,_sans-serif] '>Finished</div> : ""} */}
+                                {/* {players.find((player) => player.id === socketRef.current?.id)?.finished ? <div className='absoulte flex text-[#b5c4c5] text-[25px] self-center font-[Trebuchet_MS,_Lucida_Sans_Unicode,_Lucida_Grande,_Lucida_Sans,_Arial,_sans-serif] '>Finished</div> : ""} */}
 
 
-                                    {/* Player Avatar */}
-                                    {/* <div ref={parentRef} className='flex bg-amber-200 w-20 h-full ml-2 transition-[left] duration-150 ease-linear' style={{ position: "absolute", left: `${progressPercent}%` }}> */}
+                                {/* Player Avatar */}
+                                {/* <div ref={parentRef} className='flex bg-amber-200 w-20 h-full ml-2 transition-[left] duration-150 ease-linear' style={{ position: "absolute", left: `${progressPercent}%` }}> */}
 
-                                    {/* <img src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png" alt="" /> */}
-                                    {/* 
+                                {/* <img src="https://static.vecteezy.com/system/resources/previews/050/832/637/non_2x/a-3d-cartoon-athlete-running-png.png" alt="" /> */}
+                                {/* 
                                           
 
                                             {/* <img className='h-20 w-40' src="https://i.pinimg.com/originals/d5/96/3c/d5963c6f0bc206e3723f796e3b54fd6b.gif" alt="" /> */}
 
-                                    {/* <div className='w-full h-full bg-purple-400'>
+                                {/* <div className='w-full h-full bg-purple-400'>
 
                                                 <Application backgroundAlpha={0} resizeTo={parentRef} autoStart sharedTicker>
 
                                                     <AnimatedSpriteAvatar />
                                                 </Application>
                                             </div> */}
-                                    {/* <h1 className='DisplayName'>{players.find((player) => player.id === socketRef.current?.id)?.DisplayName ?? ""}</h1>
+                                {/* <h1 className='DisplayName'>{players.find((player) => player.id === socketRef.current?.id)?.DisplayName ?? ""}</h1>
 
                                             {status != "waiting" && status != "countdown" ? <div className='wpm'>{players.find((player) => player.id === socketRef.current?.id)?.wpm ?? 0} wpm</div> : ""}
                                             <div className='wpm'>{players.find((player) => player.id === socketRef.current?.id)?.finishtime ?? ""}</div> */}
 
-                                    {/* </div> */}
+                                {/* </div> */}
 
-                                    {/* </div> */}
+                                {/* </div> */}
 
 
 
-                                    {/* {players.filter((player) => player.id !== socketRef.current?.id)
+                                {/* {players.filter((player) => player.id !== socketRef.current?.id)
                                             .map((player) => {
                                                 const percent = words.length ? (player.progressIndex / words.length) * 100 : 0;
                                                 const finished = player.finished;

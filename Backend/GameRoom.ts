@@ -6,6 +6,7 @@ import wordsList from "../src/words.json" with { type: "json" };
 type PlayerState = {
     progressIndex: number;
     wpm: number;
+    accuracy:number;
     finished: boolean;
     finishtime: string;
     DisplayName:string
@@ -15,6 +16,10 @@ type WordDoneData = {
     nextIndex: number;
     elapsedMs: number;
     totalChars: number;
+}
+
+type AccuracyData = {
+    accuracy:number;
 }
 
 export class GameRoom {
@@ -40,7 +45,7 @@ export class GameRoom {
         this.words = [];
         this.startAt = null;
         this.countdownTimer = 10;
-        this.words = this.getRandomWords(30);
+        this.words = this.getRandomWords(10);
         this.interval = null
     }
 
@@ -51,7 +56,7 @@ export class GameRoom {
         socket.join(this.roomId);
 
         //Add newly joined player to the array of players
-        this.players.set(socket.id, { progressIndex: 0, wpm: 0, finished: false, finishtime: "", DisplayName})
+        this.players.set(socket.id, { progressIndex: 0, wpm: 0, accuracy:0, finished: false, finishtime: "", DisplayName})
 
         this.io.to(this.roomId).emit("setWords", { "words": this.words });
 
@@ -69,7 +74,6 @@ export class GameRoom {
             // this.words = this.getRandomWords(10)
 
             //set status to countdown and send to clients in room
-
 
             this.BeginCountDown();
 
@@ -134,6 +138,7 @@ export class GameRoom {
         if (data.nextIndex === TargetPlayer.progressIndex + 1) {
 
             TargetPlayer.progressIndex = data.nextIndex;
+
             TargetPlayer.wpm = Math.round((data.totalChars / 5) / (data.elapsedMs / 60000));
 
             console.log("words = ", data.totalChars / 5);
@@ -144,8 +149,44 @@ export class GameRoom {
 
                 TargetPlayer.finished = true;
                 TargetPlayer.finishtime = this.ConvertMillisecondsToMinutesAndSeconds(data.elapsedMs);
+                // console.log("accuracy = " + data.accuracy)
+                // TargetPlayer.accuracy = data.accuracy
+
             }
         }
+
+        this.io.to(this.roomId).emit("state", Array.from(this.players.entries()).map(([id, val]) => ({ id, ...val })));
+
+    }
+
+
+    HandleAccuracy(socket: Socket, data: AccuracyData) {
+
+        const TargetPlayer = this.players.get(socket.id);
+
+        if (!TargetPlayer || this.status != "running") return;
+
+        TargetPlayer.accuracy = data.accuracy;
+
+        // if (data.nextIndex === TargetPlayer.progressIndex + 1) {
+
+        //     TargetPlayer.progressIndex = data.nextIndex;
+
+        //     TargetPlayer.wpm = Math.round((data.totalChars / 5) / (data.elapsedMs / 60000));
+
+        //     console.log("words = ", data.totalChars / 5);
+        //     console.log("time elapsed = ", data.elapsedMs);
+
+        //     //if player has finished
+        //     if (TargetPlayer.progressIndex === this.words.length) {
+
+        //         TargetPlayer.finished = true;
+        //         TargetPlayer.finishtime = this.ConvertMillisecondsToMinutesAndSeconds(data.elapsedMs);
+        //         console.log("accuracy = " + data.accuracy)
+        //         TargetPlayer.accuracy = data.accuracy
+
+        //     }
+        // }
 
         this.io.to(this.roomId).emit("state", Array.from(this.players.entries()).map(([id, val]) => ({ id, ...val })));
 

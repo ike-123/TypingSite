@@ -34,6 +34,11 @@ type PlayerData = {
     DisplayName: string
 }
 
+type AccuracyData = {
+    accuracy:number;
+}
+
+
 
 export function setupSockets(server: HttpServer) {
 
@@ -94,11 +99,16 @@ export function setupSockets(server: HttpServer) {
 
         socket.emit("NumberOfPlayers", TotalPlayersInServer);
 
-        socket.on("wordDone", (data: WordDoneData) => {
+        socket.on("wordDone", (data:WordDoneData) => {
 
-            GameRoom.HandleWordDone(socket, data);
+            GameRoom.HandleWordDone(socket,data);
 
         })
+
+        socket.on("accuracy", (data:AccuracyData)=>{
+
+            GameRoom.HandleAccuracy(socket,data)
+        } )
 
         socket.on("disconnect", () => {
 
