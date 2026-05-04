@@ -15,9 +15,10 @@ import { Application } from '@pixi/react';
 import { AnimatedSprite } from 'pixi.js';
 import AnimatedSpriteAvatar from '@/Components/AnimatedSpriteAvatar';
 import MultiplayerRaceTrack from '@/Components/MultiplayerRaceTrack';
+import { Play } from 'lucide-react';
 // import { date } from 'better-auth';
 
-export type PlayerState = { id: string; progressIndex: number; wpm: number; accuracy: number, finished: boolean; finishtime: string; DisplayName: string; lastWordIndexIncreaseTime: Date | null };
+export type PlayerState = { id: string; progressIndex: number; wpm: number; accuracy: number, finished: boolean; finishtime: string; DisplayName: string; lastWordIndexIncreaseTime: number | null };
 
 type Status = "waiting" | "countdown" | "running"
 
@@ -220,7 +221,7 @@ const Multiplayer = () => {
 
             // const socket = io("http://localhost:3001")
             // console.log(isGuest)
-            const socket = io("192.168.1.186:3001", {
+            const socket = io("192.168.1.219:3001", {
                 auth: {
                     playerID,
                     DisplayName
@@ -265,7 +266,6 @@ const Multiplayer = () => {
 
             socket.on("state", (ps: PlayerState[]) => {
 
-                //loop through each player in the array and check if the currentwordIndex has increased.
 
                 // if (!players) {
 
@@ -283,6 +283,39 @@ const Multiplayer = () => {
                 // If so increase the timer
 
                 // console.log(ps.length);
+
+                //loop through each player in the array and check if the currentwordIndex has increased.
+                //If so 
+
+
+
+                setPlayers(previousPlayers => {
+
+                    if (!previousPlayers) return ps;
+
+                    console.log(previousPlayers);
+
+                    const prevMap = new Map(previousPlayers.map((player) => ([player.id, player])))
+
+                    const updatedPlayersMap = ps.map((player) => {
+
+                        const prev = prevMap.get(player.id);
+
+                        return {
+                            ...player,
+                            lastWordIndexIncreaseTime:
+                                prev && player.progressIndex > prev.progressIndex
+                                    ? Date.now()
+                                    : prev?.lastWordIndexIncreaseTime ?? 0
+                        }
+                    })
+
+                    return updatedPlayersMap;
+
+
+
+                })
+
             });
             socket.on("NumberOfPlayers", (amount) => {
                 SetPlayersInServer(amount)

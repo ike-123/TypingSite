@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 
 
 
-import { Application, extend } from '@pixi/react';
+import { Application, extend, useApplication, useTick } from '@pixi/react';
 
 import {
     Assets,
@@ -14,6 +14,7 @@ import {
     AnimatedSprite,
     Spritesheet
 } from 'pixi.js';
+import type { PlayerState } from '@/Pages/Multiplayer';
 
 extend({
     Container,
@@ -23,10 +24,14 @@ extend({
     Text
 });
 
+type playerProp = {
+    player: PlayerState,
+}
+
 
 // import RunSprite from '/profile.jpeg'
 
-const AnimatedSpriteAvatar = () => {
+const AnimatedSpriteAvatar = (props: playerProp) => {
 
 
     // const images = [
@@ -40,8 +45,16 @@ const AnimatedSpriteAvatar = () => {
     //     '/RunSprite8.png',
     // ]
 
+    const app = useApplication();
+
+
     const spriteRef = useRef<any>(null);
-    const [frames, SetFrames] = useState<Texture[]>([]);
+    const [frames, SetFrames] = useState<Map<String, Texture[]>>(new Map());
+
+    const [animationToPlay, SetAnimationToPlay] = useState<string>("idle");
+
+    const [finished, SetFinished] = useState(false);
+
 
 
 
@@ -52,8 +65,18 @@ const AnimatedSpriteAvatar = () => {
 
             Assets.load('/Zombie.json').then((sheet: Spritesheet) => {
                 // Use a named animation group directly
-                const walkFrames = sheet.animations['Idle'];
-                SetFrames(walkFrames);
+                const idleFrames = sheet.animations['Idle'];
+                const runFrames = sheet.animations['Run'];
+
+                SetFrames(() => {
+
+                    const newMap = new Map();
+
+                    newMap.set("idle", idleFrames)
+                    newMap.set("run", runFrames);
+
+                    return newMap;
+                });
             });
 
             // const textures = await Assets.load(images);
@@ -70,19 +93,95 @@ const AnimatedSpriteAvatar = () => {
 
     useEffect(() => {
 
-        if (spriteRef.current && frames.length > 0) {
-            spriteRef.current.play();
+        if (spriteRef.current && frames && frames.size > 0) {
+
+            console.log(props.player);
+            console.log("playerlastwordindex " + props.player.lastWordIndexIncreaseTime)
+
+            if (!props.player.lastWordIndexIncreaseTime) {
+                SetAnimationToPlay("idle");
+                spriteRef.current.play();
+
+                return
+            }
+            if (props.player.lastWordIndexIncreaseTime + 1000 > Date.now()) {
+
+                console.log("here 1");
+
+                SetAnimationToPlay("run");
+                spriteRef.current.play();
+
+            }
+            else {
+                console.log("here 2");
+                SetAnimationToPlay("idle");
+                spriteRef.current.play();
+
+
+            }
         }
-    }, [frames])
+    }, [frames, props.player])
+
+    useTick((delta: any) => {
+
+        if (spriteRef.current && frames && frames.size > 0) {
+
+            // console.log(props.player);
+            // console.log("playerlastwordindex " + props.player.lastWordIndexIncreaseTime)
+
+            if (!props.player.lastWordIndexIncreaseTime) {
+                SetAnimationToPlay("idle");
+                spriteRef.current.play();
+
+                return
+            }
+            if (props.player.lastWordIndexIncreaseTime + 2000 > Date.now()) {
+
+                // console.log("here 1");
+
+                SetAnimationToPlay("run");
+                spriteRef.current.play();
+
+            }
+            else {
+                // console.log("here 2");
+                SetAnimationToPlay("idle");
+                spriteRef.current.play();
 
 
+            }
 
-    if (frames.length === 0) return null;
+            if (props.player.finished) {
+
+                console.log("finished");
+                app.app.stage.removeChild(spriteRef.current);
+            }
+        }
+
+    })
+
+    useEffect(() => {
+
+        if (props.player.finished) {
+
+            SetFinished(true);
+
+        }
+    }, [props.player.finished])
+
+
+    const textures = frames.get(animationToPlay);
+    if (!textures) return null;
 
     return (
 
 
-        <pixiAnimatedSprite ref={spriteRef} textures={frames} animationSpeed={.15} anchor={{ x: 0, y: 0 }}  scale={50 / 388} loop={true} />
+
+        !finished ?
+            <pixiAnimatedSprite ref={spriteRef} textures={frames.get(animationToPlay) ?? []} animationSpeed={.15} anchor={{ x: 0, y: 0 }} scale={50 / 388} loop={true} />
+
+            : ""
+
 
 
     )

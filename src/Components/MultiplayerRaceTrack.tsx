@@ -52,12 +52,12 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
     // const width = app.app.screen.width;
     const [width, setWidth] = React.useState(app.app.screen.width);
 
-    useTick((delta: any) => {
+    // useTick((delta: any) => {
 
-        if (playerRef.current) {
-            // playerRef.current.x += .25;
-        }
-    })
+    //     if (playerRef.current) {
+    //         // playerRef.current.x += .25;
+    //     }
+    // })
 
     useEffect(() => {
 
@@ -122,7 +122,7 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
 
 
                             <pixiContainer x={playerXPosition} ref={playerRef}>
-                                <AnimatedSpriteAvatar />
+                                <AnimatedSpriteAvatar player={player}/>
 
                                 <pixiText text={player.DisplayName} style={{
                                     fill: 'white',
