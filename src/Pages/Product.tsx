@@ -24,6 +24,7 @@ import {
 } from 'pixi.js';
 import AnimatedSpriteAvatar from '@/Components/AnimatedSpriteAvatar';
 import MultiplayerRaceTrack from '@/Components/MultiplayerRaceTrack';
+import type { PlayerState } from './Multiplayer';
 
 extend({
     Container,
@@ -65,7 +66,7 @@ const Product = () => {
 
     const model = useLoader(FBXLoader, '/robot.fbx');
 
-    const Modelref = useRef<any>(null);
+    // const Modelref = useRef<any>(null);
 
 
     const [loading, setLoading] = useState(true)
@@ -78,6 +79,20 @@ const Product = () => {
 
 
     const [texture, setTexture] = useState(null)
+
+    const PlaceHolderPlayerArray: PlayerState[] = new Array(1);
+    const placeholderPlayer: PlayerState = {
+        id: "placeholder",
+        progressIndex: 1,
+        wpm: 0,
+        accuracy: 0,
+        finished: false,
+        finishtime: "",
+        DisplayName: "",
+        lastWordIndexIncreaseTime: 0
+    }
+
+    PlaceHolderPlayerArray[0] = placeholderPlayer;
 
 
     useEffect(() => {
@@ -116,6 +131,7 @@ const Product = () => {
 
         if (passedItemFromShopPage) {
             console.log("passeditemfromshop")
+            console.log(passedItemFromShopPage);
             setShopItem(passedItemFromShopPage);
             setLoading(false);
         }
@@ -135,6 +151,65 @@ const Product = () => {
         });
     }, [model]);
 
+
+    const renderSlot = () => {
+        switch (shopItem?.slot) {
+            case "avatar":
+                return (
+                    // <Canvas camera={{ position: [0, .5, 1.5], rotation: [0, 0, 0] }}>
+                    //     <ambientLight intensity={1} />
+                    //     <directionalLight position={[2, 2, 2]} />
+
+                    //     {/* <mesh>
+                    //     <planeGeometry rotateZ={90.} />
+                    //     <meshStandardMaterial color={"orange"} />
+                    // </mesh> */}
+
+                    //     <Suspense>
+
+                    //         {/* We need to make sure that we rotate the item and not the camera when we click and drag */}
+                    //         <ItemModel></ItemModel>
+
+                    //     </Suspense>
+
+                    //     <OrbitControls
+                    //         minPolarAngle={Math.PI / 2}
+                    //         maxPolarAngle={Math.PI / 2}
+                    //         enablePan={false}
+                    //         minDistance={1}
+                    //         maxDistance={5}
+                    //     />
+
+                    // </Canvas>
+
+                    //Use HTML/Tailwind to overlay a finish line at the end of the track
+
+                    <div className='flex flex-col justify-center h-full'>
+                        <Application >
+                            <pixiContainer scale={2.5}>
+                                <MultiplayerRaceTrack ShopDisplay={true} Players={PlaceHolderPlayerArray} wordsLength={30}/>
+                            </pixiContainer>
+                        </Application>
+
+                        
+                    </div>
+
+
+                );
+
+            case "model":
+                ""
+
+            case "trail":
+                ""
+
+            case "character":
+                ""
+
+            default:
+                return null;
+        }
+    };
 
 
 
@@ -162,51 +237,33 @@ const Product = () => {
 
                 {/* <img src="https://static.vecteezy.com/system/resources/thumbnails/035/576/135/small_2x/ai-generated-3d-rendering-of-a-beautiful-car-on-transparent-background-ai-generated-free-png.png" alt="" /> */}
 
-                <Canvas camera={{ position: [0, .5, 1.5], rotation: [0, 0, 0] }}>
-                    <ambientLight intensity={1} />
-                    <directionalLight position={[2, 2, 2]} />
 
-                    {/* <mesh>
-                        <planeGeometry rotateZ={90.} />
-                        <meshStandardMaterial color={"orange"} />
-                    </mesh> */}
 
-                    <Suspense>
 
-                        {/* We need to make sure that we rotate the item and not the camera when we click and drag */}
-                        <ItemModel></ItemModel>
+                {
+                    renderSlot()
+                }
 
-                    </Suspense>
 
-                    <OrbitControls
-                        minPolarAngle={Math.PI / 2}
-                        maxPolarAngle={Math.PI / 2}
-                        enablePan={false}
-                        minDistance={1}
-                        maxDistance={5}
-                    />
 
-                </Canvas>
+                {/* <Application autoStart sharedTicker background={"#1099bb"}> */}
 
-                
-                <Application autoStart sharedTicker background={"#1099bb"}>
+                {/* {texture && <pixiSprite anchor={.5} x={400} y={300} texture={texture} />}  */}
 
-                    {/* {texture && <pixiSprite anchor={.5} x={400} y={300} texture={texture} />}  */}
+                {/* <AnimatedSpriteAvatar/> */}
 
-                    {/* <AnimatedSpriteAvatar/> */}
-
-                    {/* <pixiSprite
+                {/* <pixiSprite
                         texture="https://pixijs.io/pixi-react/img/bunny.png"
                         x={400}
                         y={300}
                         anchor={{ x: 0.5, y: 0.5 }}
                     /> */}
 
-                        <MultiplayerRaceTrack/>
-                
 
 
-                </Application>
+
+
+                {/* </Application> */}
             </div>
 
             <div className='flex flex-col flex-3 p-10'>

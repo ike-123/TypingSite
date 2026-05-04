@@ -495,7 +495,6 @@ const Multiplayer = () => {
 
                                 <Application height={(0)} resolution={2} className='max-w-[1000px] w-full m-auto'>
                                     <MultiplayerRaceTrack Players={players} wordsLength={words.length} />
-
                                 </Application>
 
 

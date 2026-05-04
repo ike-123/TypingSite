@@ -6,12 +6,20 @@ import { Assets, Texture } from 'pixi.js';
 
 type MultiplayerProps = {
     Players: PlayerState[],
-    wordsLength: number
+    wordsLength: number,
+    ShopDisplay:boolean
 
 }
 const MultiplayerRaceTrack = (props: MultiplayerProps) => {
 
+
     const [goldmedaltexture, setgoldmedalTexture] = useState<Texture>()
+
+
+    const rectangleheight = props.ShopDisplay ? 125 : 50;
+
+    const characterWidth = 336 / 7.76;
+
 
 
     const VBox = ({ children, gap = 3 }: { children: React.ReactNode; gap?: number }) => (
@@ -88,10 +96,6 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
 
 
     }, [app, props.Players])
-
-    const rectangleheight = 50;
-
-    const characterWidth = 336 / 7.76;
 
     return (
 
