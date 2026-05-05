@@ -7,7 +7,7 @@ import { Assets, Texture } from 'pixi.js';
 type MultiplayerProps = {
     Players: PlayerState[],
     wordsLength: number,
-    ShopDisplay:boolean
+    ShopDisplay?:boolean
 
 }
 const MultiplayerRaceTrack = (props: MultiplayerProps) => {
@@ -126,7 +126,7 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
 
 
                             <pixiContainer x={playerXPosition} ref={playerRef}>
-                                <AnimatedSpriteAvatar player={player}/>
+                                <AnimatedSpriteAvatar shopDisplay={props.ShopDisplay} player={player}/>
 
                                 <pixiText text={player.DisplayName} style={{
                                     fill: 'white',

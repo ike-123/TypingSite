@@ -3,11 +3,16 @@ import React, { Suspense, useEffect, useRef, useState } from 'react'
 import { Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { FBXLoader } from "three/examples/jsm/loaders/FBXLoader"
 import * as THREE from 'three';
-import { OrbitControls } from "@react-three/drei";
+import { OrbitControls, useHelper, useTexture } from "@react-three/drei";
 import ItemModel from '@/Components/Item3dModel';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useLocation } from "react-router-dom"
+
+import { MeshReflectorMaterial } from '@react-three/drei';
+
+
+
 
 
 import {
@@ -25,6 +30,7 @@ import {
 import AnimatedSpriteAvatar from '@/Components/AnimatedSpriteAvatar';
 import MultiplayerRaceTrack from '@/Components/MultiplayerRaceTrack';
 import type { PlayerState } from './Multiplayer';
+import { Spotlight } from 'lucide-react';
 
 extend({
     Container,
@@ -59,6 +65,8 @@ const Product = () => {
     const location = useLocation();
     const passedItemFromShopPage = location.state?.item
 
+    // const Floortexture = useTexture("https://png.pngtree.com/background/20250104/original/pngtree-texture-of-vibrant-purple-wallpaper-picture-image_15297775.jpg");
+
 
     const { id } = useParams()
 
@@ -71,6 +79,7 @@ const Product = () => {
 
     const [loading, setLoading] = useState(true)
 
+    const [resetKey, setResetKey] = useState(0);
 
 
     // const sprite = new Sprite({
@@ -156,43 +165,117 @@ const Product = () => {
         switch (shopItem?.slot) {
             case "avatar":
                 return (
-                    // <Canvas camera={{ position: [0, .5, 1.5], rotation: [0, 0, 0] }}>
-                    //     <ambientLight intensity={1} />
-                    //     <directionalLight position={[2, 2, 2]} />
+                    <Canvas shadows camera={{ position: [0, .5, 1.5], rotation: [0, 0, 0] }}>
+                        <ambientLight intensity={.6} />
+                        {/* <directionalLight castShadow position={[2, 2, 2]} /> */}
 
-                    //     {/* <mesh>
-                    //     <planeGeometry rotateZ={90.} />
-                    //     <meshStandardMaterial color={"orange"} />
-                    // </mesh> */}
+                        {/* <planeGeometry></planeGeometry> */}
 
-                    //     <Suspense>
 
-                    //         {/* We need to make sure that we rotate the item and not the camera when we click and drag */}
-                    //         <ItemModel></ItemModel>
+                    //Floor
+                        <mesh receiveShadow position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                            <planeGeometry args={[20, 20]} />
+                            {/* <meshStandardMaterial color={"#231452"} roughness={.2} metalness={.8} />
+                             */}
 
-                    //     </Suspense>
+                            <MeshReflectorMaterial
+                                blur={[0, 0]} // Blur ground reflections (width, height), 0 skips blur
+                                mixBlur={0} // How much blur mixes with surface roughness (default = 1)
+                                mixStrength={1} // Strength of the reflections
+                                mixContrast={1} // Contrast of the reflections
+                                resolution={512} // Off-buffer resolution, lower=faster, higher=better quality, slower
+                                mirror={0} // Mirror environment, 0 = texture colors, 1 = pick up env colors
+                                depthScale={0} // Scale the depth factor (0 = no depth, default = 0)
+                                minDepthThreshold={0.9} // Lower edge for the depthTexture interpolation (default = 0)
+                                maxDepthThreshold={1} // Upper edge for the depthTexture interpolation (default = 0)
+                                depthToBlurRatioBias={0.25} // Adds a bias factor to the depthTexture before calculating the blur amount [blurFactor = blurTexture * (depthTexture + bias)]. It accepts values between 0 and 1, default is 0.25. An amount > 0 of bias makes sure that the blurTexture is not too sharp because of the multiplication with the depthTexture
+                                distortion={1} // Amount of distortion based on the distortionMap texture
+                                reflectorOffset={0} // Offsets the virtual camera that projects the reflection. Useful when the reflective surface is some distance from the object's origin (default = 0)
+                                color={"#231452"}
+                            />
+                        </mesh>
 
-                    //     <OrbitControls
-                    //         minPolarAngle={Math.PI / 2}
-                    //         maxPolarAngle={Math.PI / 2}
-                    //         enablePan={false}
-                    //         minDistance={1}
-                    //         maxDistance={5}
-                    //     />
+                    //Back Plane
+                        <mesh receiveShadow position={[0, 0, -3]} >
+                            <planeGeometry args={[30, 30]} />
+                            <meshStandardMaterial color={"#231452"} />
+                        </mesh>
 
-                    // </Canvas>
+                        <directionalLight
+
+                            position={[2, 4, 2]}
+                            intensity={4}
+
+                        />
+
+                        <pointLight intensity={1.5} position={[-1, 1, 1]} castShadow>
+
+                        </pointLight>
+
+                        <pointLight intensity={1.5} position={[1, 1, 1]} castShadow>
+
+                        </pointLight>
+
+                        <spotLight castShadow angle={Math.PI / 11} intensity={4} decay={1} position={[0, 2.5, 1]}>
+
+                        </spotLight>
+
+                        <mesh position={[0, 2.5, .75]}>
+                            <sphereGeometry args={[0.1]} />
+                            <meshBasicMaterial color="red" />
+                        </mesh>
+
+
+
+                        <mesh position={[-1, 1, 1]}>
+                            <sphereGeometry args={[0.1]} />
+                            <meshBasicMaterial color="yellow" />
+                        </mesh>
+
+                        <mesh position={[2, 5, 2]}>
+                            <sphereGeometry args={[0.1]} />
+                            <meshBasicMaterial color="yellow" />
+                        </mesh>
+
+                        {/* <MeshReflectorMaterial args={[10, 10]}
+                            rotation={[-Math.PI / 2, 0, 0]}
+                            mirror={0.7}
+                            blur={[300, 100]}
+                        >
+
+                        </MeshReflectorMaterial> */}
+
+
+
+                        <Suspense>
+
+                            {/* We need to make sure that we rotate the item and not the camera when we click and drag */}
+                            <ItemModel></ItemModel>
+
+                        </Suspense>
+
+                        <OrbitControls
+                            enableRotate={false}
+                            enablePan={false}
+                            minDistance={1}
+                            maxDistance={5}
+                        />
+
+
+                    </Canvas>
 
                     //Use HTML/Tailwind to overlay a finish line at the end of the track
 
-                    <div className='flex flex-col justify-center h-full'>
-                        <Application >
-                            <pixiContainer scale={2.5}>
-                                <MultiplayerRaceTrack ShopDisplay={true} Players={PlaceHolderPlayerArray} wordsLength={30}/>
-                            </pixiContainer>
-                        </Application>
+                    // <div className='flex flex-col justify-center h-full'>
+                    //     <Application >
+                    //         <pixiContainer scale={2.5}>
+                    //             <MultiplayerRaceTrack key={resetKey} ShopDisplay={true} Players={PlaceHolderPlayerArray} wordsLength={30}/>
+                    //         </pixiContainer>
+                    //     </Application>
 
-                        
-                    </div>
+                    //     <Button size={"lg"} className='w-18 mt-2' onClick={handleReset}>Restart</Button>
+
+                    // </div>
 
 
                 );
@@ -209,6 +292,10 @@ const Product = () => {
             default:
                 return null;
         }
+    };
+
+    const handleReset = () => {
+        setResetKey(prev => prev + 1);
     };
 
 
