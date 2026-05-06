@@ -35,7 +35,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 const app = express()
 
 app.use(cors({
-    origin: 'http://localhost:5173', // Replace with your frontend URL
+    origin: ['http://localhost:5173', "http://192.168.1.219:5173"], // Replace with your frontend URL
     // origin: "*",
     credentials: true
 }));
@@ -172,6 +172,8 @@ app.get("/api/shopItems", async (req, res) => {
 })
 
 app.get("/api/singleShopItem", async (req, res) => {
+
+    console.log("Single Shop item reached");
 
     const ProductId = req.query.productId;
 

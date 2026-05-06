@@ -124,7 +124,7 @@ const Product = () => {
                 setLoading(true)
 
                 console.log(id)
-                const res = await axios.get("http://localhost:3001/api/singleShopItem", { params: { productId: id } });
+                const res = await axios.get("http://192.168.1.219:3001/api/singleShopItem", { params: { productId: id } });
 
                 console.log(res?.data);
                 setShopItem(res?.data);
@@ -216,7 +216,7 @@ const Product = () => {
 
                         </pointLight>
 
-                        <spotLight castShadow angle={Math.PI / 11} intensity={4} decay={1} position={[0, 2.5, 1]}>
+                        <spotLight penumbra={.3} castShadow angle={Math.PI / 11} intensity={4} decay={1} position={[0, 2.5, 1]}>
 
                         </spotLight>
 

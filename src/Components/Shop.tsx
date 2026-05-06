@@ -88,34 +88,34 @@ const Shop = () => {
         });
     };
 
-    function handleClick(item:any){
+    function handleClick(item: any) {
 
         console.log("clicked");
-        navigate(`/product/${item.id}`,{state:{item}})
+        navigate(`/product/${item.id}`, { state: { item } })
     }
 
 
     return (
-        <div className='flex'>
+        <div className='flex bg-gray-700 max-w-7xl mx-auto'>
 
-            <div className='bg-purple-400 h-100 w-50 fixed'>
+            <div className='bg-gray-400 h-100 w-70 sticky top-0 h-screen'>
 
                 <div className='flex flex-col gap-3'>
 
 
-                    <Button className={`text-2xl rounded-sm p-2 ${visibleSection === "featured" ? "bg-blue-900" : "bg-blue-500 "}`} onClick={() => { scrollToSection("featured") }}>
+                    <Button className={`text-2xl rounded-sm h-12 flex justify-start ${visibleSection === "featured" ? "bg-blue-900" : ""}`} onClick={() => { scrollToSection("featured") }}>
                         Featured
                     </Button>
 
-                    <Button className={`text-2xl rounded-sm p-2 ${visibleSection === "multiplayer" ? "bg-blue-900" : "bg-blue-500 "}`} onClick={() => { scrollToSection("multiplayer") }}>
+                    <Button className={`text-2xl rounded-sm h-12 flex justify-start ${visibleSection === "multiplayer" ? "bg-blue-900" : ""}`} onClick={() => { scrollToSection("multiplayer") }}>
                         Multiplayer
                     </Button>
 
-                    <Button className={`text-2xl rounded-sm p-2 ${visibleSection === "game" ? "bg-blue-900" : "bg-blue-500 "}`} onClick={() => { scrollToSection("game") }}>
+                    <Button className={`text-2xl rounded-sm h-12 flex justify-start ${visibleSection === "game" ? "bg-blue-900" : ""}`} onClick={() => { scrollToSection("game") }}>
                         Game
                     </Button>
 
-                    <Button className={`text-2xl rounded-sm p-2 ${visibleSection === "keys" ? "bg-blue-900" : "bg-blue-500 "}`} onClick={() => { scrollToSection("keys") }}>
+                    <Button className={`text-2xl rounded-sm h-12 flex justify-start  ${visibleSection === "keys" ? "bg-blue-900" : ""}`} onClick={() => { scrollToSection("keys") }}>
                         Keys
                     </Button>
 
@@ -126,7 +126,7 @@ const Shop = () => {
             </div>
 
 
-            <div className='mx-auto max-w-7xl'>
+            <div className='w-full bg-amber-200  p-2 ml-2'>
 
                 {/* <h1 className='text-7xl font-bold text-cyan-700 fixed'>{visibleSection}</h1> */}
 
@@ -142,7 +142,7 @@ const Shop = () => {
                 >
                     {({ ref }) => (
                         <div
-                            ref={ref} id='featured' className='mb-30 bg-orange-100 pt-5'
+                            ref={ref} id='featured' className='mb-30 pt-5'
                         >
                             <h1 className='text-6xl mb-5 font-bold'>Featured</h1>
 
@@ -158,15 +158,29 @@ const Shop = () => {
                                             {
                                                 item.featured === true ?
 
-                                                    <div className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl' onClick={()=>{handleClick(item)}}>
+                                                    <div className='flex flex-col bg-indigo-500 w-70 h-90 rounded-2xl' onClick={() => { handleClick(item) }}>
                                                         {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
 
-                                                        <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
 
-                                                        <h1 className='text-4xl font-bold pl-2'>{item.name}</h1>
-                                                        <h2 className='pl-2'>Keys {item.priceKeys}</h2>
+                                                        <h1 className='text-4xl mt-auto font-bold pl-2 rounded-t-2xl'>{item.name}</h1>
 
-                                                        <Button onClick={() => { BuyShopItem(item.id) }}>Buy</Button>
+                                                        <img className='w-60 h-60  object-contain self-center' src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
+
+
+                                                        <div className='mt-auto'>
+
+
+                                                            <div className=' flex justify-center items-center h-14 rounded-2xl rounded-t-none bg-purple-900 gap-0.5' onClick={() => { }}>
+
+                                                                <img className='h-12' src="https://static.vecteezy.com/system/resources/previews/022/187/081/non_2x/3d-key-caps-or-keyboard-icon-rendering-free-png.png" alt="" />
+                                                                <h1 className=' text-2xl font-bold'>{item.priceKeys}</h1>
+
+                                                            </div>
+
+                                                        </div>
+
+
+
 
 
 
@@ -190,7 +204,7 @@ const Shop = () => {
                                             {
                                                 item.featured === true ?
 
-                                                    <div id={item.id} className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl'>
+                                                    <div id={item.id} className='flex flex-col bg-indigo-500 w-70 h-90 rounded-2xl'>
                                                         {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
 
                                                         <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/022/187/081/non_2x/3d-key-caps-or-keyboard-icon-rendering-free-png.png" alt="" />
@@ -234,7 +248,7 @@ const Shop = () => {
                 >
                     {({ ref }) => (
                         <div
-                            ref={ref} id='multiplayer' className='mb-30 bg-gray-700 pt-5'
+                            ref={ref} id='multiplayer' className='mb-30  pt-5'
                         >
                             <h1 className='text-6xl mb-5 font-bold'>Multiplayer</h1>
 
@@ -250,7 +264,7 @@ const Shop = () => {
                                             {
                                                 item.mode === "multiplayer" ?
 
-                                                    <div className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl' onClick={()=>{handleClick(item)}}>
+                                                    <div className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl' onClick={() => { handleClick(item) }}>
                                                         {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
 
                                                         <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
@@ -279,7 +293,7 @@ const Shop = () => {
                 </InView>
 
 
-                <InView
+                {/* <InView
                     key={"game"}
                     threshold={0}
                     rootMargin="-40% 0px -55% 0px"
@@ -306,7 +320,7 @@ const Shop = () => {
                                                 item.mode === "game" ?
 
                                                     <div className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
+
 
                                                         <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
 
@@ -334,7 +348,7 @@ const Shop = () => {
                         </div>
                     )}
                 </InView>
-
+ */}
 
 
 

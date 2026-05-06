@@ -8,8 +8,8 @@ const ItemModel = () => {
   const characterRef = useRef<any>(null);
   const model = useLoader(FBXLoader, '/robot.fbx');
 
-  const isDragging = useRef(false);
-  const previousX = useRef(0);
+  // const isDragging = useRef(false);
+  // const previousX = useRef(0);
 
   const { gl } = useThree();
 
@@ -69,7 +69,9 @@ const ItemModel = () => {
     if (!characterRef.current) return;
 
     // Auto-rotation
-    characterRef.current.rotation.y += 0.5 * delta;
+    if (!drag.current.active) {
+      characterRef.current.rotation.y += 0.5 * delta;
+    }
 
     // Manual drag rotation — scale the sensitivity with a constant
     const DRAG_SENSITIVITY = 0.01;
