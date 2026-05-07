@@ -167,9 +167,6 @@ async function FulfillCheckout_Keys(session: any) {
 
             })
 
-
-
-
         }
         //Better Auth will send a 200 web response after as we don't want to retry
 

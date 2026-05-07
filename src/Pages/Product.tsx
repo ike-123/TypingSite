@@ -68,7 +68,7 @@ const Product = () => {
     // const Floortexture = useTexture("https://png.pngtree.com/background/20250104/original/pngtree-texture-of-vibrant-purple-wallpaper-picture-image_15297775.jpg");
 
 
-    const { id } = useParams()
+    const { type, id } = useParams()
 
     const [shopItem, setShopItem] = useState<any>();
 
@@ -124,10 +124,15 @@ const Product = () => {
                 setLoading(true)
 
                 console.log(id)
-                const res = await axios.get("http://192.168.1.219:3001/api/singleShopItem", { params: { productId: id } });
+
+
+                const res = await axios.get(`http://192.168.1.219:3001/api/product/${type}/${id}`, { params: { productId: id } });
 
                 console.log(res?.data);
                 setShopItem(res?.data);
+
+
+
 
             } catch (error) {
                 console.log(error);
@@ -161,7 +166,62 @@ const Product = () => {
     }, [model]);
 
 
+
+    async function BuyShopItem(shopItemId: string) {
+        try {
+
+
+            const res = await axios.post("http://localhost:3001/api/BuyShopItem", { shopItemId },
+                {
+                    withCredentials: true
+                }
+            )
+
+            console.log(res.data);
+
+        } catch (error) {
+            console.error("checkout error", error);
+        }
+    }
+
+
+    async function handleCheckout(keyPackageId:string) {
+        try {
+            // const packageId = "key0"
+
+            const res = await axios.post("http://localhost:3001/api/create-checkout-session", { keyPackageId },
+                {
+                    withCredentials: true
+                }
+            )
+
+
+            //redirect to stripe checkout. USE REACT ROUTER IN THE FUTURE!!
+            window.location.href = res.data.url;
+
+        } catch (error) {
+            console.error("checkout error", error);
+        }
+    }
+
+
+
     const renderSlot = () => {
+
+        //If the type is key then we only need to render the thumbnail image in the render section
+        switch (type) {
+            case "key":
+
+                return (
+                    <>
+                        {/* Get the imageurl from the shopitem */}
+                        <img src="https://static.vecteezy.com/system/resources/previews/022/187/081/non_2x/3d-key-caps-or-keyboard-icon-rendering-free-png.png" alt="" />
+                    </>
+                )
+        }
+
+
+
         switch (shopItem?.slot) {
             case "avatar":
                 return (
@@ -294,6 +354,51 @@ const Product = () => {
         }
     };
 
+    const PurchaseSection = () => {
+
+        switch (type) {
+            case "item":
+
+                return (
+                    <div>
+                        <h1 className='text-4xl font-bold'>{shopItem?.name}</h1>
+
+
+                        <div className='flex h-15 gap-1 items-center mt-5'>
+                            <img className='h-15' src="https://static.vecteezy.com/system/resources/previews/022/187/081/non_2x/3d-key-caps-or-keyboard-icon-rendering-free-png.png" alt="" />
+                            <h2 className='text-3xl font-bold'>{shopItem?.priceKeys}</h2>
+                        </div>
+
+
+
+                        <Button size={"lg"} className='mt-20 w-full h-12 text-xl self-center' onClick={() => { BuyShopItem(shopItem.id) }}>Purchase</Button>
+
+                        {/* <img src="/profile.jop" alt="" /> */}
+                    </div>
+                );
+
+            case "key":
+                return (
+                    <div>
+                        <h1>keys section</h1>
+                        <h1 className='text-4xl font-bold'>{shopItem?.name}</h1>
+
+
+                        <div className='flex h-15 gap-1 items-center mt-5'>
+                            <h2 className='text-3xl font-bold'>£{shopItem?.price}</h2>
+                        </div>
+
+
+
+                        <Button size={"lg"} className='mt-20 w-full h-12 text-xl self-center' onClick={() => { handleCheckout(shopItem.id)}}>Purchase</Button>
+
+                        {/* <img src="/profile.jop" alt="" /> */}
+                    </div>
+                );
+        }
+    }
+
+
     const handleReset = () => {
         setResetKey(prev => prev + 1);
     };
@@ -354,19 +459,10 @@ const Product = () => {
             </div>
 
             <div className='flex flex-col flex-3 p-10'>
-                <h1 className='text-4xl font-bold'>{shopItem?.name}</h1>
 
-
-                <div className='flex h-15 gap-1 items-center mt-5'>
-                    <img className='h-15' src="https://static.vecteezy.com/system/resources/previews/022/187/081/non_2x/3d-key-caps-or-keyboard-icon-rendering-free-png.png" alt="" />
-                    <h2 className='text-3xl font-bold'>{shopItem?.priceKeys}</h2>
-                </div>
-
-
-
-                <Button size={"lg"} className='mt-20 w-full h-12 text-xl self-center'>Purchase</Button>
-
-                {/* <img src="/profile.jop" alt="" /> */}
+                {
+                    PurchaseSection()
+                }
 
             </div>
         </div>

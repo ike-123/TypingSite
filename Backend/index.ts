@@ -85,7 +85,7 @@ const keyPackages: any = {
 
 app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
 
-    const { packageId } = req.body;
+    const { keyPackageId } = req.body;
 
 
     console.log("create session reached")
@@ -93,7 +93,7 @@ app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
     // const pack = keyPackages[packageId]
 
     const pack = await prisma.keyPackage.findUnique({
-        where: { id: packageId }
+        where: { id: keyPackageId }
     }
     )
 
@@ -171,16 +171,84 @@ app.get("/api/shopItems", async (req, res) => {
 
 })
 
-app.get("/api/singleShopItem", async (req, res) => {
+// app.get("/api/singleShopItem", async (req, res) => {
 
-    console.log("Single Shop item reached");
+//     // console.log("Single Shop item reached");
 
+//     //Need to find a way to also get a keypackage as well. Maybe using the client url and putting /key before id
+
+//     const ProductId = req.query.productId;
+
+//     if (typeof ProductId !== "string") {
+//         return res.status(404).json("Invalid Product Id")
+//     }
+
+
+//     const Product = await prisma.shopItem.findUnique({
+//         where: { id: ProductId }
+//     })
+
+
+
+//     return res.status(200).json(Product)
+
+// })
+
+app.get("/api/product/:type/:id", async (req, res) => {
+
+    // console.log("Single Shop item reached");
+
+    //Need to find a way to also get a keypackage as well. Maybe using the client url and putting /key before id
+
+    try {
+
+        const { id, type } = req.params;
+
+        console.log("type ", type);
+
+        let product;
+
+        if (type === "item") {
+
+            product = await prisma.shopItem.findUnique({
+                where: { id: id }
+            })
+        }
+        else if (type === "key") {
+
+            product = await prisma.keyPackage.findUnique({
+                where: { id: id }
+            })
+        }
+        else {
+
+            return res.status(400).json({
+                error: "Invalid product type"
+            });
+
+        }
+
+        if (!product) {
+            return res.status(404).json({
+                error: "Product not found"
+            });
+        }
+
+
+        return res.status(200).json(product)
+
+    } catch (error) {
+
+        res.status(500).json({
+            error: "Server error"
+        });
+
+    }
     const ProductId = req.query.productId;
 
     if (typeof ProductId !== "string") {
         return res.status(404).json("Invalid Product Id")
     }
-
 
 
     const Product = await prisma.shopItem.findUnique({
@@ -196,13 +264,11 @@ app.get("/api/singleShopItem", async (req, res) => {
 app.post("/api/BuyShopItem", protectRoute, async (req, res) => {
 
 
-
     try {
 
         //get id of shopitem
         const { shopItemId } = req.body;
 
-        //Check to see if the Users current key amount is greater than the price of the shop item. If not don't proceed.
 
         await prisma.$transaction(async (tx) => {
 
@@ -223,6 +289,8 @@ app.post("/api/BuyShopItem", protectRoute, async (req, res) => {
             if (!ShopItem) {
                 throw new Error("ITEM_NOT_FOUND");
             }
+
+            //Check to see if the Users current key amount is greater than the price of the shop item. If not don't proceed.
 
             if (User.Keys < ShopItem.priceKeys) {
                 throw new Error("INSUFFICIENT_KEYS");
@@ -299,6 +367,9 @@ app.post("/api/BuyShopItem", protectRoute, async (req, res) => {
 
 
 app.get("/api/order", protectRoute, async (req, res) => {
+
+
+    //FUNCTION THAT IS CALLED ON THE FULFILLMENT PAGE TO GET EXTRA INFORMATION FROM ORDER
 
 
     //WHEN USING FUNCTION TO ALSO FULFILL ORDER MAKE SURE IT IS CHANGED TO A POST REQUEST

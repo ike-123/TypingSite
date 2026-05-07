@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 
 type ShopCardProps = {
-    item:any
-    isKeyPackage:boolean
+    item: any
+    isKeyPackage: boolean
 }
 
 const ShopCard = (props: ShopCardProps) => {
@@ -15,7 +15,15 @@ const ShopCard = (props: ShopCardProps) => {
     function handleClick(item: any) {
 
         console.log("clicked");
-        navigate(`/product/${item.id}`, { state: { item } })
+
+        if (props.isKeyPackage) {
+            navigate(`/product/key/${item.id}`, { state: { item } })
+
+        }
+        else {
+            navigate(`/product/item/${item.id}`, { state: { item } })
+
+        }
     }
 
     return (
