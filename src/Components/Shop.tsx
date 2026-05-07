@@ -3,6 +3,7 @@ import { Button } from './ui/button'
 import axios from 'axios'
 import { useInView, InView } from "react-intersection-observer";
 import { useNavigate } from 'react-router-dom';
+import ShopCard from './ShopCard';
 
 
 const Shop = () => {
@@ -110,10 +111,10 @@ const Shop = () => {
                     <Button className={`text-2xl rounded-sm h-12 flex justify-start ${visibleSection === "multiplayer" ? "bg-blue-900" : ""}`} onClick={() => { scrollToSection("multiplayer") }}>
                         Multiplayer
                     </Button>
-
+{/* 
                     <Button className={`text-2xl rounded-sm h-12 flex justify-start ${visibleSection === "game" ? "bg-blue-900" : ""}`} onClick={() => { scrollToSection("game") }}>
                         Game
-                    </Button>
+                    </Button> */}
 
                     <Button className={`text-2xl rounded-sm h-12 flex justify-start  ${visibleSection === "keys" ? "bg-blue-900" : ""}`} onClick={() => { scrollToSection("keys") }}>
                         Keys
@@ -158,35 +159,7 @@ const Shop = () => {
                                             {
                                                 item.featured === true ?
 
-                                                    <div className='flex flex-col bg-indigo-500 w-70 h-90 rounded-2xl' onClick={() => { handleClick(item) }}>
-                                                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-
-
-                                                        <h1 className='text-4xl mt-auto font-bold pl-2 rounded-t-2xl'>{item.name}</h1>
-
-                                                        <img className='w-60 h-60  object-contain self-center' src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
-
-
-                                                        <div className='mt-auto'>
-
-
-                                                            <div className=' flex justify-center items-center h-14 rounded-2xl rounded-t-none bg-purple-900 gap-0.5' onClick={() => { }}>
-
-                                                                <img className='h-12' src="https://static.vecteezy.com/system/resources/previews/022/187/081/non_2x/3d-key-caps-or-keyboard-icon-rendering-free-png.png" alt="" />
-                                                                <h1 className=' text-2xl font-bold'>{item.priceKeys}</h1>
-
-                                                            </div>
-
-                                                        </div>
-
-
-
-
-
-
-
-
-                                                    </div> : ""
+                                                    <ShopCard item={item} isKeyPackage={false}/> : ""
 
                                             }
 
@@ -203,22 +176,9 @@ const Shop = () => {
                                         <>
                                             {
                                                 item.featured === true ?
+                                                    <ShopCard item={item} isKeyPackage={true}/>
 
-                                                    <div id={item.id} className='flex flex-col bg-indigo-500 w-70 h-90 rounded-2xl'>
-                                                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-
-                                                        <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/022/187/081/non_2x/3d-key-caps-or-keyboard-icon-rendering-free-png.png" alt="" />
-
-                                                        <h1 className='text-4xl font-bold pl-2'>{item.name}</h1>
-                                                        <h2 className='pl-2'>£{item.price}</h2>
-
-                                                        <Button onClick={() => { BuyShopItem(item.id) }}>Buy</Button>
-
-
-
-
-
-                                                    </div> : ""
+                                                    : ""
 
                                             }
 
@@ -264,18 +224,7 @@ const Shop = () => {
                                             {
                                                 item.mode === "multiplayer" ?
 
-                                                    <div className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl' onClick={() => { handleClick(item) }}>
-                                                        {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-
-                                                        <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
-
-                                                        <h1 className='text-4xl font-bold pl-2'>{item.name}</h1>
-                                                        <h2 className='pl-2'>Keys {item.priceKeys}</h2>
-
-                                                        <Button onClick={() => { BuyShopItem(item.id) }}>Buy</Button>
-
-
-                                                    </div> : "nothing"
+                                                    <ShopCard item={item} isKeyPackage={false}/>: "nothing"
 
                                             }
 
@@ -373,16 +322,7 @@ const Shop = () => {
                                 {
                                     keyPackages.map((item: any) => (
 
-                                        <div id={item.id} className='flex flex-col bg-indigo-500 w-60 h-70 rounded-2xl'>
-                                            {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
-
-                                            <img className='w-3/4 h-50 self-center' src="https://static.vecteezy.com/system/resources/previews/022/187/081/non_2x/3d-key-caps-or-keyboard-icon-rendering-free-png.png" alt="" />
-
-                                            <h1 className='text-4xl font-bold pl-2'>{item.name}</h1>
-                                            <h2 className='pl-2'>£{item.price}</h2>
-
-                                        </div>
-
+                                        <ShopCard item={item} isKeyPackage={true}/>
                                     ))
                                 }
 
@@ -399,8 +339,8 @@ const Shop = () => {
 
 
                 {/* empty padding */}
-                <div className='bg-amber-400 h-50'>
-                </div>
+                {/* <div className='bg-amber-400 h-50'>
+                </div> */}
 
 
                 {/* 
