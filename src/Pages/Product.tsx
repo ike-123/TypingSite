@@ -38,6 +38,16 @@ extend({
     Sprite,
 });
 
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+    DialogPortal
+} from "@/components/ui/dialog"
+
 
 // import robotUrl from '../assets/robot.fbx';
 
@@ -81,6 +91,9 @@ const Product = () => {
 
     const [resetKey, setResetKey] = useState(0);
 
+    const [modalContent, SetModalContent] = useState<any>()
+
+    const [showDialogBox, SetDialogBox] = useState(false)
 
     // const sprite = new Sprite({
     //     texture: Texture.from('https://pixijs.com/assets/bunny.png')
@@ -166,6 +179,7 @@ const Product = () => {
     }, [model]);
 
 
+    
 
     async function BuyShopItem(shopItemId: string) {
         try {
@@ -180,12 +194,63 @@ const Product = () => {
             console.log(res.data);
 
         } catch (error) {
+
+
+            if (axios.isAxiosError(error)) {
+
+                const errorCode = error.response?.data.code
+
+                let modaltext = null;
+
+                switch (errorCode) {
+
+                    case "USER_NOT_FOUND":
+
+                        modaltext = (
+                            <>
+                                <h1 className='text-2xl'>User Not Found</h1>
+                            </>
+                        )
+
+                        SetModalContent(modaltext);
+                        SetDialogBox(true);
+                        break;
+
+                    case "ITEM_NOT_FOUND":
+
+                        modaltext = (
+                            <>
+                                <h1 className='text-2xl'>Item not Found</h1>
+                            </>
+                        )
+
+                        SetModalContent(modaltext);
+                        SetDialogBox(true);
+                        break;
+
+                    case "INSUFFICIENT_KEYS":
+
+                        modaltext = (
+                            <>
+                                <h1 className='text-2xl'>Insufficent amount of keycaps</h1>
+                            </>
+                        )
+
+                        SetModalContent(modaltext);
+                        SetDialogBox(true);
+                        break;
+
+                    default:
+                        console.log("Unknown error");
+                }
+            }
+
             console.error("checkout error", error);
         }
     }
 
 
-    async function handleCheckout(keyPackageId:string) {
+    async function handleCheckout(keyPackageId: string) {
         try {
             // const packageId = "key0"
 
@@ -203,6 +268,8 @@ const Product = () => {
             console.error("checkout error", error);
         }
     }
+
+
 
 
 
@@ -354,6 +421,38 @@ const Product = () => {
         }
     };
 
+    const InitialModalContent = () => {
+
+        return (
+            <>
+                <h1 className='text-2xl'>Are you sure you want to Purchase?</h1>
+
+                <h1 className='text-2xl'>Item Name</h1>
+
+                <div className='flex gap-4 mt-auto'>
+                    <Button onClick={() => { BuyShopItem(shopItem.id) }} className='bg-green-400' size={"lg"}>Confirm Purchase</Button>
+                    <Button className="bg-red-400" size={"lg"}>Cancel</Button>
+                </div>
+
+
+            </>
+        )
+    }
+
+
+    function PurchaseButtonClicked() {
+
+
+        //Confirm the user wants to purchase item
+
+
+        SetModalContent(InitialModalContent);
+        SetDialogBox(true);
+
+    }
+
+
+
     const PurchaseSection = () => {
 
         switch (type) {
@@ -370,8 +469,14 @@ const Product = () => {
                         </div>
 
 
+                        <Button onClick={() => { SetDialogBox(true) }}>Open Dialog</Button>
 
-                        <Button size={"lg"} className='mt-20 w-full h-12 text-xl self-center' onClick={() => { BuyShopItem(shopItem.id) }}>Purchase</Button>
+                        //Check to see if user has enough keys if not disable purchase button
+
+                        //If user clicks purchase button and they don't have enough keys show not enough keys modal and request
+                        // server to send back updated key amount
+                        //Open up a modal box to confirm purchase
+                        <Button size={"lg"} className='mt-20 w-full h-12 text-xl self-center' onClick={() => {PurchaseButtonClicked()}}>Purchase</Button>
 
                         {/* <img src="/profile.jop" alt="" /> */}
                     </div>
@@ -390,7 +495,7 @@ const Product = () => {
 
 
 
-                        <Button size={"lg"} className='mt-20 w-full h-12 text-xl self-center' onClick={() => { handleCheckout(shopItem.id)}}>Purchase</Button>
+                        <Button size={"lg"} className='mt-20 w-full h-12 text-xl self-center' onClick={() => { handleCheckout(shopItem.id) }}>Purchase</Button>
 
                         {/* <img src="/profile.jop" alt="" /> */}
                     </div>
@@ -465,6 +570,50 @@ const Product = () => {
                 }
 
             </div>
+
+
+            <Dialog open={showDialogBox} onOpenChange={SetDialogBox}>
+
+                <DialogPortal>
+
+                    {/* <DialogOverlay className="fixed inset-0 bg-white/50 p-10" /> */}
+
+
+
+
+                    heey
+
+                    {/* <DialogContent className='w-full max-w-sm sm:max-w-full  bg-orange-300 '> */}
+
+                    //Make dialogcontent box is the right size
+                    <DialogContent className='w-125 h-70 flex flex-col items-center pt-10 gap-10' >
+
+                        {/* <h1 className='text-2xl'>Are you sure you want to Purchase?</h1>
+
+                        <h1 className='text-2xl'>Item Name</h1> */}
+
+                        {
+                            modalContent
+                        }
+
+
+
+
+                        {/* <div className='flex gap-4 mt-auto'>
+                            <Button onClick={() => { BuyShopItem(shopItem.id) }} className='bg-green-400' size={"lg"}>Confirm Purchase</Button>
+                            <Button className="bg-red-400" size={"lg"}>Cancel</Button>
+                        </div> */}
+
+
+
+
+                    </DialogContent>
+
+
+
+                </DialogPortal>
+
+            </Dialog>
         </div>
     )
 }

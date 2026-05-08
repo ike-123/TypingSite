@@ -447,7 +447,7 @@ const SinglePageTypingTest = () => {
 
                     {/* <DialogContent className='w-full max-w-sm sm:max-w-full  bg-orange-300 '> */}
                     <DialogContent onCloseAutoFocus={(e) => {
-                        e.preventDefault() // 🚨 stop Radix from deciding focus
+                        e.preventDefault() //stop Radix from deciding focus
                         engine.inputref.current?.focus()
                     }} className=' max-w-7xl md:w-11/12 lg:w-10/12 xl:w-8/12'>
 

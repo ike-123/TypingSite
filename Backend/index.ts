@@ -27,6 +27,7 @@ import Stripe from "stripe";
 import { error } from "console";
 import { KeyTransactionType } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
+import { code } from "three/src/nodes/code/CodeNode.js";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
@@ -336,24 +337,24 @@ app.post("/api/BuyShopItem", protectRoute, async (req, res) => {
     } catch (error: unknown) {
 
         if (error instanceof PrismaClientKnownRequestError && error.code === "P2002") {
-            return res.status(409).json({ error: "You already own this item" });
+            return res.status(409).json({code:"ITEM_ALREADY_OWNED", error: "You already own this item" });
         }
 
         if (error instanceof Error) {
 
             if (error.message === "USER_NOT_FOUND") {
-                return res.status(404).json({ error: "User not found" });
+                return res.status(404).json({ code: "USER_NOT_FOUND", error: "User not found" });
             }
 
             if (error.message === "ITEM_NOT_FOUND") {
                 console.log("Item Not found");
 
-                return res.status(404).json({ error: "Item doesn't exist" });
+                return res.status(404).json({code: "ITEM_NOT_FOUND", error: "Item doesn't exist" });
             }
 
             if (error.message === "INSUFFICIENT_KEYS") {
                 console.log("not enough keys");
-                return res.status(400).json({ error: "Not enough keys" });
+                return res.status(400).json({ code: "INSUFFICIENT_KEYS", error: "Not enough keys" });
             }
         }
 
