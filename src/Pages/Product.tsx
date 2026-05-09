@@ -47,6 +47,7 @@ import {
     DialogTrigger,
     DialogPortal
 } from "@/components/ui/dialog"
+import { useAuthStore } from '@/Stores/AuthStore';
 
 
 // import robotUrl from '../assets/robot.fbx';
@@ -76,6 +77,9 @@ const Product = () => {
     const passedItemFromShopPage = location.state?.item
 
     // const Floortexture = useTexture("https://png.pngtree.com/background/20250104/original/pngtree-texture-of-vibrant-purple-wallpaper-picture-image_15297775.jpg");
+
+
+    const User = useAuthStore((state) => state.user)
 
 
     const { type, id } = useParams()
@@ -179,7 +183,7 @@ const Product = () => {
     }, [model]);
 
 
-    
+
 
     async function BuyShopItem(shopItemId: string) {
         try {
@@ -468,17 +472,35 @@ const Product = () => {
                             <h2 className='text-3xl font-bold'>{shopItem?.priceKeys}</h2>
                         </div>
 
+                        {/* 
+                        <Button onClick={() => { SetDialogBox(true) }}>Open Dialog</Button> */}
 
-                        <Button onClick={() => { SetDialogBox(true) }}>Open Dialog</Button>
 
-                        //Check to see if user has enough keys if not disable purchase button
-
-                        //If user clicks purchase button and they don't have enough keys show not enough keys modal and request
+                        {/* //If user clicks purchase button and they don't have enough keys show not enough keys modal and request
                         // server to send back updated key amount
-                        //Open up a modal box to confirm purchase
-                        <Button size={"lg"} className='mt-20 w-full h-12 text-xl self-center' onClick={() => {PurchaseButtonClicked()}}>Purchase</Button>
+                        //Open up a modal box to confirm purchase  */}
 
-                        {/* <img src="/profile.jop" alt="" /> */}
+                        {
+                            User ?
+
+
+                                User.key >= shopItem?.priceKeys ?
+                                    <Button size={"lg"} className='mt-20 w-full h-12 text-xl self-center' onClick={() => { PurchaseButtonClicked() }}>Purchase</Button>
+
+                                    :
+                                    <Button size={"lg"} variant={"outline"} className='mt-20 w-full h-12 text-xl self-center' onClick={() => { }}>Not Enough Keys</Button>
+
+
+                                :
+
+                                // Show a toast or a modal when user clicks the purchase button when not logged in
+                                <Button size={"lg"} className='mt-20 w-full h-12 text-xl self-center' onClick={() => { }}>Purchase</Button>
+                        }
+
+
+
+
+
                     </div>
                 );
 

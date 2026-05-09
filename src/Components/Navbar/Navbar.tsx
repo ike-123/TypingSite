@@ -39,9 +39,15 @@ const Navbar = () => {
 
 
 
-      <div className="container flex justify-end">
 
 
+      <div className="container flex h-full justify-end">
+
+
+        <div className='flex flex-row items-center mr-10 '>
+          <img className='h-full' src="https://static.vecteezy.com/system/resources/previews/022/187/081/non_2x/3d-key-caps-or-keyboard-icon-rendering-free-png.png" alt="" />
+          <h1>{User?.Keys}</h1>
+        </div>
 
         {
           isLoading ? (
@@ -71,7 +77,7 @@ const Navbar = () => {
                       <div className="flex gap-3 justify-center items-center">
                         <img className='rounded-full h-10 w-10 object-cover' src={User.image} alt="" />
 
-                        <div>Ik</div>
+                        <div>{User.name}</div>
                       </div>
 
 

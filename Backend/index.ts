@@ -337,7 +337,7 @@ app.post("/api/BuyShopItem", protectRoute, async (req, res) => {
     } catch (error: unknown) {
 
         if (error instanceof PrismaClientKnownRequestError && error.code === "P2002") {
-            return res.status(409).json({code:"ITEM_ALREADY_OWNED", error: "You already own this item" });
+            return res.status(409).json({ code: "ITEM_ALREADY_OWNED", error: "You already own this item" });
         }
 
         if (error instanceof Error) {
@@ -349,7 +349,7 @@ app.post("/api/BuyShopItem", protectRoute, async (req, res) => {
             if (error.message === "ITEM_NOT_FOUND") {
                 console.log("Item Not found");
 
-                return res.status(404).json({code: "ITEM_NOT_FOUND", error: "Item doesn't exist" });
+                return res.status(404).json({ code: "ITEM_NOT_FOUND", error: "Item doesn't exist" });
             }
 
             if (error.message === "INSUFFICIENT_KEYS") {
@@ -406,8 +406,27 @@ app.get("/api/order", protectRoute, async (req, res) => {
 
 })
 
-app.get("/api/profile", protectRoute, (req, res) => {
-    res.json(req.user);
+app.get("/api/profile", protectRoute, async (req, res) => {
+
+    const user = await prisma.user.findUnique({
+        where:
+        {
+            id: req.user.id
+
+        },
+
+        select: {
+            id: true,
+            email: true,
+            image: true,
+            name: true,
+            Keys: true
+        }
+    })
+
+
+
+    res.json(user);
 });
 
 app.post("/api/testresult", protectRoute, async (req, res) => {

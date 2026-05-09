@@ -51,7 +51,7 @@ export const protectRoute = async (req: Request, res: Response, next: NextFuncti
         });
 
         if (!session) {
-            console.log("hello no session found")
+            console.log("hello no (Better Auth) session found")
             return res.status(401).json({ error: "Not logged in" });
         }
 
