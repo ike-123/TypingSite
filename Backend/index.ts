@@ -445,13 +445,13 @@ app.get("/api/Inventory", protectRoute, async (req, res) => {
 
         for (const entry of inventory) {
 
-            const mode = entry.item.mode;
+            const slot = entry.item.slot;
 
-            if (!GroupedItems[mode]) {
-                GroupedItems[mode] = []
+            if (!GroupedItems[slot]) {
+                GroupedItems[slot] = []
             }
 
-            GroupedItems[mode].push(entry.item)
+            GroupedItems[slot].push(entry.item)
         }
 
         // Fetch updated equipped items

@@ -25,6 +25,7 @@ import Shop from './Components/Shop';
 import Success from './Pages/Success';
 import Product from './Pages/Product';
 import UserLocker from './Pages/UserLocker';
+import MultiplayerCharacterSelect from './Components/MultiplayerCharacterSelect';
 
 
 
@@ -85,9 +86,13 @@ const router = createBrowserRouter([
         path: "/product/:type/:id",
         element: <Product />
       },
-            {
+      {
         path: "/Locker",
         element: <UserLocker />
+      },
+      {
+        path:"/MultiplayerCharacterSelect",
+        element:<MultiplayerCharacterSelect/>
       }
 
 

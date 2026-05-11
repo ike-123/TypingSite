@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Input } from "@/components/ui/input"
 import { Button } from './ui/button';
 import { useAuthStore } from '@/Stores/AuthStore';
+import MultiplayerCharacterSelect from './MultiplayerCharacterSelect';
 
 
 type SetupProps = {
@@ -28,7 +29,7 @@ const Multiplayer_User_Setup = (props: SetupProps) => {
         }
 
         // If the user is logged in we will set the Display name to be their Username
-        if (User){
+        if (User) {
             SetDisplayName(User.name)
         }
 
@@ -56,7 +57,7 @@ const Multiplayer_User_Setup = (props: SetupProps) => {
     }
 
     return (
-        <div className='max-w-7xl m-auto flex flex-col items-center gap-15 '>
+        <div className='max-w-7xl m-auto flex flex-col items-center gap-15  '>
 
             <div className='flex gap-8 items-center'>
 
@@ -68,9 +69,17 @@ const Multiplayer_User_Setup = (props: SetupProps) => {
                 </div>
 
 
-                <div className='w-50 h-50 bg-purple-500'>
 
+                <div className='flex flex-col gap-2'>
+
+                    <h1 className='text-xl'>Select Character</h1>
+
+                    <div className='w-75 h-70 '>
+                        <MultiplayerCharacterSelect />
+                    </div>
                 </div>
+
+
 
 
             </div>

@@ -137,9 +137,9 @@ const UserLocker = () => {
 
 
     return (
-        <div className='flex bg-gray-700 max-w-7xl mx-auto'>
+        <div className='flex bg-zinc-900 max-w-7xl mx-auto'>
 
-            <div className='bg-gray-400 h-100 w-70 sticky top-0 h-screen'>
+            <div className=' h-100 w-70 sticky top-0 h-screen'>
 
                 <div className='flex flex-col gap-3'>
 
@@ -151,10 +151,10 @@ const UserLocker = () => {
                     <Button className={`text-2xl rounded-sm h-12 flex justify-start ${visibleSection === "multiplayer" ? "bg-blue-900" : ""}`} onClick={() => { scrollToSection("multiplayer") }}>
                         Multiplayer
                     </Button>
-
+{/* 
                     <Button className={`text-2xl rounded-sm h-12 flex justify-start ${visibleSection === "game" ? "bg-blue-900" : ""}`} onClick={() => { scrollToSection("game") }}>
                         Game
-                    </Button>
+                    </Button> */}
 
 
 
@@ -246,39 +246,98 @@ const UserLocker = () => {
                 >
                     {({ ref }) => (
                         <div
-                            ref={ref} id='multiplayer' className='mb-30  pt-5'
+                            ref={ref} id='multiplayer' className='mb-30 pb-30 pl-5 rounded-2xl bg-gray-900 pt-5'
                         >
                             <h1 className='text-6xl mb-5 font-bold'>Multiplayer</h1>
 
-                            <div className=' flex flex-wrap gap-3'>
 
 
 
-                                {
-                                    GroupedItems?.multiplayer?.map((item: any) => {
 
-                                        const isequipped = equippedItemIds.has(item.id)
+                            {
+                                GroupedItems?.avatar ?
 
-                                        return (
-                                            <>
-                                                {
-                                                    item.mode === "multiplayer" ?
+                                    <>
+                                        <h1 className='text-2xl mb-5 font-bold'>Character</h1>
 
-                                                        <UserLockerCard item={item} isKeyPackage={false} isequipped={isequipped} Equip={EquipItem} />
-
-                                                        : "nothing"
-
-                                                }
-
-                                            </>
-                                        )
+                                        <div className=' flex flex-wrap gap-3'>
 
 
 
-                                    })
-                                }
+                                            {
+                                                GroupedItems?.avatar?.map((item: any) => {
 
-                            </div>
+                                                    const isequipped = equippedItemIds.has(item.id)
+
+                                                    return (
+                                                        <>
+                                                            {
+                                                                item.slot === "avatar" ?
+
+                                                                    <UserLockerCard item={item} isKeyPackage={false} isequipped={isequipped} Equip={EquipItem} />
+
+                                                                    : ""
+
+                                                            }
+
+                                                        </>
+                                                    )
+
+
+
+                                                })
+                                            }
+
+                                        </div>
+
+                                    </>
+                                    : ""
+                            }
+
+
+                            {
+                                GroupedItems?.trail ?
+
+                                    <>
+
+                                        <h1 className='text-2xl mb-5 mt-15 font-bold'>Trails</h1>
+
+
+                                        <div className=' flex flex-wrap gap-3'>
+
+
+
+                                            {
+                                                GroupedItems?.trail?.map((item: any) => {
+
+                                                    const isequipped = equippedItemIds.has(item.id)
+
+                                                    return (
+                                                        <>
+                                                            {
+                                                                item.slot === "trail" ?
+
+                                                                    <UserLockerCard item={item} isKeyPackage={false} isequipped={isequipped} Equip={EquipItem} />
+
+                                                                    : ""
+
+                                                            }
+
+                                                        </>
+                                                    )
+
+
+
+                                                })
+                                            }
+
+                                        </div>
+                                    </>
+                                    : ""
+                            }
+
+
+
 
 
                         </div>
@@ -345,7 +404,7 @@ const UserLocker = () => {
 
 
 
-                <InView
+                {/* <InView
                     key={"Keys"}
                     threshold={0}
                     rootMargin="-40% 0px -55% 0px"
@@ -363,12 +422,12 @@ const UserLocker = () => {
 
                             <div className=' flex flex-wrap gap-3'>
 
-                                {/* {
+                                {
                                     keyPackages.map((item: any) => (
 
                                         <ShopCard item={item} isKeyPackage={true}/>
                                     ))
-                                } */}
+                                }
 
 
 
@@ -377,7 +436,7 @@ const UserLocker = () => {
                             </div>
                         </div>
                     )}
-                </InView>
+                </InView> */}
 
 
 
