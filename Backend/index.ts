@@ -429,6 +429,129 @@ app.get("/api/profile", protectRoute, async (req, res) => {
     res.json(user);
 });
 
+app.get("/api/Inventory", protectRoute, async (req, res) => {
+
+    try {
+        const inventory = await prisma.userInventory.findMany({
+            where: {
+                userid: req.user.id
+            },
+            include: {
+                item: true
+            }
+        })
+
+        const GroupedItems: any = {}
+
+        for (const entry of inventory) {
+
+            const mode = entry.item.mode;
+
+            if (!GroupedItems[mode]) {
+                GroupedItems[mode] = []
+            }
+
+            GroupedItems[mode].push(entry.item)
+        }
+
+        // Fetch updated equipped items
+        const equippedItems = await prisma.userEquippedItems.findMany({
+            where: {
+                userid: req.user.id,
+            },
+            include: {
+                item: true,
+            },
+        })
+
+
+
+
+        res.json({
+            GroupedItems,
+            equippedItems
+        })
+
+
+
+
+    } catch (error) {
+
+        return res.status(500).json({
+            error: "Failed to load inventory",
+        })
+    }
+})
+
+
+app.post("/api/EquipItem", protectRoute, async (req, res) => {
+
+
+    const { itemid } = req.body;
+
+
+
+    try {
+
+        //Check item exists in users inventory
+
+        const inventoryItem = await prisma.userInventory.findUnique({
+            where: {
+                userid_itemid: {
+                    userid: req.user.id,
+                    itemid,
+                },
+            },
+            include: {
+                item: true,
+            },
+        })
+
+        if (!inventoryItem) {
+            return res.status(404).json({
+                error: "Item not owned",
+            })
+        }
+
+        await prisma.userEquippedItems.upsert({
+            where: {
+                userid_slot: {
+                    userid: req.user.id,
+                    slot: inventoryItem.item.slot,
+                },
+            },
+            update: {
+                itemid,
+            },
+            create: {
+                userid: req.user.id,
+                itemid,
+                slot: inventoryItem.item.slot,
+            },
+        })
+
+        // Fetch updated equipped items
+        const equippedItems = await prisma.userEquippedItems.findMany({
+            where: {
+                userid: req.user.id,
+            },
+            include: {
+                item: true,
+            },
+        })
+
+        return res.json({
+            equippedItems,
+        })
+
+
+    } catch (error) {
+
+        return res.status(500).json({
+            error: "Failed to equip item",
+        })
+    }
+})
 app.post("/api/testresult", protectRoute, async (req, res) => {
 
 

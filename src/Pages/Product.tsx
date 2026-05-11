@@ -389,7 +389,7 @@ const Product = () => {
                             enableRotate={false}
                             enablePan={false}
                             minDistance={1}
-                            maxDistance={5}
+                            maxDistance={4}
                         />
 
 

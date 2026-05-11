@@ -24,6 +24,7 @@ import MyStats from './Pages/MyStats';
 import Shop from './Components/Shop';
 import Success from './Pages/Success';
 import Product from './Pages/Product';
+import UserLocker from './Pages/UserLocker';
 
 
 
@@ -83,6 +84,10 @@ const router = createBrowserRouter([
       {
         path: "/product/:type/:id",
         element: <Product />
+      },
+            {
+        path: "/Locker",
+        element: <UserLocker />
       }
 
 
