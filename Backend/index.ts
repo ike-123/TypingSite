@@ -693,7 +693,6 @@ app.get("/api/averagestats", protectRoute, async (req, res) => {
 
     try {
 
-        // console.log(req.query.last);
 
         //array of strings
         console.log(req.query.configs);

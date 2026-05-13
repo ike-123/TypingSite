@@ -253,7 +253,7 @@ const MyStats = () => {
         try {
 
             // const mode = "word"
-            const configs = ["punctuation", "numbers"]
+            // const configs = ["punctuation", "numbers"]
             // const LengthDurationSetting = "10"
 
             const stats = await axios.get(`http://localhost:3001/api/PBandHistory`, {

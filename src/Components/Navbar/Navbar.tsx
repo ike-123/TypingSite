@@ -11,6 +11,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
+import { Link } from 'react-router-dom'
 
 
 // import './Navbar.scss'
@@ -87,7 +88,7 @@ const Navbar = () => {
 
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
-                      <NavigationMenuLink>My Stats</NavigationMenuLink>
+                      <NavigationMenuLink> <Link to="/stats">My Stats</Link></NavigationMenuLink>
                       <NavigationMenuLink>Settings</NavigationMenuLink>
                       <NavigationMenuLink>About</NavigationMenuLink>
                       <NavigationMenuLink>Logout</NavigationMenuLink>
