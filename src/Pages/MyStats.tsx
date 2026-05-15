@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Modes } from '@/utils/Typingmode'
+import { CartesianGrid, Label, Line, LineChart, XAxis, YAxis, ReferenceDot, Scatter, ScatterChart } from "recharts"
 
 import {
     Select,
@@ -13,12 +14,29 @@ import {
 import { useSelect_TypingStats } from '@/Hooks/useSelect_TypingStats'
 import MultipleSelectWithPlaceholderDemo from '@/Components/shadcn-studio/select/select-33'
 import type { Option } from '@/components/ui/multi-select'
+import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart'
 
+const chartConfig = {
+    wpm: {
+        label: "Word Per Minute",
+        color: "var(--chart-1)",
+    },
+} satisfies ChartConfig
 
 type averagestats = {
     averageWPM: number,
     averageAccuracy: number
 }
+
+const chartData = [
+    { time: "1", wpm: 96 },
+    { time: "2", wpm: 126 },
+    { time: "3", wpm: 130 },
+    { time: "4", wpm: 94 },
+    { time: "5", wpm: 86 },
+]
+
+
 const MyStats = () => {
 
     //average stats
@@ -33,7 +51,9 @@ const MyStats = () => {
 
     const [testsCompleted, SetTestsCompleted] = useState<number>(0);
     const [timeSpentTyping, SetTimeSpentTyping] = useState<number>(0);
-    
+    const [historyOfTests, SetHistoryOfTests] = useState<any>(null);
+
+
 
 
     // const [selectedMode, SetSelectedMode] = useState("")
@@ -47,6 +67,7 @@ const MyStats = () => {
 
 
     const [pb_selectedConfigs, pb_SetSelectedConfigs] = useState<Option[]>([])
+
 
 
     // const [selectedConfigs2, setSelectedConfigs2] = useState<Option[]>([])
@@ -271,6 +292,7 @@ const MyStats = () => {
             console.log(stats);
 
             SetPersonalBest(stats.data.PersonalBest._max.wpm)
+            SetHistoryOfTests(stats.data.tests)
 
 
             // SetAverageWPM(stats.data.averageWPM)
@@ -280,6 +302,7 @@ const MyStats = () => {
         } catch (error) {
             console.error(error);
             SetPersonalBest(null)
+            SetHistoryOfTests(null)
 
         }
     }
@@ -533,6 +556,61 @@ const MyStats = () => {
                     </div>
 
                 </div>
+
+
+                <ChartContainer className='h-full w-full' config={chartConfig}>
+
+                    <ScatterChart
+                        accessibilityLayer
+
+                        margin={{
+                            left: 12,
+                            right: 12,
+                            bottom: 16,
+                            top: 10
+                        }}
+                    >
+                        <CartesianGrid vertical={true} />
+                        {/* <XAxis
+                            dataKey="time"
+                            type='number'
+                            domain={['dataMin', 'dataMax']}
+                            tickLine={false}
+                            axisLine={false}
+                            tickMargin={8}
+                        // tickCount={30}
+                        // ticks={generateTicks(minTime, maxTime, 30)}
+                        // interval={"equidistantPreserveStart"}
+                        >
+
+                            <Label position={"bottom"} value={"Time (s)"} offset={5} />
+
+                        </XAxis> */}
+
+                        <YAxis dataKey="wpm" tickLine={false} axisLine={false} >
+
+                            <Label position={"left"} value={"WPM"} angle={-45} offset={-20} />
+
+                        </YAxis>
+
+                        <ChartTooltip
+                            cursor={false}
+                            content={<ChartTooltipContent hideLabel />}
+                        />
+                        <Line
+                            dataKey="wpm"
+                            type="linear"
+                            stroke="var(--color-wpm)"
+                            strokeWidth={2}
+                            dot={false}
+                        />
+
+
+                        <Scatter activeShape={{ fill: 'red' }} name="A school" data={historyOfTests} fill="#8884d8" />
+                    </ScatterChart>
+
+
+                </ChartContainer>
 
 
 
