@@ -811,7 +811,24 @@ app.get("/api/PBandHistory", protectRoute, async (req, res) => {
             }),
 
             prisma.typingTest.findMany({
-                where: { userId: userid, mode, lengthDurationSetting, configKey: NormalizedConfigKey },
+
+                where: {
+                    userId: userid,
+                    mode,
+                    lengthDurationSetting,
+
+                    ...(NormalizedConfigKey == null
+                        ? {
+                            OR: [
+                                { configKey: null },
+                                { configKey: "" }
+                            ]
+                        }
+                        : {
+                            configKey: NormalizedConfigKey
+                        })
+                },
+                
                 orderBy: { createdAt: "asc" },
                 select: { wpm: true, accuracy: true, mode: true, lengthDurationSetting: true, configKey: true, createdAt: true }
             })
