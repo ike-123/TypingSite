@@ -735,7 +735,23 @@ app.get("/api/averagestats", protectRoute, async (req, res) => {
 
         const userid = req.user.id;
         const tests = await prisma.typingTest.findMany({
-            where: { userId: userid, mode, lengthDurationSetting, configKey: NormalizedConfigKey },
+             where: {
+                    userId: userid,
+                    mode,
+                    lengthDurationSetting,
+
+                    ...(NormalizedConfigKey == null
+                        ? {
+                            OR: [
+                                { configKey: null },
+                                { configKey: "" }
+                            ]
+                        }
+                        : {
+                            configKey: NormalizedConfigKey
+                        })
+                },
+                
             orderBy: { createdAt: "desc" },
             ...(valid_Last ? { take: Number(req.query.last) } : {}),
             select: { wpm: true, accuracy: true }
@@ -806,7 +822,23 @@ app.get("/api/PBandHistory", protectRoute, async (req, res) => {
         const [PersonalBest, tests] = await Promise.all([
 
             prisma.typingTest.aggregate({
-                where: { userId: userid, mode, lengthDurationSetting, configKey: NormalizedConfigKey },
+                where: {
+                    userId: userid,
+                    mode,
+                    lengthDurationSetting,
+
+                    ...(NormalizedConfigKey == null
+                        ? {
+                            OR: [
+                                { configKey: null },
+                                { configKey: "" }
+                            ]
+                        }
+                        : {
+                            configKey: NormalizedConfigKey
+                        })
+                },
+                
                 _max: { wpm: true },
             }),
 

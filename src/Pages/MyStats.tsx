@@ -571,25 +571,20 @@ const MyStats = () => {
                         }}
                     >
                         <CartesianGrid vertical={true} />
-                        {/* <XAxis
-                            dataKey="time"
-                            type='number'
-                            domain={['dataMin', 'dataMax']}
-                            tickLine={false}
-                            axisLine={false}
-                            tickMargin={8}
-                        // tickCount={30}
-                        // ticks={generateTicks(minTime, maxTime, 30)}
-                        // interval={"equidistantPreserveStart"}
+                        <XAxis
+                         
+                        interval={"equidistantPreserveStart"}
+                        values='false'
                         >
 
-                            <Label position={"bottom"} value={"Time (s)"} offset={5} />
+                            {/* <Label position={"bottom"} value={"Time (s)"} offset={5} /> */}
 
-                        </XAxis> */}
+                        </XAxis>
 
                         <YAxis dataKey="wpm" tickLine={false} axisLine={false} >
 
                             <Label position={"left"} value={"WPM"} angle={-45} offset={-20} />
+                            
 
                         </YAxis>
 
