@@ -325,9 +325,10 @@ const MyStats = () => {
     return (
         <div className='max-w-7xl m-auto flex flex-col gap-10'>
 
-            <section className="border-2">
 
-                <div className='flex justify-end'>
+            <div className='max-w-100 flex flex-col gap-1'>
+
+                <div className='flex justify-center flex-wrap'>
 
                     <Select value={AverageStats_Options.selected_Test_Scope} onValueChange={AverageStats_Options.SetTestScope}>
                         <SelectTrigger className="w-[180px]">
@@ -420,37 +421,43 @@ const MyStats = () => {
                 </div>
 
 
-
-                <div className='flex gap-3'>
-                    <div className='flex justify-center text-center  flex-col  w-40 h-40 bg-primary'>
+                <section className="border-2 py-5 rounded-2xl flex flex-col items-center">
 
 
-                        <h1 className='text-xl' >  Average WPM</h1>
+                    <div className='flex gap-3'>
+                        <div className='flex justify-center text-center  flex-col  w-35 h-25 bg-primary rounded-2xl'>
 
-                        <h2 className='text-4xl'>{averageWPM}</h2>
 
+                            <h1 className='text-sm' >  Average WPM</h1>
+
+                            <h2 className='text-4xl font-bold'>{averageWPM}</h2>
+
+
+                        </div>
+
+                        <div className='flex justify-center text-center  flex-col  w-35 h-25 bg-primary rounded-2xl'>
+
+
+                            <h1 className='text-sm' > Average Accuracy</h1>
+
+                            <h2 className='text-4xl font-bold'>{averageAccuracy}</h2>
+
+
+                        </div>
 
                     </div>
 
-                    <div className='flex justify-center text-center  flex-col  w-40 h-40 bg-primary'>
-
-
-                        <h1 className='text-xl' > Average Accuracy</h1>
-
-                        <h2 className='text-4xl'>{averageAccuracy}</h2>
-
-
-                    </div>
-
-                </div>
-
-            </section>
+                </section>
+            </div>
 
 
 
-            <section className="border-2">
 
-                <div className='flex justify-end'>
+
+            <section className=" max-w-250 ">
+
+
+                <div className='flex justify-end pb-2'>
 
                     <Select value={PB_And_History_Options.selected_Test_Scope} onValueChange={PB_And_History_Options.SetTestScope}>
                         <SelectTrigger className="w-[180px]">
@@ -542,73 +549,82 @@ const MyStats = () => {
 
                 </div>
 
+                <div className='bg-neutral-850 p-2 rounded-2xl border-1'>
 
 
-                <div className='flex gap-3'>
-                    <div className='flex justify-center text-center  flex-col  w-40 h-40 bg-primary'>
 
 
-                        <h1 className='text-xl' > Personal Best </h1>
 
-                        <h2 className='text-4xl'>{personalBest}</h2>
 
+
+                    <div className='flex gap-3 mb-4'>
+                        <div className='flex justify-center text-center gap-1 flex-col px-6 h-25 bg-primary rounded-2xl border-1'>
+
+
+                            <h1 className='text-sm text-primary-foreground'> Personal Best </h1>
+
+                            <h2 className='text-4xl font-bold text-primary-foreground'>{personalBest}</h2>
+
+
+                        </div>
 
                     </div>
 
-                </div>
+
+                    <ChartContainer className='h-full w-full' config={chartConfig}>
+
+                        <ScatterChart
+                            accessibilityLayer
 
 
-                <ChartContainer className='h-full w-full' config={chartConfig}>
-
-                    <ScatterChart
-                        accessibilityLayer
-
-                        margin={{
-                            left: 12,
-                            right: 12,
-                            bottom: 16,
-                            top: 10
-                        }}
-                    >
-                        <CartesianGrid vertical={true} />
-                        <XAxis
-                         
-                        interval={"equidistantPreserveStart"}
-                        values='false'
+                            margin={{
+                                left: 12,
+                                right: 12,
+                                bottom: 16,
+                                top: 10
+                            }}
                         >
+                            <CartesianGrid vertical={false} />
+                            <XAxis
 
-                            {/* <Label position={"bottom"} value={"Time (s)"} offset={5} /> */}
+                                interval={"equidistantPreserveStart"}
+                                values='false'
 
-                        </XAxis>
-
-                        <YAxis dataKey="wpm" tickLine={false} axisLine={false} >
-
-                            <Label position={"left"} value={"WPM"} angle={-45} offset={-20} />
-                            
-
-                        </YAxis>
-
-                        <ChartTooltip
-                            cursor={false}
-                            content={<ChartTooltipContent hideLabel />}
-                        />
-                        <Line
-                            dataKey="wpm"
-                            type="linear"
-                            stroke="var(--color-wpm)"
-                            strokeWidth={2}
-                            dot={false}
-                        />
-
-
-                        <Scatter activeShape={{ fill: 'red' }} name="A school" data={historyOfTests} fill="#8884d8" />
-                    </ScatterChart>
-
-
-                </ChartContainer>
+                            >
 
 
 
+                            </XAxis>
+
+                            <YAxis dataKey="wpm" tickLine={false} axisLine={false} >
+
+                                <Label position={"left"} value={"WPM"} angle={-45} offset={-20} />
+
+
+                            </YAxis>
+
+                            <ChartTooltip
+                                cursor={false}
+                                content={<ChartTooltipContent hideLabel />}
+                            />
+                            <Line
+                                dataKey="wpm"
+                                type="linear"
+                                stroke="var(--color-wpm)"
+                                strokeWidth={2}
+                                dot={false}
+                            />
+
+
+                            <Scatter activeShape={{ fill: 'red' }} name="A school" data={historyOfTests} fill="#8884d8" />
+                        </ScatterChart>
+
+
+                    </ChartContainer>
+
+
+
+                </div>
 
 
             </section>
