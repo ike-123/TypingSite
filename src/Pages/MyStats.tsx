@@ -326,304 +326,310 @@ const MyStats = () => {
         <div className='max-w-7xl m-auto flex flex-col gap-10'>
 
 
-            <div className='max-w-100 flex flex-col gap-1'>
-
-                <div className='flex justify-center flex-wrap'>
-
-                    <Select value={AverageStats_Options.selected_Test_Scope} onValueChange={AverageStats_Options.SetTestScope}>
-                        <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectItem value="0">All Time</SelectItem>
-                                <SelectItem value="1">Last 1 tests</SelectItem>
-                                <SelectItem value="25">Last 25 tests</SelectItem>
-                                <SelectItem value="50">Last 50 tests</SelectItem>
-                                <SelectItem value="100">Last 100 tests</SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-
-                    <Select value={AverageStats_Options.selectedMode} onValueChange={Change_LengthDuration}>
-                        <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Select Mode" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectItem value="time">time</SelectItem>
-                                <SelectItem value="word">word</SelectItem>
-                                <SelectItem value="quote">quote</SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
+            <section className=" flex max-w-250 ">
 
 
 
-                    {
-                        AverageStats_Options.selectedMode === "time" && <Select value={AverageStats_Options.selectedLengthDuration} onValueChange={AverageStats_Options.SetLengthDuration}>
+                <div className='flex-3'>
+
+
+                    <div className='flex justify-end pb-2'>
+
+                        <Select value={PB_And_History_Options.selected_Test_Scope} onValueChange={PB_And_History_Options.SetTestScope}>
                             <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Select Mode" />
+                                <SelectValue placeholder="" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
-                                    <SelectItem value="5">5</SelectItem>
-                                    <SelectItem value="15">15</SelectItem>
-                                    <SelectItem value="30">30</SelectItem>
-                                    <SelectItem value="60">60</SelectItem>
-                                    <SelectItem value="120">120</SelectItem>
+                                    <SelectItem value="0">All Time</SelectItem>
+                                    <SelectItem value="1">Last 1 tests</SelectItem>
+                                    <SelectItem value="25">Last 25 tests</SelectItem>
+                                    <SelectItem value="50">Last 50 tests</SelectItem>
+                                    <SelectItem value="100">Last 100 tests</SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
 
 
-
-                    }
-
-                    {
-                        AverageStats_Options.selectedMode === "word" && <Select value={AverageStats_Options.selectedLengthDuration} onValueChange={AverageStats_Options.SetLengthDuration}>
+                        <Select value={PB_And_History_Options.selectedMode} onValueChange={PB_Change_LengthDuration}>
                             <SelectTrigger className="w-[180px]">
                                 <SelectValue placeholder="Select Mode" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
-                                    <SelectItem value="10">10</SelectItem>
-                                    <SelectItem value="25">25</SelectItem>
-                                    <SelectItem value="50">50</SelectItem>
-                                    <SelectItem value="100">100</SelectItem>
-                                    <SelectItem value="500">500</SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                    }
-
-                    {
-                        AverageStats_Options.selectedMode === "quote" && <Select value={AverageStats_Options.selectedLengthDuration} onValueChange={AverageStats_Options.SetLengthDuration}>
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Select Mode" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectItem value="short">short</SelectItem>
-                                    <SelectItem value="medium">medium</SelectItem>
-                                    <SelectItem value="long">long</SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                    }
-
-
-                    <MultipleSelectWithPlaceholderDemo
-                        value={avg_stats_selectedConfigs}
-                        onChange={avg_SetSelectedConfigs}>
-
-                    </MultipleSelectWithPlaceholderDemo>
-                </div>
-
-
-                <section className="border-2 py-5 rounded-2xl flex flex-col items-center">
-
-
-                    <div className='flex gap-3'>
-                        <div className='flex justify-center text-center  flex-col  w-35 h-25 bg-primary rounded-2xl'>
-
-
-                            <h1 className='text-sm' >  Average WPM</h1>
-
-                            <h2 className='text-4xl font-bold'>{averageWPM}</h2>
-
-
-                        </div>
-
-                        <div className='flex justify-center text-center  flex-col  w-35 h-25 bg-primary rounded-2xl'>
-
-
-                            <h1 className='text-sm' > Average Accuracy</h1>
-
-                            <h2 className='text-4xl font-bold'>{averageAccuracy}</h2>
-
-
-                        </div>
-
-                    </div>
-
-                </section>
-            </div>
-
-
-
-
-
-            <section className=" max-w-250 ">
-
-
-                <div className='flex justify-end pb-2'>
-
-                    <Select value={PB_And_History_Options.selected_Test_Scope} onValueChange={PB_And_History_Options.SetTestScope}>
-                        <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectItem value="0">All Time</SelectItem>
-                                <SelectItem value="1">Last 1 tests</SelectItem>
-                                <SelectItem value="25">Last 25 tests</SelectItem>
-                                <SelectItem value="50">Last 50 tests</SelectItem>
-                                <SelectItem value="100">Last 100 tests</SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-
-
-                    <Select value={PB_And_History_Options.selectedMode} onValueChange={PB_Change_LengthDuration}>
-                        <SelectTrigger className="w-[180px]">
-                            <SelectValue placeholder="Select Mode" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectItem value="time">time</SelectItem>
-                                <SelectItem value="word">word</SelectItem>
-                                <SelectItem value="quote">quote</SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
-
-                    {
-                        PB_And_History_Options.selectedMode === "time" && <Select value={PB_And_History_Options.selectedLengthDuration} onValueChange={PB_And_History_Options.SetLengthDuration}>
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Select Mode" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectItem value="5">5</SelectItem>
-                                    <SelectItem value="15">15</SelectItem>
-                                    <SelectItem value="30">30</SelectItem>
-                                    <SelectItem value="60">60</SelectItem>
-                                    <SelectItem value="120">120</SelectItem>
+                                    <SelectItem value="time">time</SelectItem>
+                                    <SelectItem value="word">word</SelectItem>
+                                    <SelectItem value="quote">quote</SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
 
-
-
-                    }
-
-                    {
-                        PB_And_History_Options.selectedMode === "word" && <Select value={PB_And_History_Options.selectedLengthDuration} onValueChange={PB_And_History_Options.SetLengthDuration}>
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Select Mode" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectItem value="10">10</SelectItem>
-                                    <SelectItem value="25">25</SelectItem>
-                                    <SelectItem value="50">50</SelectItem>
-                                    <SelectItem value="100">100</SelectItem>
-                                    <SelectItem value="500">500</SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                    }
-
-                    {
-                        PB_And_History_Options.selectedMode === "quote" && <Select value={PB_And_History_Options.selectedLengthDuration} onValueChange={PB_And_History_Options.SetLengthDuration}>
-                            <SelectTrigger className="w-[180px]">
-                                <SelectValue placeholder="Select Mode" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectItem value="short">short</SelectItem>
-                                    <SelectItem value="medium">medium</SelectItem>
-                                    <SelectItem value="long">long</SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-                    }
-
-
-                    <MultipleSelectWithPlaceholderDemo
-                        value={pb_selectedConfigs}
-                        onChange={pb_SetSelectedConfigs}>
-
-                    </MultipleSelectWithPlaceholderDemo>
-
-                </div>
-
-                <div className='bg-neutral-850 p-2 rounded-2xl border-1'>
+                        {
+                            PB_And_History_Options.selectedMode === "time" && <Select value={PB_And_History_Options.selectedLengthDuration} onValueChange={PB_And_History_Options.SetLengthDuration}>
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Select Mode" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectItem value="5">5</SelectItem>
+                                        <SelectItem value="15">15</SelectItem>
+                                        <SelectItem value="30">30</SelectItem>
+                                        <SelectItem value="60">60</SelectItem>
+                                        <SelectItem value="120">120</SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
 
 
 
+                        }
+
+                        {
+                            PB_And_History_Options.selectedMode === "word" && <Select value={PB_And_History_Options.selectedLengthDuration} onValueChange={PB_And_History_Options.SetLengthDuration}>
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Select Mode" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectItem value="10">10</SelectItem>
+                                        <SelectItem value="25">25</SelectItem>
+                                        <SelectItem value="50">50</SelectItem>
+                                        <SelectItem value="100">100</SelectItem>
+                                        <SelectItem value="500">500</SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        }
+
+                        {
+                            PB_And_History_Options.selectedMode === "quote" && <Select value={PB_And_History_Options.selectedLengthDuration} onValueChange={PB_And_History_Options.SetLengthDuration}>
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Select Mode" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectItem value="short">short</SelectItem>
+                                        <SelectItem value="medium">medium</SelectItem>
+                                        <SelectItem value="long">long</SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        }
 
 
+                        <MultipleSelectWithPlaceholderDemo
+                            value={pb_selectedConfigs}
+                            onChange={pb_SetSelectedConfigs}>
 
-
-                    <div className='flex gap-3 mb-4'>
-                        <div className='flex justify-center text-center gap-1 flex-col px-6 h-25 bg-primary rounded-2xl border-1'>
-
-
-                            <h1 className='text-sm text-primary-foreground'> Personal Best </h1>
-
-                            <h2 className='text-4xl font-bold text-primary-foreground'>{personalBest}</h2>
-
-
-                        </div>
+                        </MultipleSelectWithPlaceholderDemo>
 
                     </div>
 
 
-                    <ChartContainer className='h-full w-full' config={chartConfig}>
 
-                        <ScatterChart
-                            accessibilityLayer
+                    <div className='bg-neutral-850 p-2 rounded-2xl border-1'>
 
 
-                            margin={{
-                                left: 12,
-                                right: 12,
-                                bottom: 16,
-                                top: 10
-                            }}
-                        >
-                            <CartesianGrid vertical={false} />
-                            <XAxis
 
-                                interval={"equidistantPreserveStart"}
-                                values='false'
 
+
+
+
+                        <div className='flex gap-3 mb-4'>
+                            <div className='flex justify-center text-center gap-1 flex-col px-6 h-25 bg-primary rounded-2xl border-1'>
+
+
+                                <h1 className='text-sm text-primary-foreground'> Personal Best </h1>
+
+                                <h2 className='text-4xl font-bold text-primary-foreground'>{personalBest}</h2>
+
+
+                            </div>
+
+                        </div>
+
+
+                        <ChartContainer className='h-full w-full' config={chartConfig}>
+
+                            <ScatterChart
+                                accessibilityLayer
+
+
+                                margin={{
+                                    left: 12,
+                                    right: 12,
+                                    bottom: 16,
+                                    top: 10
+                                }}
                             >
+                                <CartesianGrid vertical={false} />
+                                <XAxis
+
+                                    interval={"equidistantPreserveStart"}
+                                    values='false'
+
+                                >
 
 
 
-                            </XAxis>
+                                </XAxis>
 
-                            <YAxis dataKey="wpm" tickLine={false} axisLine={false} >
+                                <YAxis dataKey="wpm" tickLine={false} axisLine={false} >
 
-                                <Label position={"left"} value={"WPM"} angle={-45} offset={-20} />
-
-
-                            </YAxis>
-
-                            <ChartTooltip
-                                cursor={false}
-                                content={<ChartTooltipContent hideLabel />}
-                            />
-                            <Line
-                                dataKey="wpm"
-                                type="linear"
-                                stroke="var(--color-wpm)"
-                                strokeWidth={2}
-                                dot={false}
-                            />
+                                    <Label position={"left"} value={"WPM"} angle={-45} offset={-20} />
 
 
-                            <Scatter activeShape={{ fill: 'red' }} name="A school" data={historyOfTests} fill="#8884d8" />
-                        </ScatterChart>
+                                </YAxis>
+
+                                <ChartTooltip
+                                    cursor={false}
+                                    content={<ChartTooltipContent hideLabel />}
+                                />
+                                <Line
+                                    dataKey="wpm"
+                                    type="linear"
+                                    stroke="var(--color-wpm)"
+                                    strokeWidth={2}
+                                    dot={false}
+                                />
 
 
-                    </ChartContainer>
+                                <Scatter activeShape={{ fill: 'red' }} name="A school" data={historyOfTests} fill="#8884d8" />
+                            </ScatterChart>
+
+
+                        </ChartContainer>
 
 
 
+                    </div>
+
+                </div>
+
+
+
+                <div className='max-w-100 flex flex-col flex-1 gap-1'>
+
+                    <div className='flex justify-center flex-wrap'>
+
+                        <Select value={AverageStats_Options.selected_Test_Scope} onValueChange={AverageStats_Options.SetTestScope}>
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem value="0">All Time</SelectItem>
+                                    <SelectItem value="1">Last 1 tests</SelectItem>
+                                    <SelectItem value="25">Last 25 tests</SelectItem>
+                                    <SelectItem value="50">Last 50 tests</SelectItem>
+                                    <SelectItem value="100">Last 100 tests</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+
+                        <Select value={AverageStats_Options.selectedMode} onValueChange={Change_LengthDuration}>
+                            <SelectTrigger className="w-[180px]">
+                                <SelectValue placeholder="Select Mode" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem value="time">time</SelectItem>
+                                    <SelectItem value="word">word</SelectItem>
+                                    <SelectItem value="quote">quote</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+
+
+
+                        {
+                            AverageStats_Options.selectedMode === "time" && <Select value={AverageStats_Options.selectedLengthDuration} onValueChange={AverageStats_Options.SetLengthDuration}>
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Select Mode" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectItem value="5">5</SelectItem>
+                                        <SelectItem value="15">15</SelectItem>
+                                        <SelectItem value="30">30</SelectItem>
+                                        <SelectItem value="60">60</SelectItem>
+                                        <SelectItem value="120">120</SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+
+
+
+                        }
+
+                        {
+                            AverageStats_Options.selectedMode === "word" && <Select value={AverageStats_Options.selectedLengthDuration} onValueChange={AverageStats_Options.SetLengthDuration}>
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Select Mode" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectItem value="10">10</SelectItem>
+                                        <SelectItem value="25">25</SelectItem>
+                                        <SelectItem value="50">50</SelectItem>
+                                        <SelectItem value="100">100</SelectItem>
+                                        <SelectItem value="500">500</SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        }
+
+                        {
+                            AverageStats_Options.selectedMode === "quote" && <Select value={AverageStats_Options.selectedLengthDuration} onValueChange={AverageStats_Options.SetLengthDuration}>
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Select Mode" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectItem value="short">short</SelectItem>
+                                        <SelectItem value="medium">medium</SelectItem>
+                                        <SelectItem value="long">long</SelectItem>
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        }
+
+
+                        <MultipleSelectWithPlaceholderDemo
+                            value={avg_stats_selectedConfigs}
+                            onChange={avg_SetSelectedConfigs}>
+
+                        </MultipleSelectWithPlaceholderDemo>
+                    </div>
+
+
+                    <section className="border-2 py-5 rounded-2xl flex flex-col items-center">
+
+
+                        <div className='flex gap-3'>
+                            <div className='flex justify-center text-center  flex-col  w-35 h-25 bg-primary rounded-2xl'>
+
+
+                                <h1 className='text-sm' >  Average WPM</h1>
+
+                                <h2 className='text-4xl font-bold'>{averageWPM}</h2>
+
+
+                            </div>
+
+                            <div className='flex justify-center text-center  flex-col  w-35 h-25 bg-primary rounded-2xl'>
+
+
+                                <h1 className='text-sm' > Average Accuracy</h1>
+
+                                <h2 className='text-4xl font-bold'>{averageAccuracy}</h2>
+
+
+                            </div>
+
+                        </div>
+
+                    </section>
                 </div>
 
 
