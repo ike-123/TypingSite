@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { Modes } from '@/utils/Typingmode'
-import { CartesianGrid, Label, Line, LineChart, XAxis, YAxis, ReferenceDot, Scatter, ScatterChart } from "recharts"
+import { CartesianGrid, Label, Line, LineChart, XAxis, YAxis, ReferenceDot, Scatter, ScatterChart, Tooltip } from "recharts"
 
 import {
     Select,
@@ -322,6 +322,37 @@ const MyStats = () => {
         }
     }
 
+    const CustomTooltip = ({ active, payload }:any) => {
+        if (active && payload && payload.length) {
+            const point = payload[0].payload;
+            console.log("logging")
+
+            // return (
+            //     <div
+            //         style={{
+            //             background: "#fff",
+            //             border: "1px solid #ccc",
+            //             padding: "10px",
+            //         }}
+            //     >
+            //         <p>{point.label}</p>
+            //         <p>X: {point.x}</p>
+            //         <p>Y: {point.y}</p>
+            //     </div>
+            // );
+
+               return (
+                <div className=''>
+                    <p>WPM: {point.wpm}</p>
+                    <p>Accuracy: {point.accuracy}</p>
+                    <p>{new Date(point.createdAt).toLocaleString()}</p>
+                </div>
+            );
+        }
+
+        return null;
+    };
+
     return (
         <div className='max-w-7xl m-auto flex flex-col gap-10 mt-10'>
 
@@ -473,6 +504,7 @@ const MyStats = () => {
 
 
 
+
                                 </XAxis>
 
                                 <YAxis dataKey="wpm" tickLine={false} axisLine={false} >
@@ -484,7 +516,7 @@ const MyStats = () => {
 
                                 <ChartTooltip
                                     cursor={false}
-                                    content={<ChartTooltipContent hideLabel />}
+                                    content={<CustomTooltip hideLabel />}
                                 />
                                 <Line
                                     dataKey="wpm"
@@ -493,6 +525,9 @@ const MyStats = () => {
                                     strokeWidth={2}
                                     dot={false}
                                 />
+
+                                    {/* <Tooltip content={<CustomTooltip />} /> */}
+
 
 
                                 <Scatter activeShape={{ fill: 'red' }} name="A school" data={historyOfTests} fill="#8884d8" />
