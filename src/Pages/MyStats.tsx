@@ -343,8 +343,8 @@ const MyStats = () => {
 
                return (
                 <div className=''>
-                    <p>WPM: {point.wpm}</p>
-                    <p>Accuracy: {point.accuracy}</p>
+                    <p>wpm: {point.wpm}</p>
+                    <p>accuracy: {point.accuracy}</p>
                     <p>{new Date(point.createdAt).toLocaleString()}</p>
                 </div>
             );
