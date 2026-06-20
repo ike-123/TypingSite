@@ -721,7 +721,6 @@ app.get("/api/averagestats", protectRoute, async (req, res) => {
         }
 
         // const NormalizedConfigKey = configs ? configs.sort().join("_") : null;
-
         // console.log(NormalizedConfigKey);
 
         const valid_Last = Number.isFinite(Number(req.query.last)) && Number(req.query.last) > 0
@@ -838,7 +837,7 @@ app.get("/api/PBandHistory", protectRoute, async (req, res) => {
                             configKey: NormalizedConfigKey
                         })
                 },
-                
+
                 _max: { wpm: true },
             }),
 
