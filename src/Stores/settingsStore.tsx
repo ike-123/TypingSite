@@ -1,11 +1,15 @@
 import { settings } from "node:cluster";
 import { create } from "zustand";
 
-export interface UserSettings {
-    account: {
-        username: string;
-        email: string;
-    };
+
+export interface UserAccountSettings {
+
+    username: string;
+    email: string;
+
+}
+
+export interface OtherSettings {
 
     personalization: {
         theme: "light" | "dark";
@@ -17,10 +21,29 @@ export interface UserSettings {
 }
 
 type UserStore = {
-    settings: UserSettings,
+
+    //Account Settings
+
+    accountSettings: UserAccountSettings,
+
+    SetAccountSettings: ()=> void;
+
+    settings: OtherSettings,
+
 }
 
 export const useSettingsStore = create<UserStore>((set) => ({
+
+    accountSettings: {
+
+        username:"",
+        email:"",
+    },
+
+    SetAccountSettings() {
+        
+    },
+    
 
     settings: {
         account: {

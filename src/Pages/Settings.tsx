@@ -1,3 +1,4 @@
+import AccountSettings from '@/Components/AccountSettings'
 import React from 'react'
 
 const Settings = () => {
@@ -7,8 +8,10 @@ const Settings = () => {
 
         </div>
 
-        <div className='bg-red-200 flex-5'>
+        <div className='bg-neutral-900 flex-5 text-3xl font-bold'>
 
+
+            <AccountSettings/>
         </div>
     </div>
   )
