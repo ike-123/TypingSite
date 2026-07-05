@@ -10,24 +10,24 @@ const AccountSettings = () => {
 
   return (
     <div w->
-      <h1 className='mb-10'>Account Settings</h1>
+      <h1 className='mb-10 font-bold text-3xl w-full'>Account Settings</h1>
 
 
       <div className='flex-col flex gap-3'>
 
         <div className='flex gap-3 items-center'>
-          <label className='text-lg' htmlFor="">Username</label>
+          <label className='text-xl' htmlFor="">Username</label>
           <Input value={User?.name} disabled />
         </div>
 
 
         <div className='flex gap-3 items-center'>
-          <label className='text-lg' htmlFor="">Email</label>
+          <label className='text-xl' htmlFor="">Email</label>
           <Input value={User?.email} disabled />
         </div>
 
         <div className='flex gap-3 items-center'>
-          <label className='text-lg text-nowrap' htmlFor="">Key ammount</label>
+          <label className='text-xl text-nowrap' htmlFor="">Key ammount</label>
           <Input value={User?.Keys} disabled />
         </div>
 

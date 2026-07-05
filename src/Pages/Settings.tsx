@@ -1,36 +1,42 @@
 import AccountSettings from '@/Components/AccountSettings'
 import { Button } from '@/components/ui/button'
 import React, { useState } from 'react'
+import { useAuthStore } from '@/Stores/AuthStore';
 
-type SettingsSection = "Account" | "Personalisation";
+type SettingsSection = "Account" | "Personalisation" | "other";
 
 const Settings = () => {
 
 
+    const User = useAuthStore((state) => state.user);
+    const isLoading = useAuthStore((state) => state.loading)
+
     const [CurrentSection, SetCurrentSection] = useState<SettingsSection>("Account")
 
     return (
-        <div className='max-w-7xl flex h-100 m-auto'>
-            <div className='bg-amber-200 flex-1'>
+        <div className='max-w-7xl flex h-100 m-auto mt-10'>
+            <div className=''>
 
 
-                <div className='h-100 sticky top-0 h-screen'>
+                <div className='h-100 w-60 border-r-white-800 border-r-1 sticky top-0 h-screen'>
 
-                    <div className='flex flex-col gap-3'>
+                    <div className='flex flex-col gap-4 mr-2'>
+
+                        {
+                            User &&
+                            <Button className={`text-xl rounded-sm h-10 flex justify-start`} variant={CurrentSection === "Account" ? "default" : "ghost"} onClick={() => { SetCurrentSection("Account") }}>
+                                Account
+                            </Button>
+                        }
 
 
-                        <Button className={`text-2xl rounded-sm h-12 flex justify-start `} onClick={() => {SetCurrentSection("Account")}}>
-                            Account
+                        <Button className={`text-xl rounded-sm h-10 flex justify-start `} variant={CurrentSection === "Personalisation" ? "default" : "ghost"} onClick={() => { SetCurrentSection("Personalisation") }}>
+                            Customisation
                         </Button>
 
-                        <Button className={`text-2xl rounded-sm h-12 flex justify-start `} onClick={() => {SetCurrentSection("Personalisation")}}>
-                            Personalisation
-                        </Button>
-
-                        {/* <Button className={`text-2xl rounded-sm h-12 flex justify-start `} onClick={() => { }}>
-                            Keys
+                        {/* <Button className={`text-xl rounded-sm h-10 flex justify-start `} variant={CurrentSection === "other" ? "default" : "ghost"} onClick={() => { SetCurrentSection("other") }}>
+                            Other
                         </Button> */}
-
 
 
                     </div>
@@ -38,15 +44,19 @@ const Settings = () => {
                 </div>
             </div>
 
-            <div className='bg-neutral-900 flex-5 text-3xl font-bold'>
+            <div className='w-full m-3'>
 
-                {
-                    CurrentSection === "Account" && <AccountSettings />
-                }
+                <div className='w-100 ml-5'>
+                    {
+                        CurrentSection === "Account" && <AccountSettings />
+                    }
 
-                {
-                    CurrentSection === "Personalisation" && <>Personalisation</>
-                }
+                    {
+                        CurrentSection === "Personalisation" && <>Personalisation</>
+                    }
+
+                </div>
+
 
 
             </div>

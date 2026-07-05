@@ -89,7 +89,7 @@ const Navbar = () => {
                     </NavigationMenuTrigger>
                     <NavigationMenuContent>
                       <NavigationMenuLink> <Link to="/stats">My Stats</Link></NavigationMenuLink>
-                      <NavigationMenuLink>Settings</NavigationMenuLink>
+                      <NavigationMenuLink><Link to="/settings">Settings</Link></NavigationMenuLink>
                       <NavigationMenuLink>About</NavigationMenuLink>
                       <NavigationMenuLink>Logout</NavigationMenuLink>
 
