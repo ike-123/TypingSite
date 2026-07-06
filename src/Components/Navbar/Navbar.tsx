@@ -90,7 +90,7 @@ const Navbar = () => {
                     <NavigationMenuContent>
                       <NavigationMenuLink> <Link to="/stats">My Stats</Link></NavigationMenuLink>
                       <NavigationMenuLink><Link to="/settings">Settings</Link></NavigationMenuLink>
-                      <NavigationMenuLink>About</NavigationMenuLink>
+                      <NavigationMenuLink><Link to="/locker">Locker</Link></NavigationMenuLink>
                       <NavigationMenuLink>Logout</NavigationMenuLink>
 
                     </NavigationMenuContent>

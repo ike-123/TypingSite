@@ -137,7 +137,7 @@ const UserLocker = () => {
 
 
     return (
-        <div className='flex bg-zinc-900 max-w-7xl mx-auto'>
+        <div className='flex max-w-7xl mx-auto'>
 
             <div className=' h-100 w-70 sticky top-0 h-screen'>
 
