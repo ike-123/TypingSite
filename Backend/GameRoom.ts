@@ -6,10 +6,11 @@ import wordsList from "../src/words.json" with { type: "json" };
 type PlayerState = {
     progressIndex: number;
     wpm: number;
-    accuracy:number;
+    accuracy: number;
     finished: boolean;
     finishtime: string;
-    DisplayName:string
+    Disconnected: boolean;
+    DisplayName: string;
 }
 
 type WordDoneData = {
@@ -19,7 +20,7 @@ type WordDoneData = {
 }
 
 type AccuracyData = {
-    accuracy:number;
+    accuracy: number;
 }
 
 export class GameRoom {
@@ -50,13 +51,13 @@ export class GameRoom {
     }
 
 
-    addPlayer(socket: Socket, DisplayName:string): void {
+    addPlayer(socket: Socket, DisplayName: string): void {
 
         //add socket(client) to room
         socket.join(this.roomId);
 
         //Add newly joined player to the array of players
-        this.players.set(socket.id, { progressIndex: 0, wpm: 0, accuracy:0, finished: false, finishtime: "", DisplayName})
+        this.players.set(socket.id, { progressIndex: 0, wpm: 0, accuracy: 0, finished: false, finishtime: "", Disconnected: false, DisplayName })
 
         this.io.to(this.roomId).emit("setWords", { "words": this.words });
 
@@ -109,10 +110,18 @@ export class GameRoom {
 
     HandleDisconnect(socket: Socket): void {
 
-        this.players.delete(socket.id);
-        console.log(socket.id, "has been removed");
 
-        if (this.status === "countdown") {
+        if (this.status === "waiting") {
+            
+            this.players.delete(socket.id);
+            console.log(socket.id, "has been removed");
+
+        }
+        else if (this.status === "countdown") {
+
+            this.players.delete(socket.id);
+            console.log(socket.id, "has been removed");
+
 
             if (this.players.size === 1) {
 
@@ -121,6 +130,19 @@ export class GameRoom {
                 // this.io.to(this.roomId).emit("countdown", null)
 
             }
+        }
+        else {
+
+            const Player = this.players.get(socket.id);
+
+            //Player should always exist
+            if (Player) {
+                this.players.set(socket.id, { ...Player, Disconnected: true });
+            }
+            else {
+                console.log("Player doesn't exist")
+            }
+
         }
 
         this.io.to(this.roomId).emit("state", Array.from(this.players.entries()).map(([id, val]) => ({ id, ...val })));

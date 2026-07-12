@@ -18,7 +18,7 @@ import MultiplayerRaceTrack from '@/Components/MultiplayerRaceTrack';
 import { Play } from 'lucide-react';
 // import { date } from 'better-auth';
 
-export type PlayerState = { id: string; progressIndex: number; wpm: number; accuracy: number, finished: boolean; finishtime: string; DisplayName: string; lastWordIndexIncreaseTime: number | null };
+export type PlayerState = { id: string; progressIndex: number; wpm: number; accuracy: number, finished: boolean; finishtime: string; Disconnected: Boolean; DisplayName: string; lastWordIndexIncreaseTime: number | null };
 
 type Status = "waiting" | "countdown" | "running"
 
@@ -221,7 +221,7 @@ const Multiplayer = () => {
 
             // const socket = io("http://localhost:3001")
             // console.log(isGuest)
-            const socket = io("192.168.1.98:3001", {
+            const socket = io("192.168.1.210:3001", {
                 auth: {
                     playerID,
                     DisplayName

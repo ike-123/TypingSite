@@ -93,6 +93,7 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
         const newheight = props.Players.length * rectangleheight;
 
         app.app.renderer.resize(app.app.screen.width, newheight);
+        console.log(props.Players)
 
 
     }, [app, props.Players])
@@ -107,6 +108,8 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
                     const playerXPosition = props.wordsLength ? progressPercent * width * .95 : 0
 
                     const trackColour = player.finished ? "0E3044" : "0E3044"
+                    
+                    const AlphaStrength = player.Disconnected ? .5 : 1
 
                     //Limit presentable name to Maximum of 12 characters after add elipsis
                     const playerName = player.DisplayName;
@@ -118,9 +121,10 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
                     return (
                         <pixiGraphics key={player.id} y={index * (rectangleheight + 1)} draw={(graphics) => {
                             graphics.clear();
-                            graphics.setFillStyle({ color: trackColour });
+                            // graphics.setFillStyle({ color: trackColour });
                             graphics.rect(0, 0, width * .9, rectangleheight);
-                            graphics.fill();
+                            graphics.fill({color: trackColour, alpha:AlphaStrength});
+                            
                         }} >
 
 
