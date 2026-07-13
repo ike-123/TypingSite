@@ -101,6 +101,7 @@ export class GameRoom {
                 this.io.to(this.roomId).emit("state", Array.from(this.players.entries()).map(([id, val]) => ({ id, ...val })));
                 this.io.to(this.roomId).emit("status", this.status)
 
+                GameTimerCountdown()
             }
 
         }, 1000);
@@ -112,7 +113,7 @@ export class GameRoom {
 
 
         if (this.status === "waiting") {
-            
+
             this.players.delete(socket.id);
             console.log(socket.id, "has been removed");
 
@@ -212,6 +213,30 @@ export class GameRoom {
 
         this.io.to(this.roomId).emit("state", Array.from(this.players.entries()).map(([id, val]) => ({ id, ...val })));
 
+    }
+
+    GameCountdown(): void {
+
+
+        let timer = 600;
+
+        this.interval = setInterval(() => {
+            this.io.to(this.roomId).emit("GameCountdown", timer)
+            timer--;
+
+            if (timer <= 0) {
+                clearInterval(this.interval)
+                this.status = "running"
+                this.startAt = Date.now() + 500
+
+                this.io.to(this.roomId).emit("start", { "words": this.words, "startAt": this.startAt });
+                this.io.to(this.roomId).emit("state", Array.from(this.players.entries()).map(([id, val]) => ({ id, ...val })));
+                this.io.to(this.roomId).emit("status", this.status)
+
+
+            }
+
+        }, 1000);
     }
 
     getRandomWords(amount: number) {
