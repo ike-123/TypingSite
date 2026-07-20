@@ -28,28 +28,34 @@ export class GameRoom {
     io: Server;
     roomId: string;
     players: Map<string | undefined, PlayerState>;
-    cachedPlayersArray: Map<string | undefined, PlayerState>;
+    // cachedPlayersArray: Map<string | undefined, PlayerState>;
     status: string;
     words: string[];
     startAt: number | null;
     countdownTimer: number;
-    interval: any
+    interval: any;
+    isShuttingDown: boolean
+    private OnRoomDestoryed?: (roomid: string) => void;
+    private HasSentNotification = false;
+    
 
 
 
 
-    constructor(io: Server, roomId: string) {
+    constructor(io: Server, roomId: string, onRoomDestroyed: (roomId: string) => void) {
 
         this.io = io;
         this.roomId = roomId;
         this.players = new Map();
-        this.cachedPlayersArray = new Map();
+        // this.cachedPlayersArray = new Map();
         this.status = "waiting";
         this.words = [];
         this.startAt = null;
         this.countdownTimer = 10;
         this.words = this.getRandomWords(5);
         this.interval = null
+        this.OnRoomDestoryed = onRoomDestroyed;
+        this.isShuttingDown = false
     }
 
 
@@ -101,13 +107,13 @@ export class GameRoom {
 
                 //Created cachedPlayersArray
 
-                this.cachedPlayersArray = new Map(this.players);
+                // this.cachedPlayersArray = new Map(this.players);
 
                 this.io.to(this.roomId).emit("start", { "words": this.words, "startAt": this.startAt });
-                this.io.to(this.roomId).emit("state", Array.from(this.cachedPlayersArray.entries()).map(([id, val]) => ({ id, ...val })));
+                this.io.to(this.roomId).emit("state", Array.from(this.players.entries()).map(([id, val]) => ({ id, ...val })));
                 this.io.to(this.roomId).emit("status", this.status)
 
-                // GameTimerCountdown()
+                this.GameCountdown();
             }
 
         }, 1000);
@@ -118,10 +124,13 @@ export class GameRoom {
     HandleDisconnect(socket: Socket): void {
 
 
-        this.players.delete(socket.id);
 
+        if(this.isShuttingDown) return;
 
         if (this.status === "waiting") {
+
+            this.players.delete(socket.id);
+
 
             console.log(socket.id, "has been removed");
 
@@ -129,6 +138,9 @@ export class GameRoom {
 
         }
         else if (this.status === "countdown") {
+
+
+            this.players.delete(socket.id);
 
             console.log(socket.id, "has been removed");
 
@@ -148,17 +160,17 @@ export class GameRoom {
 
             //match has started
 
-            const CachedPlayer = this.cachedPlayersArray.get(socket.id);
+            const Player = this.players.get(socket.id);
 
             //Player should always exist
-            if (CachedPlayer) {
-                this.cachedPlayersArray.set(socket.id, { ...CachedPlayer, Disconnected: true });
+            if (Player) {
+                this.players.set(socket.id, { ...Player, Disconnected: true });
             }
             else {
                 console.log("Player doesn't exist")
             }
 
-            this.io.to(this.roomId).emit("state", Array.from(this.cachedPlayersArray.entries()).map(([id, val]) => ({ id, ...val })));
+            this.io.to(this.roomId).emit("state", Array.from(this.players.entries()).map(([id, val]) => ({ id, ...val })));
 
         }
 
@@ -168,7 +180,7 @@ export class GameRoom {
 
     HandleWordDone(socket: Socket, data: WordDoneData) {
 
-        const TargetPlayer = this.cachedPlayersArray.get(socket.id);
+        const TargetPlayer = this.players.get(socket.id);
 
         if (!TargetPlayer || this.status != "running") return;
 
@@ -193,14 +205,14 @@ export class GameRoom {
             }
         }
 
-        this.io.to(this.roomId).emit("state", Array.from(this.cachedPlayersArray.entries()).map(([id, val]) => ({ id, ...val })));
+        this.io.to(this.roomId).emit("state", Array.from(this.players.entries()).map(([id, val]) => ({ id, ...val })));
 
     }
 
 
     HandleAccuracy(socket: Socket, data: AccuracyData) {
 
-        const TargetPlayer = this.cachedPlayersArray.get(socket.id);
+        const TargetPlayer = this.players.get(socket.id);
 
         if (!TargetPlayer || this.status != "running") return;
 
@@ -226,33 +238,71 @@ export class GameRoom {
         //     }
         // }
 
-        this.io.to(this.roomId).emit("state", Array.from(this.cachedPlayersArray.entries()).map(([id, val]) => ({ id, ...val })));
+        this.io.to(this.roomId).emit("state", Array.from(this.players.entries()).map(([id, val]) => ({ id, ...val })));
 
     }
 
-    // GameCountdown(): void {
+    GameCountdown(): void {
 
 
-    //     let timer = 600;
+        let timer = 600;
+        let TimeToSendCloseNotification = 60;
 
-    //     this.interval = setInterval(() => {
-    //         this.io.to(this.roomId).emit("GameCountdown", timer)
-    //         timer--;
-
-    //         if (timer <= 0) {
-    //             clearInterval(this.interval)
-    //             this.status = "running"
-    //             this.startAt = Date.now() + 500
-
-    //             this.io.to(this.roomId).emit("start", { "words": this.words, "startAt": this.startAt });
-    //             this.io.to(this.roomId).emit("state", Array.from(this.players.entries()).map(([id, val]) => ({ id, ...val })));
-    //             this.io.to(this.roomId).emit("status", this.status)
+        this.interval = setInterval(() => {
+            this.io.to(this.roomId).emit("GameCountdown", timer)
+            timer--;
 
 
-    //         }
+            if(timer <= TimeToSendCloseNotification && !this.HasSentNotification){
+                //send ServerClosing notification
+                this.io.to(this.roomId).emit("ServerCloseNotification",TimeToSendCloseNotification)
+                this.HasSentNotification = true;
 
-    //     }, 1000);
-    // }
+            }
+            if (timer <= 0) {
+                clearInterval(this.interval)
+                this.status = "end"
+
+                this.io.to(this.roomId).emit("state", Array.from(this.players.entries()).map(([id, val]) => ({ id, ...val })));
+                this.io.to(this.roomId).emit("status", this.status)
+                this.ShutdownGameRoom();
+
+
+            }
+
+        }, 1000);
+    }
+
+
+    ShutdownGameRoom(): void {
+
+        if(this.isShuttingDown) return;
+
+        this.isShuttingDown = true;
+
+        //Disconnect each socket in the Room 
+
+        for (const socketId of Array.from(this.players.keys())) {
+            if (!socketId) continue;
+
+            const socket = this.io.sockets.sockets.get(socketId);
+
+            if (socket) {
+                // Remove socket from a room
+                socket.leave(this.roomId)
+                //Disconnet socket
+                socket?.disconnect(true);
+
+            }
+        }
+
+        //Remove players from players Map
+        this.players.clear();
+        //Delete GameRoom
+        this.io.sockets.adapter.rooms.delete(this.roomId)
+        //Call callback function in parent to delete this room from it's array of Rooms
+        this.OnRoomDestoryed?.(this.roomId)
+    }
 
     getRandomWords(amount: number) {
         const randomArray = [...wordsList].sort(() => 0.5 - Math.random());

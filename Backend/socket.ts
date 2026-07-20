@@ -149,23 +149,24 @@ export function setupSockets(server: HttpServer) {
 
     function CalculateNumberOfPlayers() {
 
-        let Total = 0;
+        // let Total = 0;
 
-        for (let [roomid, room] of rooms.entries()) {
+        // for (let [roomid, room] of rooms.entries()) {
 
-            Total += room.players.size;
-        }
+        //     Total += room.players.size;
+        // }
 
-        if (Total === 0) {
+        // if (Total === 0) {
 
-            TotalPlayersInServer = 1;
-        }
-        else {
+        //     TotalPlayersInServer = 1;
+        // }
+        // else {
 
-            TotalPlayersInServer = Total;
-        }
+        //     TotalPlayersInServer = Total;
+        // }
 
-        io.emit("NumberOfPlayers", TotalPlayersInServer)
+        
+        io.emit("NumberOfPlayers", players.size)
 
     }
 
