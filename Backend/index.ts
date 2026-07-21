@@ -581,7 +581,8 @@ app.post("/api/testresult", protectRoute, async (req, res) => {
         if (Array.isArray(configs)) {
 
             let FilteredConfigs = configs.filter(item => item !== "error")
-            NormalizedConfigKey = FilteredConfigs.sort().join("_")
+            NormalizedConfigKey = FilteredConfigs.length > 0 ? FilteredConfigs.sort().join("_") : null
+
         }
 
 
@@ -734,23 +735,23 @@ app.get("/api/averagestats", protectRoute, async (req, res) => {
 
         const userid = req.user.id;
         const tests = await prisma.typingTest.findMany({
-             where: {
-                    userId: userid,
-                    mode,
-                    lengthDurationSetting,
+            where: {
+                userId: userid,
+                mode,
+                lengthDurationSetting,
 
-                    ...(NormalizedConfigKey == null
-                        ? {
-                            OR: [
-                                { configKey: null },
-                                { configKey: "" }
-                            ]
-                        }
-                        : {
-                            configKey: NormalizedConfigKey
-                        })
-                },
-                
+                ...(NormalizedConfigKey == null
+                    ? {
+                        OR: [
+                            { configKey: null },
+                            { configKey: "" }
+                        ]
+                    }
+                    : {
+                        configKey: NormalizedConfigKey
+                    })
+            },
+
             orderBy: { createdAt: "desc" },
             ...(valid_Last ? { take: Number(req.query.last) } : {}),
             select: { wpm: true, accuracy: true }
@@ -859,7 +860,7 @@ app.get("/api/PBandHistory", protectRoute, async (req, res) => {
                             configKey: NormalizedConfigKey
                         })
                 },
-                
+
                 orderBy: { createdAt: "asc" },
                 select: { wpm: true, accuracy: true, mode: true, lengthDurationSetting: true, configKey: true, createdAt: true }
             })
