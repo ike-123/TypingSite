@@ -245,8 +245,8 @@ export class GameRoom {
     GameCountdown(): void {
 
 
-        let timer = 600;
-        let TimeToSendCloseNotification = 60;
+        let timer = 10;
+        let TimeToSendCloseNotification = 5;
 
         this.interval = setInterval(() => {
             this.io.to(this.roomId).emit("GameCountdown", timer)

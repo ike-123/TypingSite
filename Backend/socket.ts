@@ -137,7 +137,9 @@ export function setupSockets(server: HttpServer) {
         //No rooms have been found so make a new one
 
         const roomid = `Room_${crypto.randomUUID()}`
-        const new_room = new GameRoom(io, roomid);
+        const new_room = new GameRoom(io, roomid,(closedRoomID)=>{
+            rooms.delete(closedRoomID)
+        });
         rooms.set(roomid, new_room);
 
         return new_room;

@@ -16,6 +16,7 @@ import { AnimatedSprite } from 'pixi.js';
 import AnimatedSpriteAvatar from '@/Components/AnimatedSpriteAvatar';
 import MultiplayerRaceTrack from '@/Components/MultiplayerRaceTrack';
 import { Play } from 'lucide-react';
+import { div } from 'three/src/nodes/math/OperatorNode.js';
 // import { date } from 'better-auth';
 
 export type PlayerState = { id: string; progressIndex: number; wpm: number; accuracy: number, finished: boolean; finishtime: string; Disconnected: Boolean; DisplayName: string; lastWordIndexIncreaseTime: number | null };
@@ -59,6 +60,17 @@ const Multiplayer = () => {
 
     const [PlayersInServer, SetPlayersInServer] = useState(0);
 
+    const [RoomCloseTime, SetRoomCloseTime] = useState(0)
+
+    const [showRoomCloseTime, SetShowRoomCloseTime] = useState(false)
+
+    const [ShowRoomClosedMessage, SetShowRoomClosedMessage] = useState(false)
+
+
+
+
+
+
 
     // const caretRef = useRef<HTMLDivElement | null>(null);
 
@@ -81,6 +93,10 @@ const Multiplayer = () => {
     const [ShowSetupScreen, SetShowSetupScreen] = useState(false)
 
     const parentRef = useRef<HTMLDivElement>(null);
+
+    const RoomCloseMessage = "The server has closed"
+
+
 
     // useEffect(() => {
 
@@ -320,6 +336,11 @@ const Multiplayer = () => {
             socket.on("NumberOfPlayers", (amount) => {
                 SetPlayersInServer(amount)
             })
+            socket.on("ServerCloseNotification", (time) => {
+                SetShowRoomCloseTime(true)
+                SetRoomCloseTime(time)
+                console.log("serverClosingNotif")
+            })
 
             return () => { socket.disconnect(); };
 
@@ -419,6 +440,24 @@ const Multiplayer = () => {
 
     }, [players])
 
+    useEffect(() => {
+        if (!showRoomCloseTime || RoomCloseTime <= 0) return;
+
+        const interval = setInterval(() => {
+            SetRoomCloseTime((prev) => {
+                if (prev <= 1) {
+                    clearInterval(interval);
+                    SetShowRoomClosedMessage(true);
+                    SetShowRoomCloseTime(false);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [showRoomCloseTime, RoomCloseTime]);
+
 
 
     return (
@@ -488,6 +527,12 @@ const Multiplayer = () => {
 
                             <div className='mb-10'>
 
+                                {
+                                    showRoomCloseTime && <p className='text-red-300'>Room will close in {RoomCloseTime}</p>
+                                }
+                                {
+                                    ShowRoomClosedMessage && <p className='text-red-300'>{RoomCloseMessage}</p>
+                                }
                                 {status === "countdown" && countdown !== null && <h1 className='infotext text-2xl'>Game starts in {countdown}</h1>}
                                 {status === "waiting" ? <h1 className='infotext text-2xl'>Waiting For more Players</h1> : ""}
                                 {<h1 className='infotext'>Players in Server: {PlayersInServer}</h1>}
