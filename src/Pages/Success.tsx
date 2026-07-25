@@ -8,7 +8,7 @@ const Success = () => {
     // const location = useLocation();
 
     const [searchParams] = useSearchParams();
-    const [orderdetails,setOrderDetails] = useState<any>(null)
+    const [orderdetails, setOrderDetails] = useState<any>(null)
 
     useEffect(() => {
 

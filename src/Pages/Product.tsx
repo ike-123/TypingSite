@@ -244,6 +244,20 @@ const Product = () => {
                         SetDialogBox(true);
                         break;
 
+
+
+                    case "ITEM_ALREADY_OWNED":
+
+                        modaltext = (
+                            <>
+                                <h1 className='text-2xl'>{error.response?.data.error}</h1>
+                            </>
+                        )
+
+                        SetModalContent(modaltext);
+                        SetDialogBox(true);
+                        break;
+
                     default:
                         console.log("Unknown error");
                 }
@@ -253,6 +267,7 @@ const Product = () => {
         }
     }
 
+    
 
     async function handleCheckout(keyPackageId: string) {
         try {
@@ -395,21 +410,25 @@ const Product = () => {
 
                     </Canvas>
 
-                    //Use HTML/Tailwind to overlay a finish line at the end of the track
-
-                    // <div className='flex flex-col justify-center h-full'>
-                    //     <Application >
-                    //         <pixiContainer scale={2.5}>
-                    //             <MultiplayerRaceTrack key={resetKey} ShopDisplay={true} Players={PlaceHolderPlayerArray} wordsLength={30}/>
-                    //         </pixiContainer>
-                    //     </Application>
-
-                    //     <Button size={"lg"} className='w-18 mt-2' onClick={handleReset}>Restart</Button>
-
-                    // </div>
 
 
                 );
+
+            case "character":
+
+                //Use HTML/Tailwind to overlay a finish line at the end of the track
+
+                <div className='flex flex-col justify-center h-full'>
+                    <Application >
+                        <pixiContainer scale={2.5}>
+                            <MultiplayerRaceTrack key={resetKey} ShopDisplay={true} Players={PlaceHolderPlayerArray} wordsLength={30} />
+                        </pixiContainer>
+                    </Application>
+
+                    <Button size={"lg"} className='w-18 mt-2' onClick={handleReset}>Restart</Button>
+
+                </div>
+
 
             case "model":
                 ""
@@ -417,8 +436,7 @@ const Product = () => {
             case "trail":
                 ""
 
-            case "character":
-                ""
+
 
             default:
                 return null;
@@ -431,7 +449,7 @@ const Product = () => {
             <>
                 <h1 className='text-2xl'>Are you sure you want to Purchase?</h1>
 
-                <h1 className='text-2xl'>Item Name</h1>
+                <h1 className='text-2xl'>{shopItem?.name}</h1>
 
                 <div className='flex gap-4 mt-auto'>
                     <Button onClick={() => { BuyShopItem(shopItem.id) }} className='bg-green-400' size={"lg"}>Confirm Purchase</Button>
@@ -484,7 +502,7 @@ const Product = () => {
                             User ?
 
 
-                                User.key >= shopItem?.priceKeys ?
+                                User.Keys >= shopItem?.priceKeys ?
                                     <Button size={"lg"} className='mt-20 w-full h-12 text-xl self-center' onClick={() => { PurchaseButtonClicked() }}>Purchase</Button>
 
                                     :

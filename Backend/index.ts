@@ -337,7 +337,7 @@ app.post("/api/BuyShopItem", protectRoute, async (req, res) => {
     } catch (error: unknown) {
 
         if (error instanceof PrismaClientKnownRequestError && error.code === "P2002") {
-            return res.status(409).json({ code: "ITEM_ALREADY_OWNED", error: "You already own this item" });
+            return res.status(409).json({ code: "ITEM_ALREADY_OWNED", error: "Item already owned" });
         }
 
         if (error instanceof Error) {
@@ -369,6 +369,7 @@ app.post("/api/BuyShopItem", protectRoute, async (req, res) => {
 
 app.get("/api/order", protectRoute, async (req, res) => {
 
+    console.log("inside order endpoint")
 
     //FUNCTION THAT IS CALLED ON THE FULFILLMENT PAGE TO GET EXTRA INFORMATION FROM ORDER
 
@@ -382,21 +383,32 @@ app.get("/api/order", protectRoute, async (req, res) => {
     if (typeof sessionId !== "string") {
 
         //Refactor res.status response to use correct code and message type
+        console.log("1")
 
-        return res.status(404).json("Invalid Session")
+        return res.status(400).json({ error: "Invalid session ID" })
     }
 
     const purchase = await prisma.payment.findUnique({
         where: { stripeSessionId: sessionId }
     })
 
+    console.log(purchase)
+
     if (!purchase) {
-        return res.status(404).json("Order doesn't exist")
+        console.log("2")
+
+        return res.status(404).json({ error: "Order not found" })
+
     }
 
     if (purchase.userId != req.user.id) {
-        return res.status(403).send("Forbidden");
+        console.log("3")
+
+        return res.status(403).send({ error: "Forbidden" });
+
     }
+    console.log("4")
+
 
     res.json({
         productName: purchase.itemName,
