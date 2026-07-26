@@ -197,7 +197,7 @@ app.get("/api/shopItems", async (req, res) => {
 
 app.get("/api/product/:type/:id", async (req, res) => {
 
-    // console.log("Single Shop item reached");
+    console.log("Single Shop item reached");
 
     //Need to find a way to also get a keypackage as well. Maybe using the client url and putting /key before id
 
@@ -223,14 +223,14 @@ app.get("/api/product/:type/:id", async (req, res) => {
         }
         else {
 
-            return res.status(400).json({
+            return res.status(400).json({code: "ITEM_NOT_FOUND",
                 error: "Invalid product type"
             });
 
         }
 
         if (!product) {
-            return res.status(404).json({
+            return res.status(404).json({code: "ITEM_NOT_FOUND",
                 error: "Product not found"
             });
         }
@@ -383,7 +383,6 @@ app.get("/api/order", protectRoute, async (req, res) => {
     if (typeof sessionId !== "string") {
 
         //Refactor res.status response to use correct code and message type
-        console.log("1")
 
         return res.status(400).json({ error: "Invalid session ID" })
     }
@@ -395,20 +394,15 @@ app.get("/api/order", protectRoute, async (req, res) => {
     console.log(purchase)
 
     if (!purchase) {
-        console.log("2")
-
         return res.status(404).json({ error: "Order not found" })
 
     }
 
     if (purchase.userId != req.user.id) {
-        console.log("3")
 
         return res.status(403).send({ error: "Forbidden" });
 
     }
-    console.log("4")
-
 
     res.json({
         productName: purchase.itemName,

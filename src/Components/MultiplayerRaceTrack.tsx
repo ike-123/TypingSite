@@ -130,7 +130,7 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
 
 
                             <pixiContainer x={playerXPosition} ref={playerRef}>
-                                <AnimatedSpriteAvatar shopDisplay={props.ShopDisplay} player={player}/>
+                                <AnimatedSpriteAvatar isShopDisplay={props.ShopDisplay} player={player}/>
 
                                 <pixiText text={player.DisplayName} style={{
                                     fill: 'white',

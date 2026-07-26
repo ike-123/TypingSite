@@ -107,6 +107,7 @@ const Product = () => {
     const [texture, setTexture] = useState(null)
 
     const PlaceHolderPlayerArray: PlayerState[] = new Array(1);
+
     const placeholderPlayer: PlayerState = {
         id: "placeholder",
         progressIndex: 1,
@@ -115,7 +116,8 @@ const Product = () => {
         finished: false,
         finishtime: "",
         DisplayName: "",
-        lastWordIndexIncreaseTime: 0
+        lastWordIndexIncreaseTime: 0,
+        Disconnected:false
     }
 
     PlaceHolderPlayerArray[0] = placeholderPlayer;
@@ -143,7 +145,7 @@ const Product = () => {
                 console.log(id)
 
 
-                const res = await axios.get(`http://192.168.1.219:3001/api/product/${type}/${id}`, { params: { productId: id } });
+                const res = await axios.get(`http://localhost:3001/api/product/${type}/${id}`, { params: { productId: id } });
 
                 console.log(res?.data);
                 setShopItem(res?.data);
@@ -152,7 +154,14 @@ const Product = () => {
 
 
             } catch (error) {
-                console.log(error);
+                if (axios.isAxiosError(error)) {
+
+                    if (error.response?.data.code === "ITEM_NOT_FOUND") {
+                        //redirect to error page or custom item not found page
+                        // navigate("/not-found");
+                        console.log("Item not found")
+                    }
+                }
             }
             finally {
                 setLoading(false)
@@ -267,7 +276,7 @@ const Product = () => {
         }
     }
 
-    
+
 
     async function handleCheckout(keyPackageId: string) {
         try {
@@ -311,79 +320,100 @@ const Product = () => {
         switch (shopItem?.slot) {
             case "avatar":
                 return (
-                    <Canvas shadows camera={{ position: [0, .5, 1.5], rotation: [0, 0, 0] }}>
-                        <ambientLight intensity={.6} />
-                        {/* <directionalLight castShadow position={[2, 2, 2]} /> */}
 
-                        {/* <planeGeometry></planeGeometry> */}
+                    //Use HTML/Tailwind to overlay a finish line at the end of the track
+
+                    <div className='flex flex-col justify-center h-full'>
+                        <Application >
+                            <pixiContainer scale={2.5}>
+                                <MultiplayerRaceTrack key={resetKey} ShopDisplay={true} Players={PlaceHolderPlayerArray} wordsLength={30} />
+                            </pixiContainer>
+                        </Application>
+
+                        <Button size={"lg"} className='w-18 mt-2' onClick={handleReset}>Restart</Button>
+
+                    </div>
+
+
+
+
+                );
+
+            case "character":
+
+                <Canvas shadows camera={{ position: [0, .5, 1.5], rotation: [0, 0, 0] }}>
+                    <ambientLight intensity={.6} />
+                    {/* <directionalLight castShadow position={[2, 2, 2]} /> */}
+
+                    {/* <planeGeometry></planeGeometry> */}
 
 
                     //Floor
-                        <mesh receiveShadow position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-                            <planeGeometry args={[20, 20]} />
-                            {/* <meshStandardMaterial color={"#231452"} roughness={.2} metalness={.8} />
+                    <mesh receiveShadow position={[0, 0, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+                        <planeGeometry args={[20, 20]} />
+                        {/* <meshStandardMaterial color={"#231452"} roughness={.2} metalness={.8} />
                              */}
 
-                            <MeshReflectorMaterial
-                                blur={[0, 0]} // Blur ground reflections (width, height), 0 skips blur
-                                mixBlur={0} // How much blur mixes with surface roughness (default = 1)
-                                mixStrength={1} // Strength of the reflections
-                                mixContrast={1} // Contrast of the reflections
-                                resolution={512} // Off-buffer resolution, lower=faster, higher=better quality, slower
-                                mirror={0} // Mirror environment, 0 = texture colors, 1 = pick up env colors
-                                depthScale={0} // Scale the depth factor (0 = no depth, default = 0)
-                                minDepthThreshold={0.9} // Lower edge for the depthTexture interpolation (default = 0)
-                                maxDepthThreshold={1} // Upper edge for the depthTexture interpolation (default = 0)
-                                depthToBlurRatioBias={0.25} // Adds a bias factor to the depthTexture before calculating the blur amount [blurFactor = blurTexture * (depthTexture + bias)]. It accepts values between 0 and 1, default is 0.25. An amount > 0 of bias makes sure that the blurTexture is not too sharp because of the multiplication with the depthTexture
-                                distortion={1} // Amount of distortion based on the distortionMap texture
-                                reflectorOffset={0} // Offsets the virtual camera that projects the reflection. Useful when the reflective surface is some distance from the object's origin (default = 0)
-                                color={"#231452"}
-                            />
-                        </mesh>
+                        <MeshReflectorMaterial
+                            blur={[0, 0]} // Blur ground reflections (width, height), 0 skips blur
+                            mixBlur={0} // How much blur mixes with surface roughness (default = 1)
+                            mixStrength={1} // Strength of the reflections
+                            mixContrast={1} // Contrast of the reflections
+                            resolution={512} // Off-buffer resolution, lower=faster, higher=better quality, slower
+                            mirror={0} // Mirror environment, 0 = texture colors, 1 = pick up env colors
+                            depthScale={0} // Scale the depth factor (0 = no depth, default = 0)
+                            minDepthThreshold={0.9} // Lower edge for the depthTexture interpolation (default = 0)
+                            maxDepthThreshold={1} // Upper edge for the depthTexture interpolation (default = 0)
+                            depthToBlurRatioBias={0.25} // Adds a bias factor to the depthTexture before calculating the blur amount [blurFactor = blurTexture * (depthTexture + bias)]. It accepts values between 0 and 1, default is 0.25. An amount > 0 of bias makes sure that the blurTexture is not too sharp because of the multiplication with the depthTexture
+                            distortion={1} // Amount of distortion based on the distortionMap texture
+                            reflectorOffset={0} // Offsets the virtual camera that projects the reflection. Useful when the reflective surface is some distance from the object's origin (default = 0)
+                            color={"#231452"}
+                        />
+                    </mesh>
 
                     //Back Plane
-                        <mesh receiveShadow position={[0, 0, -3]} >
-                            <planeGeometry args={[30, 30]} />
-                            <meshStandardMaterial color={"#231452"} />
-                        </mesh>
+                    <mesh receiveShadow position={[0, 0, -3]} >
+                        <planeGeometry args={[30, 30]} />
+                        <meshStandardMaterial color={"#231452"} />
+                    </mesh>
 
-                        <directionalLight
+                    <directionalLight
 
-                            position={[2, 4, 2]}
-                            intensity={4}
+                        position={[2, 4, 2]}
+                        intensity={4}
 
-                        />
+                    />
 
-                        <pointLight intensity={1.5} position={[-1, 1, 1]} castShadow>
+                    <pointLight intensity={1.5} position={[-1, 1, 1]} castShadow>
 
-                        </pointLight>
+                    </pointLight>
 
-                        <pointLight intensity={1.5} position={[1, 1, 1]} castShadow>
+                    <pointLight intensity={1.5} position={[1, 1, 1]} castShadow>
 
-                        </pointLight>
+                    </pointLight>
 
-                        <spotLight penumbra={.3} castShadow angle={Math.PI / 11} intensity={4} decay={1} position={[0, 2.5, 1]}>
+                    <spotLight penumbra={.3} castShadow angle={Math.PI / 11} intensity={4} decay={1} position={[0, 2.5, 1]}>
 
-                        </spotLight>
+                    </spotLight>
 
-                        <mesh position={[0, 2.5, .75]}>
-                            <sphereGeometry args={[0.1]} />
-                            <meshBasicMaterial color="red" />
-                        </mesh>
+                    <mesh position={[0, 2.5, .75]}>
+                        <sphereGeometry args={[0.1]} />
+                        <meshBasicMaterial color="red" />
+                    </mesh>
 
 
 
-                        <mesh position={[-1, 1, 1]}>
-                            <sphereGeometry args={[0.1]} />
-                            <meshBasicMaterial color="yellow" />
-                        </mesh>
+                    <mesh position={[-1, 1, 1]}>
+                        <sphereGeometry args={[0.1]} />
+                        <meshBasicMaterial color="yellow" />
+                    </mesh>
 
-                        <mesh position={[2, 5, 2]}>
-                            <sphereGeometry args={[0.1]} />
-                            <meshBasicMaterial color="yellow" />
-                        </mesh>
+                    <mesh position={[2, 5, 2]}>
+                        <sphereGeometry args={[0.1]} />
+                        <meshBasicMaterial color="yellow" />
+                    </mesh>
 
-                        {/* <MeshReflectorMaterial args={[10, 10]}
+                    {/* <MeshReflectorMaterial args={[10, 10]}
                             rotation={[-Math.PI / 2, 0, 0]}
                             mirror={0.7}
                             blur={[300, 100]}
@@ -393,44 +423,25 @@ const Product = () => {
 
 
 
-                        <Suspense>
+                    <Suspense>
 
-                            {/* We need to make sure that we rotate the item and not the camera when we click and drag */}
-                            <ItemModel></ItemModel>
+                        {/* We need to make sure that we rotate the item and not the camera when we click and drag */}
+                        <ItemModel></ItemModel>
 
-                        </Suspense>
+                    </Suspense>
 
-                        <OrbitControls
-                            enableRotate={false}
-                            enablePan={false}
-                            minDistance={1}
-                            maxDistance={4}
-                        />
-
-
-                    </Canvas>
+                    <OrbitControls
+                        enableRotate={false}
+                        enablePan={false}
+                        minDistance={1}
+                        maxDistance={4}
+                    />
 
 
-
-                );
-
-            case "character":
-
-                //Use HTML/Tailwind to overlay a finish line at the end of the track
-
-                <div className='flex flex-col justify-center h-full'>
-                    <Application >
-                        <pixiContainer scale={2.5}>
-                            <MultiplayerRaceTrack key={resetKey} ShopDisplay={true} Players={PlaceHolderPlayerArray} wordsLength={30} />
-                        </pixiContainer>
-                    </Application>
-
-                    <Button size={"lg"} className='w-18 mt-2' onClick={handleReset}>Restart</Button>
-
-                </div>
+                </Canvas>
 
 
-            case "model":
+            case "celebration":
                 ""
 
             case "trail":

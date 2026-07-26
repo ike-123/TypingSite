@@ -26,7 +26,7 @@ extend({
 
 type playerProp = {
     player: PlayerState,
-    shopDisplay?: boolean
+    isShopDisplay?: boolean
 }
 
 
@@ -50,7 +50,7 @@ const AnimatedSpriteAvatar = (props: playerProp) => {
 
 
     const spriteRef = useRef<any>(null);
-    const spriteRefSet = useRef(false);
+    // const spriteRefSet = useRef(false);
 
     const [frames, SetFrames] = useState<Map<String, Texture[]>>(new Map());
 
@@ -149,7 +149,7 @@ const AnimatedSpriteAvatar = (props: playerProp) => {
             // console.log(props.player);
             // console.log("playerlastwordindex " + props.player.lastWordIndexIncreaseTime)
 
-            if (!props.shopDisplay) {
+            if (!props.isShopDisplay) {
 
                 if (!props.player.lastWordIndexIncreaseTime) {
                     SetAnimationToPlay("idle");
