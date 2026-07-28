@@ -479,8 +479,8 @@ const Multiplayer = () => {
 
 
                     <div>
-                        <div>Last Key pressed {engine.state.lastkeyPressed}</div>
-                        {engine.state.CurrentWordIndex}
+                        {/* <div>Last Key pressed {engine.state.lastkeyPressed}</div> */}
+                        {/* {engine.state.CurrentWordIndex} */}
 
                         <Button onClick={EnableShowSetupScreen}>Change Name/Avatar</Button>
 
