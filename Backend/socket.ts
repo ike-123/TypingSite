@@ -11,6 +11,7 @@ import { GameRoom } from "./GameRoom.ts";
 import wordsList from "../src/words.json" with { type: "json" };
 import cookieParser from "cookie-parser"
 import { map } from "zod";
+import { auth } from "./lib/Auth.ts";
 
 
 
@@ -35,7 +36,7 @@ type PlayerData = {
 }
 
 type AccuracyData = {
-    accuracy:number;
+    accuracy: number;
 }
 
 
@@ -55,6 +56,34 @@ export function setupSockets(server: HttpServer) {
     let players = new Map<string, PlayerData>()
 
     let TotalPlayersInServer = 0;
+
+    io.use(async (socket, next) => {
+
+        try {
+            const session = await auth.api.getSession({
+                headers: socket.handshake.headers as any
+            });
+
+            if (session?.user) {
+                // return next(new Error("Unauthorized"));
+
+                // Attach server-verified identity to the socket
+                socket.data.playerID = session.user.id;
+                socket.data.DisplayName = session.user.name;
+            }
+
+            else {
+                
+            }
+
+
+
+            next();
+        } catch (err) {
+            console.error("Auth middleware error:", err);
+            next(new Error("Authentication failed"));
+        }
+    });
 
 
     io.on("connection", (socket) => {
@@ -84,31 +113,31 @@ export function setupSockets(server: HttpServer) {
             //Let user know that they were logged out
             ExistingSocket.Socket.emit("force_disconnect", {
                 reason: "You were disconnected because you logged in on another tab."
-            }); 
+            });
             ExistingSocket.Socket.disconnect(true);
         }
 
-        players.set(playerID, {Socket:socket,DisplayName:DisplayName});
+        players.set(playerID, { Socket: socket, DisplayName: DisplayName });
 
 
         const GameRoom = FindRoom();
 
         // console.log(rooms.size);
 
-        GameRoom.addPlayer(socket,DisplayName);
+        GameRoom.addPlayer(socket, DisplayName);
 
         socket.emit("NumberOfPlayers", TotalPlayersInServer);
 
-        socket.on("wordDone", (data:WordDoneData) => {
+        socket.on("wordDone", (data: WordDoneData) => {
 
-            GameRoom.HandleWordDone(socket,data);
+            GameRoom.HandleWordDone(socket, data);
 
         })
 
-        socket.on("accuracy", (data:AccuracyData)=>{
+        socket.on("accuracy", (data: AccuracyData) => {
 
-            GameRoom.HandleAccuracy(socket,data)
-        } )
+            GameRoom.HandleAccuracy(socket, data)
+        })
 
         socket.on("disconnect", () => {
 
@@ -137,7 +166,7 @@ export function setupSockets(server: HttpServer) {
         //No rooms have been found so make a new one
 
         const roomid = `Room_${crypto.randomUUID()}`
-        const new_room = new GameRoom(io, roomid,(closedRoomID)=>{
+        const new_room = new GameRoom(io, roomid, (closedRoomID) => {
             rooms.delete(closedRoomID)
         });
         rooms.set(roomid, new_room);
@@ -167,7 +196,7 @@ export function setupSockets(server: HttpServer) {
         //     TotalPlayersInServer = Total;
         // }
 
-        
+
         io.emit("NumberOfPlayers", players.size)
 
     }

@@ -8,6 +8,7 @@ type PlayerState = {
     wpm: number;
     accuracy: number;
     finished: boolean;
+    Avatar:string;
     finishtime: string;
     Disconnected: boolean;
     DisplayName: string;
@@ -59,13 +60,13 @@ export class GameRoom {
     }
 
 
-    addPlayer(socket: Socket, DisplayName: string): void {
+    addPlayer(socket: Socket, DisplayName: string, Avatar:string): void {
 
         //add socket(client) to room
         socket.join(this.roomId);
 
         //Add newly joined player to the array of players
-        this.players.set(socket.id, { progressIndex: 0, wpm: 0, accuracy: 0, finished: false, finishtime: "", Disconnected: false, DisplayName })
+        this.players.set(socket.id, { progressIndex: 0, wpm: 0, accuracy: 0, finished: false, finishtime: "", Disconnected: false, DisplayName, Avatar})
 
         this.io.to(this.roomId).emit("setWords", { "words": this.words });
 
