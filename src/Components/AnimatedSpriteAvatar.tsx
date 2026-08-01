@@ -69,37 +69,71 @@ const AnimatedSpriteAvatar = (props: playerProp) => {
     useEffect(() => {
 
 
+        // const loadtextures = async () => {
+
+        //     Assets.load(props.player.avatarUrl.atlasUrl).then((sheet: Spritesheet) => {
+        //         // Use a named animation group directly
+        //         const idleFrames = sheet.animations['Idle'];
+        //         const runFrames = sheet.animations['Run'];
+
+        //         SetFrames(() => {
+
+        //             const newMap = new Map();
+
+        //             newMap.set("idle", idleFrames)
+        //             newMap.set("run", runFrames);
+
+        //             return newMap;
+        //         });
+        //     });
+        // }
+
+        let isCancelled = false;
         const loadtextures = async () => {
 
-            Assets.load('/Zombie.json').then((sheet: Spritesheet) => {
-                // Use a named animation group directly
+            try {
+                // const { atlasUrl, spriteSheetUrl } = props.player.avatarUrl;
+
+                // Load both independently — no assumption about folder structure
+                const [texture, atlasData] = await Promise.all([
+                    Assets.load<Texture>("./character.json"),
+                    fetch("./charater.png").then((res) => res.json())
+                ]);
+
+                if (isCancelled) return;
+
+                const sheet = new Spritesheet(texture, atlasData);
+                await sheet.parse();
+
+                if (isCancelled) return;
+
                 const idleFrames = sheet.animations['Idle'];
                 const runFrames = sheet.animations['Run'];
 
                 SetFrames(() => {
-
                     const newMap = new Map();
-
-                    newMap.set("idle", idleFrames)
+                    newMap.set("idle", idleFrames);
                     newMap.set("run", runFrames);
-
                     return newMap;
                 });
-            });
 
-            // const textures = await Assets.load(images);
+            } catch (err) {
+                console.error("Failed to load avatar spritesheet:", props.player.avatarUrl, err);
+            }
 
-            // const orderedArray = images.map((img) => textures[img]);
-            // SetFrames(orderedArray);
         }
 
         console.log(frames)
 
         loadtextures();
 
+        return () => {
+            isCancelled = true;
+        };
 
 
-    }, []);
+
+    }, [props.player.avatarUrl.atlasUrl, props.player.avatarUrl.spriteSheetUrl]);
 
     // useEffect(()=>{
 
@@ -214,7 +248,7 @@ const AnimatedSpriteAvatar = (props: playerProp) => {
         }, 3000);
     }
 
-    function RestartShopAnimSequence(){
+    function RestartShopAnimSequence() {
 
         spriteRef.current.x = SpriteStartPos.current;
         PlayShopAnimSequence();
@@ -256,7 +290,7 @@ const AnimatedSpriteAvatar = (props: playerProp) => {
 
             : ""
 
-            
+
 
 
 

@@ -19,9 +19,14 @@ import { Play } from 'lucide-react';
 import { div } from 'three/src/nodes/math/OperatorNode.js';
 // import { date } from 'better-auth';
 
-export type PlayerState = { id: string; progressIndex: number; wpm: number; accuracy: number, finished: boolean; avatar:string; finishtime: string; Disconnected: Boolean; DisplayName: string; lastWordIndexIncreaseTime: number | null  };
+export type PlayerState = { id: string; progressIndex: number; wpm: number; accuracy: number, finished: boolean; avatarUrl:AvatarResult; finishtime: string; Disconnected: Boolean; DisplayName: string; lastWordIndexIncreaseTime: number | null  };
 
 type Status = "waiting" | "countdown" | "running"
+
+export type AvatarResult = {
+    atlasUrl: string;
+    spriteSheetUrl: string;
+};
 
 
 // function getRandomWords(amount: number) {

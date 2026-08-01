@@ -139,7 +139,10 @@ model ShopItem {
   priceKeys Int
 
   thumbnailUrl String
-  ModelUrl     String?
+
+  assetUrl     String?
+  spriteSheetUrl String?
+
   featured     Boolean @default(false)
   enabled      Boolean @default(true)
 

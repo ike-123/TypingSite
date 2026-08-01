@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 import { Socket } from "socket.io";
 import wordsList from "../src/words.json" with { type: "json" };
+import { AvatarResult } from "./avatarService";
 
 
 type PlayerState = {
@@ -8,7 +9,7 @@ type PlayerState = {
     wpm: number;
     accuracy: number;
     finished: boolean;
-    Avatar: string;
+    avatar: AvatarResult;
     finishtime: string;
     Disconnected: boolean;
     DisplayName: string;
@@ -60,13 +61,13 @@ export class GameRoom {
     }
 
 
-    addPlayer(socket: Socket, DisplayName: string, Avatar: string): void {
+    addPlayer(socket: Socket, DisplayName: string, avatar: AvatarResult): void {
 
         //add socket(client) to room
         socket.join(this.roomId);
 
         //Add newly joined player to the array of players
-        this.players.set(socket.id, { progressIndex: 0, wpm: 0, accuracy: 0, finished: false, finishtime: "", Disconnected: false, DisplayName, Avatar })
+        this.players.set(socket.id, { progressIndex: 0, wpm: 0, accuracy: 0, finished: false, finishtime: "", Disconnected: false, DisplayName, avatar })
 
         this.io.to(this.roomId).emit("setWords", { "words": this.words });
 
@@ -90,13 +91,13 @@ export class GameRoom {
         }
     }
 
-    UpdatePlayerAvatar(socketId: string, avatarUrl: string) {
+    UpdatePlayerAvatar(socketId: string, avatarUrl: AvatarResult) {
 
         const player = this.players.get(socketId)
 
         if (!player) return;
 
-        player.Avatar = avatarUrl
+        player.avatar = avatarUrl
 
         this.io.to(this.roomId).emit("state", Array.from(this.players.entries()).map(([id, val]) => ({ id, ...val })));
     }

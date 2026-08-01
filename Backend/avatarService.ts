@@ -2,9 +2,20 @@
 import { prisma } from "./lib/prisma.ts"
 import { EquipSlot } from "@prisma/client";
 
-export const DEFAULT_AVATAR = "default"
+export const DEFAULT_AVATAR:AvatarResult = {
 
-export async function GetEquippedAvatar(userId: string): Promise<string> {
+    atlasUrl:"",
+    spriteSheetUrl:""
+}
+
+
+export type AvatarResult = {
+    atlasUrl: string;
+    spriteSheetUrl: string;
+};
+
+
+export async function GetEquippedAvatar(userId: string): Promise<AvatarResult> {
 
     const equippedAvatar = await prisma.userEquippedItems.findUnique({
         where: {
@@ -16,7 +27,8 @@ export async function GetEquippedAvatar(userId: string): Promise<string> {
         include: {
             item: {
                 select: {
-                    ModelUrl: true,
+                    assetUrl: true,
+                    spriteSheetUrl: true
                 },
             },
 
@@ -24,10 +36,13 @@ export async function GetEquippedAvatar(userId: string): Promise<string> {
 
     });
 
-    if (!equippedAvatar?.item || !equippedAvatar.item.ModelUrl) {
+    if (!equippedAvatar?.item || !equippedAvatar.item.assetUrl || !equippedAvatar.item.spriteSheetUrl) {
         return DEFAULT_AVATAR;
     }
-    
-    return equippedAvatar.item.ModelUrl
-    
+
+    return {
+        atlasUrl: equippedAvatar.item.assetUrl,
+        spriteSheetUrl:equippedAvatar.item.spriteSheetUrl
+    }
+
 }

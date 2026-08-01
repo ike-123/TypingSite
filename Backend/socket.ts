@@ -13,7 +13,7 @@ import cookieParser from "cookie-parser"
 import { map } from "zod";
 import { auth } from "./lib/Auth.ts";
 import { GetEquippedAvatar } from "./avatarService.ts";
-
+import { DEFAULT_AVATAR } from "./avatarService.ts";
 
 
 // const app = express()
