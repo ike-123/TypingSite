@@ -91,13 +91,27 @@ const AnimatedSpriteAvatar = (props: playerProp) => {
         let isCancelled = false;
         const loadtextures = async () => {
 
+            const avatarUrl = props.player.avatarUrl;
+
+            if (!avatarUrl) {
+                return;
+            }
+
+
+            const { atlasUrl, spriteSheetUrl } = props.player.avatarUrl;
+
+
             try {
-                // const { atlasUrl, spriteSheetUrl } = props.player.avatarUrl;
+
+                console.log(atlasUrl)
+                console.log(spriteSheetUrl)
+
+
 
                 // Load both independently — no assumption about folder structure
                 const [texture, atlasData] = await Promise.all([
-                    Assets.load<Texture>("./character.json"),
-                    fetch("./charater.png").then((res) => res.json())
+                    Assets.load<Texture>(spriteSheetUrl),
+                    fetch(atlasUrl).then((res) => res.json())
                 ]);
 
                 if (isCancelled) return;
@@ -123,7 +137,7 @@ const AnimatedSpriteAvatar = (props: playerProp) => {
 
         }
 
-        console.log(frames)
+        // console.log(frames)
 
         loadtextures();
 
@@ -133,7 +147,9 @@ const AnimatedSpriteAvatar = (props: playerProp) => {
 
 
 
-    }, [props.player.avatarUrl.atlasUrl, props.player.avatarUrl.spriteSheetUrl]);
+    }, [props.player]);
+
+
 
     // useEffect(()=>{
 

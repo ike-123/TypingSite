@@ -116,6 +116,7 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
 
                     // console.log(progressPercent)
                     console.log(width);
+                    console.log("rendering track again")
                     // console.log(progressPercent)
 
                     return (

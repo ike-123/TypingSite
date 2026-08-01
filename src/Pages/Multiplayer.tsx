@@ -242,7 +242,8 @@ const Multiplayer = () => {
 
             // const socket = io("http://localhost:3001")
             // console.log(isGuest)
-            const socket = io("192.168.1.210:3001", {
+            const socket = io("http://localhost:3001", {
+                withCredentials: true,
                 auth: {
                     playerID,
                     DisplayName

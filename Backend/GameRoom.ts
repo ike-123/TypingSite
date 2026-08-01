@@ -9,7 +9,7 @@ type PlayerState = {
     wpm: number;
     accuracy: number;
     finished: boolean;
-    avatar: AvatarResult;
+    avatarUrl: AvatarResult;
     finishtime: string;
     Disconnected: boolean;
     DisplayName: string;
@@ -61,13 +61,13 @@ export class GameRoom {
     }
 
 
-    addPlayer(socket: Socket, DisplayName: string, avatar: AvatarResult): void {
+    addPlayer(socket: Socket, DisplayName: string, avatarUrl: AvatarResult): void {
 
         //add socket(client) to room
         socket.join(this.roomId);
 
         //Add newly joined player to the array of players
-        this.players.set(socket.id, { progressIndex: 0, wpm: 0, accuracy: 0, finished: false, finishtime: "", Disconnected: false, DisplayName, avatar })
+        this.players.set(socket.id, { progressIndex: 0, wpm: 0, accuracy: 0, finished: false, finishtime: "", Disconnected: false, DisplayName, avatarUrl})
 
         this.io.to(this.roomId).emit("setWords", { "words": this.words });
 
@@ -97,7 +97,7 @@ export class GameRoom {
 
         if (!player) return;
 
-        player.avatar = avatarUrl
+        player.avatarUrl = avatarUrl
 
         this.io.to(this.roomId).emit("state", Array.from(this.players.entries()).map(([id, val]) => ({ id, ...val })));
     }

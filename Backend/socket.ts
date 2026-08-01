@@ -14,6 +14,7 @@ import { map } from "zod";
 import { auth } from "./lib/Auth.ts";
 import { GetEquippedAvatar } from "./avatarService.ts";
 import { DEFAULT_AVATAR } from "./avatarService.ts";
+import { fromNodeHeaders } from "better-auth/node";
 
 
 // const app = express()
@@ -46,7 +47,8 @@ export function setupSockets(server: HttpServer) {
 
     const io = new Server(server, {
         cors: {
-            origin: "*"
+            origin: "http://localhost:5173",
+            credentials: true
         }
     })
 
@@ -60,9 +62,11 @@ export function setupSockets(server: HttpServer) {
 
     io.use(async (socket, next) => {
 
+        console.log("raw cookie header:", socket.handshake.headers.cookie);
+        console.log("middleware reached2")
         try {
             const session = await auth.api.getSession({
-                headers: socket.handshake.headers as any
+                headers: fromNodeHeaders(socket.handshake.headers),
             });
 
             if (session?.user) {
@@ -71,9 +75,12 @@ export function setupSockets(server: HttpServer) {
                 // Attach server-verified identity to the socket
                 socket.data.playerID = session.user.id;
                 socket.data.isGuest = false;
+                console.log("exist")
             }
 
             else {
+
+                console.log("doesn't exist")
 
                 const clientProvidedID = socket.handshake.auth.PlayerId
 
