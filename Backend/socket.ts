@@ -12,6 +12,7 @@ import wordsList from "../src/words.json" with { type: "json" };
 import cookieParser from "cookie-parser"
 import { map } from "zod";
 import { auth } from "./lib/Auth.ts";
+import { GetEquippedAvatar } from "./avatarService.ts";
 
 
 
@@ -69,16 +70,28 @@ export function setupSockets(server: HttpServer) {
 
                 // Attach server-verified identity to the socket
                 socket.data.playerID = session.user.id;
-                socket.data.DisplayName = session.user.name;
+                socket.data.isGuest = false;
             }
 
             else {
-                
+
+                const clientProvidedID = socket.handshake.auth.PlayerId
+
+                if (!clientProvidedID) {
+                    return next(new Error("No guest ID provided"));
+                }
+
+                socket.data.playerID = `guest_${clientProvidedID}`;
+                socket.data.isGuest = true;
+
             }
 
-
+            const rawName = socket.handshake.auth.DisplayName
+            const sanitizedName = String(rawName).slice(0, 20).trim();
+            socket.data.DisplayName = sanitizedName
 
             next();
+
         } catch (err) {
             console.error("Auth middleware error:", err);
             next(new Error("Authentication failed"));
@@ -91,8 +104,10 @@ export function setupSockets(server: HttpServer) {
         console.log("testing")
         console.log(socket.id)
 
-        const playerID = socket.handshake.auth.playerID;
-        const DisplayName = socket.handshake.auth.DisplayName;
+        const playerID = socket.data.playerID;
+        const DisplayName = socket.data.DisplayName;
+        const isGuest = socket.data.isGuest;
+
 
         console.log(DisplayName);
         console.log(playerID)
@@ -124,7 +139,19 @@ export function setupSockets(server: HttpServer) {
 
         // console.log(rooms.size);
 
-        GameRoom.addPlayer(socket, DisplayName);
+        if (isGuest) {
+            GameRoom.addPlayer(socket, DisplayName, DEFAULT_AVATAR);
+        } else {
+            GameRoom.addPlayer(socket, DisplayName, DEFAULT_AVATAR);
+
+            GetEquippedAvatar(playerID)
+                .then(( modelUrl ) => {
+                    GameRoom.UpdatePlayerAvatar(socket.id, modelUrl);
+                })
+                .catch((err) => {
+                    console.error("Failed to fetch avatar for", playerID, err);
+                });
+        }
 
         socket.emit("NumberOfPlayers", TotalPlayersInServer);
 

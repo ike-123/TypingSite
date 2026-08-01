@@ -8,7 +8,7 @@ type PlayerState = {
     wpm: number;
     accuracy: number;
     finished: boolean;
-    Avatar:string;
+    Avatar: string;
     finishtime: string;
     Disconnected: boolean;
     DisplayName: string;
@@ -38,7 +38,7 @@ export class GameRoom {
     isShuttingDown: boolean
     private OnRoomDestoryed?: (roomid: string) => void;
     private HasSentNotification = false;
-    
+
 
 
 
@@ -60,13 +60,13 @@ export class GameRoom {
     }
 
 
-    addPlayer(socket: Socket, DisplayName: string, Avatar:string): void {
+    addPlayer(socket: Socket, DisplayName: string, Avatar: string): void {
 
         //add socket(client) to room
         socket.join(this.roomId);
 
         //Add newly joined player to the array of players
-        this.players.set(socket.id, { progressIndex: 0, wpm: 0, accuracy: 0, finished: false, finishtime: "", Disconnected: false, DisplayName, Avatar})
+        this.players.set(socket.id, { progressIndex: 0, wpm: 0, accuracy: 0, finished: false, finishtime: "", Disconnected: false, DisplayName, Avatar })
 
         this.io.to(this.roomId).emit("setWords", { "words": this.words });
 
@@ -88,6 +88,17 @@ export class GameRoom {
             this.BeginCountDown();
 
         }
+    }
+
+    UpdatePlayerAvatar(socketId: string, avatarUrl: string) {
+
+        const player = this.players.get(socketId)
+
+        if (!player) return;
+
+        player.Avatar = avatarUrl
+
+        this.io.to(this.roomId).emit("state", Array.from(this.players.entries()).map(([id, val]) => ({ id, ...val })));
     }
 
     BeginCountDown() {
@@ -126,7 +137,7 @@ export class GameRoom {
 
 
 
-        if(this.isShuttingDown) return;
+        if (this.isShuttingDown) return;
 
         if (this.status === "waiting") {
 
@@ -162,6 +173,7 @@ export class GameRoom {
             //match has started
 
             const Player = this.players.get(socket.id);
+            
 
             //Player should always exist
             if (Player) {
@@ -254,9 +266,9 @@ export class GameRoom {
             timer--;
 
 
-            if(timer <= TimeToSendCloseNotification && !this.HasSentNotification){
+            if (timer <= TimeToSendCloseNotification && !this.HasSentNotification) {
                 //send ServerClosing notification
-                this.io.to(this.roomId).emit("ServerCloseNotification",TimeToSendCloseNotification)
+                this.io.to(this.roomId).emit("ServerCloseNotification", TimeToSendCloseNotification)
                 this.HasSentNotification = true;
 
             }
@@ -277,7 +289,7 @@ export class GameRoom {
 
     ShutdownGameRoom(): void {
 
-        if(this.isShuttingDown) return;
+        if (this.isShuttingDown) return;
 
         this.isShuttingDown = true;
 
