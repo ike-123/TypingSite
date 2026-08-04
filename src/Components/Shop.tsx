@@ -89,11 +89,11 @@ const Shop = () => {
         });
     };
 
-    function handleClick(item: any) {
+    // function handleClick(item: any) {
 
-        console.log("clicked");
-        navigate(`/product/${item.id}`, { state: { item } })
-    }
+    //     console.log("clicked");
+    //     navigate(`/product/${item.id}`, { state: { item } })
+    // }
 
 
     return (

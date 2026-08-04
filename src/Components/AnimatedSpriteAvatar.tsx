@@ -96,6 +96,10 @@ const AnimatedSpriteAvatar = (props: playerProp) => {
             if (!avatarUrl) {
                 return;
             }
+            if(avatarUrl.atlasUrl === "" && avatarUrl.spriteSheetUrl === ""){
+                console.log("returning")
+                return;
+            }
 
 
             const { atlasUrl, spriteSheetUrl } = props.player.avatarUrl;

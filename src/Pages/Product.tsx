@@ -49,6 +49,7 @@ import {
 } from "@/components/ui/dialog"
 import { useAuthStore } from '@/Stores/AuthStore';
 
+import type { AvatarResult } from './Multiplayer';
 
 // import robotUrl from '../assets/robot.fbx';
 
@@ -106,7 +107,6 @@ const Product = () => {
 
     const [texture, setTexture] = useState(null)
 
-    const PlaceHolderPlayerArray: PlayerState[] = new Array(1);
 
     const placeholderPlayer: PlayerState = {
         id: "placeholder",
@@ -116,25 +116,34 @@ const Product = () => {
         finished: false,
         finishtime: "",
         DisplayName: "",
+        avatarUrl: {
+            atlasUrl: "",
+            spriteSheetUrl: ""
+        },
         lastWordIndexIncreaseTime: 0,
-        Disconnected:false
+        Disconnected: false
     }
 
-    PlaceHolderPlayerArray[0] = placeholderPlayer;
+    const [PlaceHolderPlayerArray, SetPlaceHolderPlayerArray] = useState<PlayerState[]>([placeholderPlayer])
+
+
+    // PlaceHolderPlayerArray[0] = placeholderPlayer;
 
 
     useEffect(() => {
 
-        async function loadAsset() {
-            const texture = await Assets.load('/profile.jpeg');
+        // async function loadAsset() {
+        //     const texture = await Assets.load('/profile.jpeg');
 
-            setTexture(texture);
+        //     setTexture(texture);
 
-            //  const texture = await Assets.load('https://pixijs.com/assets/bunny.png');
+        //     //  const texture = await Assets.load('https://pixijs.com/assets/bunny.png');
 
-        }
+        // }
 
-        loadAsset();
+        // loadAsset();
+
+        console.log("AAAAAAAAAASDFASDF")
 
         async function getShopItem() {
 
@@ -150,7 +159,19 @@ const Product = () => {
                 console.log(res?.data);
                 setShopItem(res?.data);
 
+                const newAvatarUrl = res?.data.assetUrl
+                const newSpriteSheetUrl = res?.data.spriteSheetUrl
 
+                SetPlaceHolderPlayerArray((prev) =>
+
+                    prev.map(player => ({
+                        ...player,
+                        avatarUrl: {
+                            atlasUrl: newAvatarUrl,
+                            spriteSheetUrl: newSpriteSheetUrl,
+                        }
+                    }))
+                )
 
 
             } catch (error) {
@@ -173,6 +194,19 @@ const Product = () => {
             console.log("passeditemfromshop")
             console.log(passedItemFromShopPage);
             setShopItem(passedItemFromShopPage);
+         
+            SetPlaceHolderPlayerArray((prev) =>
+
+                prev.map(player => ({
+                    ...player,
+                    avatarUrl: {
+                        atlasUrl: passedItemFromShopPage.assetUrl,
+                        spriteSheetUrl: passedItemFromShopPage.spriteSheetUrl,
+                    }
+                }))
+            )
+
+
             setLoading(false);
         }
         else {
