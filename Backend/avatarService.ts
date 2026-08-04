@@ -4,8 +4,8 @@ import { EquipSlot } from "@prisma/client";
 
 export const DEFAULT_AVATAR:AvatarResult = {
 
-    atlasUrl:"",
-    spriteSheetUrl:""
+    atlasUrl:"/Zombie.json",
+    spriteSheetUrl:"/Zombie.png"
 }
 
 

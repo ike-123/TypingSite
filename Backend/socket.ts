@@ -82,11 +82,14 @@ export function setupSockets(server: HttpServer) {
 
                 console.log("doesn't exist")
 
-                const clientProvidedID = socket.handshake.auth.PlayerId
+                const clientProvidedID = socket.handshake.auth.playerID
 
                 if (!clientProvidedID) {
+                    console.log("nothing provided")
                     return next(new Error("No guest ID provided"));
                 }
+
+                console.log(`guest_${clientProvidedID}`)
 
                 socket.data.playerID = `guest_${clientProvidedID}`;
                 socket.data.isGuest = true;
