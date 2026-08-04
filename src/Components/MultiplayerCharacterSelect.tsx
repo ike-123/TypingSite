@@ -121,7 +121,7 @@ const MultiplayerCharacterSelect = () => {
                                                             {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
 
 
-                                                            <img className='w-55 h-55  object-contain self-center' src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
+                                                            <img className='w-full h-full  object-contain self-center' src={item.thumbnailUrl} alt="" />
 
 
                                                             {/* {
