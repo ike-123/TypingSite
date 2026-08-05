@@ -105,6 +105,20 @@ const Product = () => {
     // });
 
 
+
+    const [Inventory, SetInventory] = useState<any>();
+
+
+    // //Use a UseMemo to only rebuild when equippeditem Changes
+    // const equippedItemIds = new Set(
+    //     equippedItems?.map((item: any) => item.itemid)
+    // )
+
+
+
+
+
+
     const [texture, setTexture] = useState(null)
 
 
@@ -128,6 +142,31 @@ const Product = () => {
 
 
     // PlaceHolderPlayerArray[0] = placeholderPlayer;
+
+    useEffect(() => {
+
+        //should I always use a try catch block with axios requests?
+
+
+        try {
+            async function getItems() {
+
+                const res = await axios.get("http://localhost:3001/api/Inventory", { withCredentials: true });
+
+                console.log(res?.data);
+                SetInventory(res?.data?.GroupedItems);
+
+            }
+
+            getItems();
+
+        } catch (error) {
+            console.log(error)
+        }
+
+
+    }, [])
+
 
 
     useEffect(() => {
@@ -194,7 +233,7 @@ const Product = () => {
             console.log("passeditemfromshop")
             console.log(passedItemFromShopPage);
             setShopItem(passedItemFromShopPage);
-         
+
             SetPlaceHolderPlayerArray((prev) =>
 
                 prev.map(player => ({
@@ -544,14 +583,22 @@ const Product = () => {
                         //Open up a modal box to confirm purchase  */}
 
                         {
-                            User ?
+                            User
 
 
-                                User.Keys >= shopItem?.priceKeys ?
-                                    <Button size={"lg"} className='mt-20 w-full h-12 text-xl self-center' onClick={() => { PurchaseButtonClicked() }}>Purchase</Button>
+                                ?
 
-                                    :
-                                    <Button size={"lg"} variant={"outline"} className='mt-20 w-full h-12 text-xl self-center' onClick={() => { }}>Not Enough Keys</Button>
+
+
+                                (
+                                    Inventory?.[shopItem.slot].some((item: any) => item.id === shopItem?.id) ?
+                                        <Button size={"lg"} variant={"outline"} className='mt-20 w-full h-12 text-xl self-center' onClick={() => { }}>Item already owned</Button>
+                                        :
+                                        User.Keys >= shopItem?.priceKeys ?
+                                            <Button size={"lg"} className='mt-20 w-full h-12 text-xl self-center' onClick={() => { PurchaseButtonClicked() }}>Purchase</Button>
+                                            : <Button size={"lg"} variant={"outline"} className='mt-20 w-full h-12 text-xl self-center' onClick={() => { }}>Not Enough Keys</Button>
+
+                                )
 
 
                                 :
