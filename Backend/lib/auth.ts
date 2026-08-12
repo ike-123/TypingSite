@@ -162,7 +162,7 @@ async function FulfillCheckout_Keys(session: any) {
                 //3 scenarios
 
                 //duplicate payment (stripeSessionId) then P2002 error will run and we acknowlege the request preventing retrires
-                //Payment is succesfful then we send a 200 response showing we have acknowldged the request
+                //Payment is succesful then we send a 200 response showing we have acknowldged the request
                 //Prisma transaction fails for some other reason. (Database is down) we throw an error which will make webhook retry later
 
             })

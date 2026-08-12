@@ -464,10 +464,7 @@ app.get("/api/Inventory", protectRoute, async (req, res) => {
         const equippedItems = await prisma.userEquippedItems.findMany({
             where: {
                 userid: req.user.id,
-            },
-            include: {
-                item: true,
-            },
+            }
         })
 
 

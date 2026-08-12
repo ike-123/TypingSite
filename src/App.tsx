@@ -39,7 +39,17 @@ const PageStructure = () => {
     <>
       <Navbar />
       <Outlet />
-      <Footer />
+      {/* <Footer /> */}
+    </>
+  )
+}
+
+const PageStructureNoFooter = () => {
+
+  return (
+    <>
+      <Navbar />
+      <Outlet />
     </>
   )
 }
@@ -63,14 +73,7 @@ const router = createBrowserRouter([
         path: "/Games",
         element: <Games />
       },
-      {
-        path: "/Login",
-        element: <Login />
-      },
-      {
-        path: "/SignUp",
-        element: <SignUp />
-      },
+
       {
         path: "/stats",
         element: <MyStats />
@@ -92,18 +95,35 @@ const router = createBrowserRouter([
         element: <UserLocker />
       },
       {
-        path:"/MultiplayerCharacterSelect",
-        element:<MultiplayerCharacterSelect/>
+        path: "/MultiplayerCharacterSelect",
+        element: <MultiplayerCharacterSelect />
       },
       {
-        path:"/Settings",
-        element:<Settings/>
+        path: "/Settings",
+        element: <Settings />
       }
 
 
     ]
 
   },
+
+  {
+    path: "/",
+    element: <PageStructureNoFooter />,
+    children: [
+      {
+        path: "/Login",
+        element: <Login />
+      },
+      {
+        path: "/SignUp",
+        element: <SignUp />
+      },
+    ]
+  }
+
+
 ]);
 
 function App() {
