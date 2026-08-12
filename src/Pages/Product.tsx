@@ -279,6 +279,18 @@ const Product = () => {
 
             console.log(res.data);
 
+
+            // SetModalContent(
+            //     <>
+            //         <h1 className="text-2xl">Purchase Successful!</h1>
+            //     </>
+            // );
+
+            // SetDialogBox(true);
+
+            window.location.reload();
+
+
         } catch (error) {
 
 
@@ -592,7 +604,7 @@ const Product = () => {
 
                                 (
                                     Inventory?.[shopItem.slot].some((item: any) => item.id === shopItem?.id) ?
-                                        <Button size={"lg"} variant={"outline"} className='mt-20 w-full h-12 text-xl self-center' onClick={() => { }}>Item already owned</Button>
+                                        <Button size={"lg"} variant={"outline"} className='mt-20 w-full h-12 text-xl self-center' onClick={() => { }}>Item owned</Button>
                                         :
                                         User.Keys >= shopItem?.priceKeys ?
                                             <Button size={"lg"} className='mt-20 w-full h-12 text-xl self-center' onClick={() => { PurchaseButtonClicked() }}>Purchase</Button>
