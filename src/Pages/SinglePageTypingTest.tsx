@@ -19,6 +19,7 @@ import TestResults from '@/Components/TestResults'
 import { DialogOverlay } from '@radix-ui/react-dialog'
 import { NavLink } from 'react-router-dom'
 import axios from 'axios'
+import NavMenu from '@/Components/NavMenu'
 
 
 
@@ -333,40 +334,7 @@ const SinglePageTypingTest = () => {
 
             </Card> */}
 
-            <div className='flex justify-center gap-3'>
-
-                <NavLink to={"/"} >
-
-                    {({ isActive }) => (
-
-                        <Button variant={isActive ? "default" : "outline"}>Solo</Button>
-
-                    )}
-
-                </NavLink>
-
-                <NavLink to={"/Multiplayer"} >
-
-                    {({ isActive }) => (
-
-                        <Button variant={isActive ? "default" : "outline"}>Multiplayer</Button>
-
-                    )}
-
-                </NavLink>
-
-
-                <NavLink to={"/Games"} >
-
-                    {({ isActive }) => (
-
-                        <Button variant={isActive ? "default" : "outline"}>Games</Button>
-
-                    )}
-
-                </NavLink>
-
-            </div>
+          <NavMenu/>
 
             <div className='flex justify-center'>
 

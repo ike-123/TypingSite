@@ -17,9 +17,10 @@ import AnimatedSpriteAvatar from '@/Components/AnimatedSpriteAvatar';
 import MultiplayerRaceTrack from '@/Components/MultiplayerRaceTrack';
 import { Play } from 'lucide-react';
 import { div } from 'three/src/nodes/math/OperatorNode.js';
+import NavMenu from '@/Components/NavMenu';
 // import { date } from 'better-auth';
 
-export type PlayerState = { id: string; progressIndex: number; wpm: number; accuracy: number, finished: boolean; avatarUrl:AvatarResult; finishtime: string; Disconnected: Boolean; DisplayName: string; lastWordIndexIncreaseTime: number | null  };
+export type PlayerState = { id: string; progressIndex: number; wpm: number; accuracy: number, finished: boolean; avatarUrl: AvatarResult; finishtime: string; Disconnected: Boolean; DisplayName: string; lastWordIndexIncreaseTime: number | null };
 
 type Status = "waiting" | "countdown" | "running"
 
@@ -488,50 +489,21 @@ const Multiplayer = () => {
                         {/* <div>Last Key pressed {engine.state.lastkeyPressed}</div> */}
                         {/* {engine.state.CurrentWordIndex} */}
 
-                        <Button onClick={EnableShowSetupScreen}>Change Name/Avatar</Button>
 
 
                         <div className='main bg-background max-w-7xl flex flex-col items-center m-auto'>
 
 
-                            <div className='flex justify-center gap-3'>
-
-                                <NavLink to={"/"} >
-
-                                    {({ isActive }) => (
-
-                                        <Button variant={isActive ? "default" : "outline"}>Solo</Button>
-
-                                    )}
-
-                                </NavLink>
-
-                                <NavLink to={"/Multiplayer"} >
-
-                                    {({ isActive }) => (
-
-                                        <Button variant={isActive ? "default" : "outline"}>Multiplayer</Button>
-
-                                    )}
-
-                                </NavLink>
+                            <NavMenu />
 
 
-                                <NavLink to={"/Games"} >
-
-                                    {({ isActive }) => (
-
-                                        <Button variant={isActive ? "default" : "outline"}>Games</Button>
-
-                                    )}
-
-                                </NavLink>
-
-                            </div>
 
 
 
                             <div className='mb-10'>
+
+                                <Button onClick={EnableShowSetupScreen}>Change Name/Avatar</Button>
+
 
                                 {
                                     showRoomCloseTime && <p className='text-red-300'>Room will close in {RoomCloseTime}</p>
