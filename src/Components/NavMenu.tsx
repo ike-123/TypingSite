@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 
 const NavMenu = () => {
     return (
-        <div className='flex justify-center bg-zinc-900 gap-1 border-1 rounded-full h-12 '>
+        <div className='flex justify-center bg-zinc-900 p-1 border-1 rounded-full h-13 '>
 
             <NavLink to={"/"} >
 

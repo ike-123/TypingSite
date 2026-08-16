@@ -334,30 +334,44 @@ const SinglePageTypingTest = () => {
 
             </Card> */}
 
-          <NavMenu/>
+            <NavMenu />
 
-            <div className='flex justify-center'>
+            <div className='flex flex-row w-full max-w-3/4  justify-center gap-50 mt-7'>
 
 
-                <div className='flex justify-center gap-5 m-10'>
 
-                    {
-                        Object.values(Modes).map((mode) => (
-                            <Button key={mode.id} onClick={() => selectMode(mode.id)} className='bg-primary w-25' variant={mode.id === modeID ? "default" : "outline"}>{mode.id}</Button>
-                        ))
-                    }
+                <div className='bg-zinc-900 flex flex-col items-center gap-1 h-full pb-2 pt-1 px-3 rounded-md border-1 '>
+
+                    <div className='text-base'>Mode</div>
+
+
+                    <div className='flex justify-center gap-3 ' >
+
+                        {
+                            Object.values(Modes).map((mode) => (
+                                <Button size={'sm'} key={mode.id} onClick={() => selectMode(mode.id)} className='bg-primary w-16 text-lg font-bold' variant={mode.id === modeID ? "default" : "outline"}>{mode.id}</Button>
+                            ))
+                        }
+
+                    </div>
 
                 </div>
 
-                <div className='flex r gap-5 m-10'>
+                <div className='bg-zinc-900 flex flex-col items-center gap-1 h-full pb-2 pt-1 px-3 rounded-md border-1 '>
 
-                    {
-                        Object.values(Modes[modeID].LengthDurationSetting.options).map((_LengthDurationSetting) => (
+                    <div className='text-base'>Length</div>
 
-                            <Button key={_LengthDurationSetting} onClick={() => ChangeLengthDurationSetting(_LengthDurationSetting)} className='bg-primary w-25' variant={_LengthDurationSetting === LengthDurationSetting ? "default" : "outline"}>{_LengthDurationSetting}</Button>
 
-                        ))
-                    }
+                    <div className='flex justify-center gap-3 '>
+
+                        {
+                            Object.values(Modes[modeID].LengthDurationSetting.options).map((_LengthDurationSetting) => (
+
+                                <Button size={'sm'} key={_LengthDurationSetting} onClick={() => ChangeLengthDurationSetting(_LengthDurationSetting)} className='bg-primary w-12 text-lg' variant={_LengthDurationSetting === LengthDurationSetting ? "default" : "outline"}>{_LengthDurationSetting}</Button>
+
+                            ))
+                        }
+                    </div>
                 </div>
 
 
@@ -372,15 +386,22 @@ const SinglePageTypingTest = () => {
                 <Button onClick={} className='bg-primary w-25'>Quote</Button>
             </div> */}
 
-            <div className='flex r gap-5 m-10'>
+            <div className='bg-zinc-900 flex flex-col items-center justify-center gap-1  h-full p-1 pb-2 px-5 rounded-md border mt-8 mb-10'>
 
-                {
-                    Object.values(Modes[modeID].allowedConfigs).map((config) => (
+                <div className='text-sm'>
+                    Configs
+                </div>
+                <div className='flex justify-center gap-3'>
 
-                        <Button key={config} onClick={() => changeConfig(config)} className='bg-primary w-25' variant={Allowedconfigs.includes(config) ? "default" : "outline"}>{config}</Button>
+                    {
+                        Object.values(Modes[modeID].allowedConfigs).map((config) => (
 
-                    ))
-                }
+                            <Button key={config} onClick={() => changeConfig(config)} className='bg-primary' variant={Allowedconfigs.includes(config) ? "default" : "outline"}>{config}</Button>
+
+                        ))
+                    }
+                </div>
+
             </div>
 
 
