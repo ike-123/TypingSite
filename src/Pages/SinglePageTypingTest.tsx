@@ -340,16 +340,16 @@ const SinglePageTypingTest = () => {
 
 
 
-                <div className='bg-zinc-900 flex flex-col items-center gap-1 h-full pb-2 pt-1 px-3 rounded-md border-1 '>
+                <div className='bg-zinc-900 flex flex-col items-center gap-1 h-full pb-1.5 pt-1 px-3 rounded-md border-1 '>
 
-                    <div className='text-base'>Mode</div>
+                    <div className='text-xs'>Mode</div>
 
 
                     <div className='flex justify-center gap-3 ' >
 
                         {
                             Object.values(Modes).map((mode) => (
-                                <Button size={'sm'} key={mode.id} onClick={() => selectMode(mode.id)} className='bg-primary w-16 text-lg font-bold' variant={mode.id === modeID ? "default" : "outline"}>{mode.id}</Button>
+                                <Button size={'sm'} key={mode.id} onClick={() => selectMode(mode.id)} className='bg-primary w-16 text-base font-bold' variant={mode.id === modeID ? "default" : "outline"}>{mode.id}</Button>
                             ))
                         }
 
@@ -357,9 +357,9 @@ const SinglePageTypingTest = () => {
 
                 </div>
 
-                <div className='bg-zinc-900 flex flex-col items-center gap-1 h-full pb-2 pt-1 px-3 rounded-md border-1 '>
+                <div className='bg-zinc-900 flex flex-col items-center gap-1 h-full pb-1.5 pt-1 px-3 rounded-md border-1 '>
 
-                    <div className='text-base'>Length</div>
+                    <div className='text-xs'>{Modes[modeID].LengthDurationSetting.name}</div>
 
 
                     <div className='flex justify-center gap-3 '>
@@ -367,7 +367,7 @@ const SinglePageTypingTest = () => {
                         {
                             Object.values(Modes[modeID].LengthDurationSetting.options).map((_LengthDurationSetting) => (
 
-                                <Button size={'sm'} key={_LengthDurationSetting} onClick={() => ChangeLengthDurationSetting(_LengthDurationSetting)} className='bg-primary w-12 text-lg' variant={_LengthDurationSetting === LengthDurationSetting ? "default" : "outline"}>{_LengthDurationSetting}</Button>
+                                <Button size={'sm'} key={_LengthDurationSetting} onClick={() => ChangeLengthDurationSetting(_LengthDurationSetting)} className='bg-primary  text-base font-bold' variant={_LengthDurationSetting === LengthDurationSetting ? "default" : "outline"}>{_LengthDurationSetting}</Button>
 
                             ))
                         }
@@ -386,9 +386,9 @@ const SinglePageTypingTest = () => {
                 <Button onClick={} className='bg-primary w-25'>Quote</Button>
             </div> */}
 
-            <div className='bg-zinc-900 flex flex-col items-center justify-center gap-1  h-full p-1 pb-2 px-5 rounded-md border mt-8 mb-10'>
+            <div className='bg-zinc-900 flex flex-row items-center justify-center gap-1  h-full p-1 px-5 rounded-md border mt-6 mb-15'>
 
-                <div className='text-sm'>
+                <div className='text-xs font-bold mr-3'>
                     Configs
                 </div>
                 <div className='flex justify-center gap-3'>
@@ -396,7 +396,7 @@ const SinglePageTypingTest = () => {
                     {
                         Object.values(Modes[modeID].allowedConfigs).map((config) => (
 
-                            <Button key={config} onClick={() => changeConfig(config)} className='bg-primary' variant={Allowedconfigs.includes(config) ? "default" : "outline"}>{config}</Button>
+                            <Button size={'sm'} key={config} onClick={() => changeConfig(config)} className='bg-primary' variant={Allowedconfigs.includes(config) ? "default" : "outline"}>{config}</Button>
 
                         ))
                     }

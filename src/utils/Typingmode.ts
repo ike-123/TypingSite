@@ -143,7 +143,7 @@ export const Modes: Record<modeID, TypingModeConfig> = {
     quote: {
         id: "quote",
         LengthDurationSetting:{
-            name:"Word Amount",
+            name:"Quote Length",
             options:["short","medium","long"],
             defaultValue: "medium",
             customOptions:false,

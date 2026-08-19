@@ -57,7 +57,7 @@ export interface State {
     wordsAmount: number
     isRedo: boolean
     PreviousWords: string[]
-    stoppedDueToError:boolean
+    stoppedDueToError: boolean
     errors: number[]
     lastkeyPressed: string
 }
@@ -179,7 +179,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
     const [lineoffset, setlineoffset] = useState<number>(0)
 
-    const [AmountOfWordsToGenerateOnStart, SetAmountOfWordsToGenerateOnStart] = useState(20);
+    const [AmountOfWordsToGenerateOnStart, SetAmountOfWordsToGenerateOnStart] = useState(50);
 
 
 
@@ -265,7 +265,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
 
 
-        const { value, inputEventData, keyPressEvent, textForDisplay, indexToChange, word, Init_Words, HighestIndexFoundOutOfBounds, RemainingWords, wordsSincePunctuation, isStartOfSentence, stoppedDueToError} = action.payload
+        const { value, inputEventData, keyPressEvent, textForDisplay, indexToChange, word, Init_Words, HighestIndexFoundOutOfBounds, RemainingWords, wordsSincePunctuation, isStartOfSentence, stoppedDueToError } = action.payload
 
 
         switch (action.type) {
@@ -296,7 +296,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
                         //overtyped so incorrect
 
 
-                        
+
                         iscorrect = false;
 
                         // console.log("1")
@@ -612,10 +612,10 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
                 // console.log("Character count = ", characterLength);
 
                 const WordsTyped = characterLength / 5;
-                
+
 
                 WPM = Math.round(WordsTyped / timeElapsed)
-                
+
                 Accuracy = Math.round((correctCount / (correctCount + incorrectCount)) * 100)
 
                 TestFinished = true;
@@ -1114,7 +1114,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
                 //span is above the Text Container.
                 SpanstoRemove.push(span);
             }
-            
+
 
             else {
                 // console.log("break = ", span);
@@ -1305,17 +1305,17 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
     }, [state.status])
 
-    useEffect(()=>{
+    useEffect(() => {
 
-        if(state.stopTest === true){
+        if (state.stopTest === true) {
 
             console.log("test stopped")
 
             dispatch({ type: "FinishTest", payload: {} })
 
         }
-    },[state.stopTest])
-    
+    }, [state.stopTest])
+
     //CurrentWord index Change
     useEffect(() => {
 
@@ -1334,7 +1334,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
     useEffect(() => {
 
         if (config.includes("error") && state.incorrectCount > 0) {
-            dispatch({ type: "FinishTest", payload: {stoppedDueToError:true} })
+            dispatch({ type: "FinishTest", payload: { stoppedDueToError: true } })
         }
 
     }, [state.incorrectCount])

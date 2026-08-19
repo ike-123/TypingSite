@@ -54,7 +54,7 @@ export class GameRoom {
         this.words = [];
         this.startAt = null;
         this.countdownTimer = 10;
-        this.words = this.getRandomWords(5);
+        this.words = this.getRandomWords(50);
         this.interval = null
         this.OnRoomDestoryed = onRoomDestroyed;
         this.isShuttingDown = false
