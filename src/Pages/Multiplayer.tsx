@@ -4,6 +4,8 @@ import words from '../words.json'
 import { io, Socket } from 'socket.io-client'
 import { NavLink } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Badge } from "@/components/ui/badge"
+import { Spinner } from "@/components/ui/spinner"
 import { useTypingEnigne2 } from '@/Hooks/useTypingEngine2';
 import SP_TypingTest from '@/Components/SP_TypingTest';
 import type { configID, modeID } from '@/utils/Typingmode';
@@ -100,7 +102,7 @@ const Multiplayer = () => {
 
     const parentRef = useRef<HTMLDivElement>(null);
 
-    const RoomCloseMessage = "The server has closed"
+    const RoomCloseMessage = "This room has shutdown"
 
 
 
@@ -502,21 +504,48 @@ const Multiplayer = () => {
 
                             <div className='mb-10'>
 
-                                <Button onClick={EnableShowSetupScreen}>Change Name/Avatar</Button>
+                                <div className='mt-5'>
+                                    {<Badge variant="secondary">Players in Server: {PlayersInServer}</Badge>}
+
+                                </div>
+
+                                {/* <Button onClick={EnableShowSetupScreen}>Change Name/Avatar</Button> */}
 
 
-                                {
-                                    showRoomCloseTime && <p className='text-red-300'>Room will close in {RoomCloseTime}</p>
+                                <div className='flex flex-col items-center'>
+                                    {
+                                        showRoomCloseTime && <p className='text-red-300'>Room will close in {RoomCloseTime}</p>
+                                    }
+                                    {
+                                        ShowRoomClosedMessage && <p className='text-red-300 text-lg border-red-400 border-2 p-2 rounded-xl'>{RoomCloseMessage}</p>
+                                    }
+
+                                </div>
+
+
+
+                                {status === "countdown" && countdown !== null &&
+                                    <div className='flex flex-col items-center'>
+                                        <h1 className=' text-xl'>Game starts in {countdown}</h1>
+                                    </div>
+
                                 }
-                                {
-                                    ShowRoomClosedMessage && <p className='text-red-300'>{RoomCloseMessage}</p>
-                                }
-                                {status === "countdown" && countdown !== null && <h1 className='infotext text-2xl'>Game starts in {countdown}</h1>}
-                                {status === "waiting" ? <h1 className='infotext text-2xl'>Waiting For more Players</h1> : ""}
-                                {<h1 className='infotext'>Players in Server: {PlayersInServer}</h1>}
+
+                                {status === "waiting" ?
+
+                                    <div className='flex flex-col items-center mt-3'>
+
+                                        <h1 className=' text-base'>Waiting For more Players</h1>
+
+                                        <Spinner />
+
+                                    </div>
 
 
-                                <Application height={(0)} resolution={2} className='max-w-[1000px] w-full m-auto'>
+                                    : ""}
+
+
+                                <Application height={(0)} resolution={2} className='mt-4 max-w-[1000px] w-full m-auto'>
                                     <MultiplayerRaceTrack Players={players} wordsLength={words.length} />
                                 </Application>
 
