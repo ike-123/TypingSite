@@ -20,6 +20,8 @@ import MultiplayerRaceTrack from '@/Components/MultiplayerRaceTrack';
 import { Play } from 'lucide-react';
 import { div } from 'three/src/nodes/math/OperatorNode.js';
 import NavMenu from '@/Components/NavMenu';
+import { Store } from "lucide-react"
+
 // import { date } from 'better-auth';
 
 export type PlayerState = { id: string; progressIndex: number; wpm: number; accuracy: number, finished: boolean; avatarUrl: AvatarResult; finishtime: string; Disconnected: Boolean; DisplayName: string; lastWordIndexIncreaseTime: number | null };
@@ -479,8 +481,6 @@ const Multiplayer = () => {
                     <div className=' '>
                         <Multiplayer_User_Setup disableSetupScreen={DisableShowSetupScreen}></Multiplayer_User_Setup>
 
-
-
                     </div>
 
                     :
@@ -499,6 +499,12 @@ const Multiplayer = () => {
                             <NavMenu />
 
 
+                            <div className='w-full flex flex-row justify-end'>
+                                <Button variant="ghost" className=''>
+                                    < Store className='border border-amber-100' />
+                                </Button>
+
+                            </div>
 
 
 
