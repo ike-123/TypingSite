@@ -669,10 +669,10 @@ const Product = () => {
 
 
     return (
-        <div className='flex mx-auto max-w-7xl bg-teal-900 '>
+        <div className='flex mx-auto max-w-7xl  bg-zinc-900 border mt-5 rounded-xl '>
 
             {/* Item view */}
-            <div className='bg-amber-300 flex-4 h-150'>
+            <div className=' flex-4 h-150 border-r-2'>
 
                 {/* Conditonally render based on shopItemType */}
 

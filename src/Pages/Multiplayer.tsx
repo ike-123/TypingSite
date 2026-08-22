@@ -499,10 +499,17 @@ const Multiplayer = () => {
                             <NavMenu />
 
 
-                            <div className='w-full flex flex-row justify-end'>
-                                <Button variant="ghost" className=''>
-                                    < Store className='border border-amber-100' />
-                                </Button>
+                            <div className="w-full flex justify-end ">
+
+                                <NavLink to={"/shop"}>
+
+                                    <Button
+                                        variant="ghost"
+                                        className="!p-2 border-1 border-white/10 hover:border-white/15  h-auto w-auto"
+                                    >
+                                        <Store className="!w-7 !h-7" />
+                                    </Button>
+                                </NavLink>
 
                             </div>
 

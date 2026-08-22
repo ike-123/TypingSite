@@ -83,7 +83,7 @@ const Shop = () => {
     }
 
 
-    const scrollToSection = (id: any) => {
+    const scrollToSection = (id: string) => {
         document.getElementById(id)?.scrollIntoView({
             behavior: "smooth",
         });
@@ -96,30 +96,29 @@ const Shop = () => {
     // }
 
 
+    const LeftNavMenu = ({children,scroll}:any) => {
+        return (
+
+
+            <Button variant={'outline'} className={`text-2xl rounded-none rounded-r-lg border-0 border-l-2 border-r-0 h-20 flex justify-start ${visibleSection === scroll ? "bg-violet-400! border-l-4 border-2 !border-white/80" : ""}`} onClick={() => { scrollToSection(scroll) }}>
+                {children}
+            </Button>
+
+        )
+    }
     return (
-        <div className='flex bg-gray-700 max-w-7xl mx-auto'>
+        <div className='flex  max-w-7xl mx-auto'>
 
-            <div className='bg-gray-400 h-100 w-70 sticky top-0 h-screen'>
+            <div className=' w-80 sticky top-1 h-screen border-r-1 bg-card pt-15'>
 
-                <div className='flex flex-col gap-3'>
+                <div className='flex flex-col gap-2'>
 
 
-                    <Button className={`text-2xl rounded-sm h-12 flex justify-start ${visibleSection === "featured" ? "bg-blue-900" : ""}`} onClick={() => { scrollToSection("featured") }}>
-                        Featured
-                    </Button>
+                   <LeftNavMenu scroll={"featured"}>Featured</LeftNavMenu>
 
-                    <Button className={`text-2xl rounded-sm h-12 flex justify-start ${visibleSection === "multiplayer" ? "bg-blue-900" : ""}`} onClick={() => { scrollToSection("multiplayer") }}>
-                        Multiplayer
-                    </Button>
-{/* 
-                    <Button className={`text-2xl rounded-sm h-12 flex justify-start ${visibleSection === "game" ? "bg-blue-900" : ""}`} onClick={() => { scrollToSection("game") }}>
-                        Game
-                    </Button> */}
+                   <LeftNavMenu scroll={"multiplayer"}>Multiplayer</LeftNavMenu>
 
-                    <Button className={`text-2xl rounded-sm h-12 flex justify-start  ${visibleSection === "keys" ? "bg-blue-900" : ""}`} onClick={() => { scrollToSection("keys") }}>
-                        Keys
-                    </Button>
-
+                   <LeftNavMenu scroll={"keys"}>Keys</LeftNavMenu>
 
 
                 </div>
@@ -127,8 +126,13 @@ const Shop = () => {
             </div>
 
 
-            <div className='w-full bg-amber-200  p-2 ml-2'>
+            <div className='w-full p-2 ml-10'>
 
+                <div className=' text-4xl  w-9/10 font-bold border-b-2  text-center '>
+
+                    <h1 className=''>Shop</h1>
+                </div>
+                
                 {/* <h1 className='text-7xl font-bold text-cyan-700 fixed'>{visibleSection}</h1> */}
 
                 <InView
@@ -145,7 +149,7 @@ const Shop = () => {
                         <div
                             ref={ref} id='featured' className='mb-30 pt-5'
                         >
-                            <h1 className='text-6xl mb-5 font-bold'>Featured</h1>
+                            <h1 className='text-3xl mb-6 font-bold'>Featured</h1>
 
                             <div className=' flex flex-wrap gap-3'>
 
@@ -159,7 +163,7 @@ const Shop = () => {
                                             {
                                                 item.featured === true ?
 
-                                                    <ShopCard item={item} isKeyPackage={false}/> : ""
+                                                    <ShopCard item={item} isKeyPackage={false} /> : ""
 
                                             }
 
@@ -176,7 +180,7 @@ const Shop = () => {
                                         <>
                                             {
                                                 item.featured === true ?
-                                                    <ShopCard item={item} isKeyPackage={true}/>
+                                                    <ShopCard item={item} isKeyPackage={true} />
 
                                                     : ""
 
@@ -210,7 +214,7 @@ const Shop = () => {
                         <div
                             ref={ref} id='multiplayer' className='mb-30  pt-5'
                         >
-                            <h1 className='text-6xl mb-5 font-bold'>Multiplayer</h1>
+                            <h1 className='text-3xl mb-6 font-bold'>Multiplayer</h1>
 
                             <div className=' flex flex-wrap gap-3'>
 
@@ -224,7 +228,7 @@ const Shop = () => {
                                             {
                                                 item.mode === "multiplayer" ?
 
-                                                    <ShopCard item={item} isKeyPackage={false}/>: "nothing"
+                                                    <ShopCard item={item} isKeyPackage={false} /> : "nothing"
 
                                             }
 
@@ -315,14 +319,14 @@ const Shop = () => {
                         <div
                             ref={ref} id='keys' className='mb-30'
                         >
-                            <h1 className='text-6xl mb-5 font-bold'>Keys</h1>
+                            <h1 className='text-3xl mb-6 font-bold'>Keys</h1>
 
                             <div className=' flex flex-wrap gap-3'>
 
                                 {
                                     keyPackages.map((item: any) => (
 
-                                        <ShopCard item={item} isKeyPackage={true}/>
+                                        <ShopCard item={item} isKeyPackage={true} />
                                     ))
                                 }
 
