@@ -36,9 +36,9 @@ const UserLockerCard = (props: ShopCardProps) => {
                 {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
 
 
-                <h1 className='text-xl mt-auto font-bold pl-2 absolute rounded-t-2xl'>{props.item.name}</h1>
+                <h1 className='text-xl mt-auto font-bold pl-2  rounded-t-2xl'>{props.item.name}</h1>
 
-                <img className='w-50 object-contain self-center' src="https://static.vecteezy.com/system/resources/previews/052/259/440/non_2x/a-smiling-3d-cartoon-car-character-full-of-energy-and-joy-free-png.png" alt="" />
+                <img className='w-50 h-full object-contain self-center' src={props.item.thumbnailUrl} alt="" />
 
 
                 {

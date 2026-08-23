@@ -135,32 +135,32 @@ const UserLocker = () => {
     //     navigate(`/product/${item.id}`, { state: { item } })
     // }
 
+    const LeftNavMenu = ({ children, scroll }: any) => {
+        return (
+
+
+            <Button variant={'outline'} className={`text-2xl rounded-none rounded-r-lg border-0 border-l-2 border-r-0 h-20 flex justify-start ${visibleSection === scroll ? "bg-violet-400! border-l-4 border-2 !border-white/80" : ""}`} onClick={() => { scrollToSection(scroll) }}>
+                {children}
+            </Button>
+
+        )
+    }
+
 
     return (
         <div className='flex max-w-7xl mx-auto'>
 
-            <div className=' h-100 w-70 sticky top-0 h-screen'>
+            <div className=' w-80 sticky top-1 h-screen border-r bg-card pt-15'>
 
-                <div className='flex flex-col gap-3'>
+                <div className='flex flex-col gap-2'>
 
-
-                    {/* <Button className={`text-2xl rounded-sm h-12 flex justify-start ${visibleSection === "featured" ? "bg-blue-900" : ""}`} onClick={() => { scrollToSection("featured") }}>
-                        Featured
-                    </Button> */}
-
-                    <Button className={`text-2xl rounded-sm h-12 flex justify-start ${visibleSection === "multiplayer" ? "bg-blue-900" : ""}`} onClick={() => { scrollToSection("multiplayer") }}>
-                        Multiplayer
-                    </Button>
-{/* 
-                    <Button className={`text-2xl rounded-sm h-12 flex justify-start ${visibleSection === "game" ? "bg-blue-900" : ""}`} onClick={() => { scrollToSection("game") }}>
-                        Game
-                    </Button> */}
-
+                    <LeftNavMenu scroll={"multiplayer"}>Multiplayer</LeftNavMenu>
 
 
 
 
                 </div>
+
 
             </div>
 
@@ -248,7 +248,7 @@ const UserLocker = () => {
                         <div
                             ref={ref} id='multiplayer' className='mb-30 pb-30 pl-5 rounded-2xl bg-gray-900 pt-5'
                         >
-                            <h1 className='text-6xl mb-5 font-bold'>Multiplayer</h1>
+                            <h1 className='text-3xl mb-5 font-bold'>Multiplayer</h1>
 
 
 
@@ -258,7 +258,7 @@ const UserLocker = () => {
                                 GroupedItems?.avatar ?
 
                                     <>
-                                        <h1 className='text-2xl mb-5 font-bold'>Character</h1>
+                                        <h1 className='text-xl mb-5 font-bold'>Character</h1>
 
                                         <div className=' flex flex-wrap gap-3'>
 
