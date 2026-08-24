@@ -246,7 +246,7 @@ const UserLocker = () => {
                 >
                     {({ ref }) => (
                         <div
-                            ref={ref} id='multiplayer' className='mb-30 pb-30 pl-5 rounded-2xl bg-gray-900 pt-5'
+                            ref={ref} id='multiplayer' className='mb-30 pb-30 pl-5 rounded-2xl border-3 pt-5'
                         >
                             <h1 className='text-3xl mb-5 font-bold'>Multiplayer</h1>
 

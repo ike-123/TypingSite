@@ -36,9 +36,9 @@ const UserLockerCard = (props: ShopCardProps) => {
                 {/* <Button onClick={handleCheckout}>Buy Item</Button> */}
 
 
-                <h1 className='text-xl mt-auto font-bold pl-2  rounded-t-2xl'>{props.item.name}</h1>
+                <h1 className='text-xl mt-auto font-bold pl-2  absolute rounded-t-2xl'>{props.item.name}</h1>
 
-                <img className='w-50 h-full object-contain self-center' src={props.item.thumbnailUrl} alt="" />
+                <img className='w-50 h-60 pt-5 pb-5 object-contain self-center' src={props.item.thumbnailUrl} alt="" />
 
 
                 {
