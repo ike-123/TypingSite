@@ -1,4 +1,5 @@
 // e.g. avatarService.ts
+import { assetUrl } from "./lib/cdn.ts";
 import { prisma } from "./lib/prisma.ts"
 import { EquipSlot } from "@prisma/client";
 
@@ -36,9 +37,15 @@ export async function GetEquippedAvatar(userId: string): Promise<AvatarResult> {
 
     });
 
+
     if (!equippedAvatar?.item || !equippedAvatar.item.assetUrl || !equippedAvatar.item.spriteSheetUrl) {
         return DEFAULT_AVATAR;
     }
+
+    equippedAvatar.item.assetUrl = assetUrl(equippedAvatar?.item.assetUrl)
+    equippedAvatar.item.spriteSheetUrl = assetUrl(equippedAvatar?.item.spriteSheetUrl)
+
+    console.log( equippedAvatar.item.assetUrl)
 
     return {
         atlasUrl: equippedAvatar.item.assetUrl,
