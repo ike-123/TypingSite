@@ -340,9 +340,9 @@ const SinglePageTypingTest = () => {
 
 
 
-                <div className='bg-zinc-900 flex flex-col items-center gap-1 h-full pb-1.5 pt-1 px-3 rounded-md border-1 '>
+                <div className='bg-zinc-900 flex flex-row items-center  gap-3 h-full pb-1.5 pt-1 px-3 rounded-md border-1 '>
 
-                    <div className='text-xs'>Mode</div>
+                    <div className='text-sm'>Mode:</div>
 
 
                     <div className='flex justify-center gap-3 ' >
@@ -357,9 +357,9 @@ const SinglePageTypingTest = () => {
 
                 </div>
 
-                <div className='bg-zinc-900 flex flex-col items-center gap-1 h-full pb-1.5 pt-1 px-3 rounded-md border-1 '>
+                <div className='bg-zinc-900 flex flex-row gap-4  items-center gap-1 h-full pb-1.5 pt-1 px-3 rounded-md border-1 '>
 
-                    <div className='text-xs'>{Modes[modeID].LengthDurationSetting.name}</div>
+                    <div className='text-sm'>{Modes[modeID].LengthDurationSetting.name}:</div>
 
 
                     <div className='flex justify-center gap-3 '>

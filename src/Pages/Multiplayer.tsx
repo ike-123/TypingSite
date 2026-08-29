@@ -104,7 +104,7 @@ const Multiplayer = () => {
 
     const parentRef = useRef<HTMLDivElement>(null);
 
-    const RoomCloseMessage = "This room has shutdown"
+    const RoomCloseMessage = "Room has closed"
 
 
 
