@@ -182,8 +182,6 @@ const Product = () => {
 
         // loadAsset();
 
-        console.log("AAAAAAAAAASDFASDF")
-
         async function getShopItem() {
 
 

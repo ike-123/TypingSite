@@ -28,6 +28,7 @@ import { error } from "console";
 import { KeyTransactionType } from "@prisma/client";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import { code } from "three/src/nodes/code/CodeNode.js";
+import { assetUrl } from "./lib/cdn.ts";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
 
@@ -98,6 +99,7 @@ app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
     }
     )
 
+
     if (!pack) {
         return res.status(404).json({ error: "Key Package not found" })
     }
@@ -147,7 +149,7 @@ app.post("/api/create-checkout-session", protectRoute, async (req, res) => {
 app.get("/api/shopItems", async (req, res) => {
 
 
-    const [shopItems, keyPackages] = await Promise.all([
+    const [_shopItems, keyPackages] = await Promise.all([
 
         prisma.shopItem.findMany({
             where: { enabled: true }
@@ -159,14 +161,24 @@ app.get("/api/shopItems", async (req, res) => {
     ])
 
 
+
     //return key packages as well
+
+
+    const shopItems = _shopItems.map((item) => (
+        {
+            ...item,
+            thumbnailUrl: assetUrl(item.thumbnailUrl),
+            assetUrl: item.assetUrl ? assetUrl(item.assetUrl) : "",
+            spriteSheetUrl: item.spriteSheetUrl ? assetUrl(item.spriteSheetUrl) : ""
+
+        }
+    ))
 
     const data = {
         shopItems,
         keyPackages
     }
-
-
 
     return res.status(200).json(data)
 
@@ -214,6 +226,13 @@ app.get("/api/product/:type/:id", async (req, res) => {
             product = await prisma.shopItem.findUnique({
                 where: { id: id }
             })
+
+            if (product) {
+                product.thumbnailUrl = assetUrl(product?.thumbnailUrl)
+                product.assetUrl = product.assetUrl ? assetUrl(product.assetUrl) : ""
+                product.spriteSheetUrl = product.spriteSheetUrl ? assetUrl(product.spriteSheetUrl) : ""
+            }
+
         }
         else if (type === "key") {
 
@@ -223,18 +242,19 @@ app.get("/api/product/:type/:id", async (req, res) => {
         }
         else {
 
-            return res.status(400).json({code: "ITEM_NOT_FOUND",
+            return res.status(400).json({
+                code: "ITEM_NOT_FOUND",
                 error: "Invalid product type"
             });
 
         }
 
         if (!product) {
-            return res.status(404).json({code: "ITEM_NOT_FOUND",
+            return res.status(404).json({
+                code: "ITEM_NOT_FOUND",
                 error: "Product not found"
             });
         }
-
 
         return res.status(200).json(product)
 
@@ -452,6 +472,11 @@ app.get("/api/Inventory", protectRoute, async (req, res) => {
         for (const entry of inventory) {
 
             const slot = entry.item.slot;
+
+            entry.item.thumbnailUrl = assetUrl(entry.item.thumbnailUrl)
+            entry.item.assetUrl = entry.item.assetUrl ? assetUrl(entry.item.assetUrl) : ""
+            entry.item.spriteSheetUrl = entry.item.spriteSheetUrl ? assetUrl(entry.item.spriteSheetUrl) : ""
+
 
             if (!GroupedItems[slot]) {
                 GroupedItems[slot] = []
