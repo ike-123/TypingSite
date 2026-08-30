@@ -124,7 +124,7 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
                             graphics.clear();
                             // graphics.setFillStyle({ color: trackColour });
                             graphics.rect(0, 0, width * .9, rectangleheight);
-                            graphics.fill({color: trackColour, alpha:AlphaStrength});
+                            graphics.fill({color: "0b0809", alpha:AlphaStrength});
                             
                         }} >
 
@@ -235,7 +235,7 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
 
                             <pixiGraphics draw={(graphics) => {
                                 graphics.clear();
-                                graphics.setFillStyle({ color: '#081f30' });
+                                graphics.setFillStyle({ color: '#0b0809' });
                                 graphics.rect(width * .9, 0, width * .5, rectangleheight);
                                 graphics.fill();
                                 graphics.zIndex = 1;

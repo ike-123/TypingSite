@@ -30,7 +30,7 @@ const SP_TypingTest = ({engine,HighlightIncorrectCurrentWord}:SP_TypingTestProps
 
             <div className="TypeTestContainer font-sans">
 
-                <div ref={engine.TextContainerref} className='flex h-[115px] bg-[#1e293b] overflow-hidden relative'>
+                <div ref={engine.TextContainerref} className='flex h-[115px] overflow-hidden relative'>
 
 
                     {/* <div id='wordcontainer' className={`relative text-3xl text-[#8a8c8f]`} style={{ marginTop: engine.margin > 0 ? -(engine.margin * 39) : 0, }}> */}
@@ -125,7 +125,7 @@ const SP_TypingTest = ({engine,HighlightIncorrectCurrentWord}:SP_TypingTestProps
 
                     {/* <div className=''> */}
 
-                    <input className={`w-full h-[115px] m-auto absolute outline-none pointer-events-none ${engine.focus? "opacity-0" : "bg-red-200/20 backdrop-blur-xs"} `} ref={engine.inputref} id="input" type="text" autoComplete='off' spellCheck="false" autoCapitalize='false' autoCorrect='false' autoFocus value={engine.state.TypedWord} onFocus={() => { engine.SetFocus(true) }} onBlur={()=>{engine.SetFocus(false)}}  onKeyDown={engine.HandleKeyDown} onChange={engine.ChangeInput} onClick={engine.MoveCaretToEnd} />
+                    <input className={`w-full h-[115px] text-transparent m-auto absolute outline-none pointer-events-none ${engine.focus? "opacity-0" : "backdrop-blur-xs"} `} ref={engine.inputref} id="input" type="text" autoComplete='off' spellCheck="false" autoCapitalize='false' autoCorrect='false' autoFocus value={engine.state.TypedWord} onFocus={() => { engine.SetFocus(true) }} onBlur={()=>{engine.SetFocus(false)}}  onKeyDown={engine.HandleKeyDown} onChange={engine.ChangeInput} onClick={engine.MoveCaretToEnd} />
 
                     {/* </div> */}
 

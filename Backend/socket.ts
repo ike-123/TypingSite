@@ -12,9 +12,10 @@ import wordsList from "../src/words.json" with { type: "json" };
 import cookieParser from "cookie-parser"
 import { map } from "zod";
 import { auth } from "./lib/Auth.ts";
-import { GetEquippedAvatar } from "./avatarService.ts";
+import { AvatarResult, GetEquippedAvatar } from "./avatarService.ts";
 import { DEFAULT_AVATAR } from "./avatarService.ts";
 import { fromNodeHeaders } from "better-auth/node";
+import { assetUrl } from "./lib/cdn.ts";
 
 
 // const app = express()
@@ -147,15 +148,20 @@ export function setupSockets(server: HttpServer) {
 
         const GameRoom = FindRoom();
 
-        // console.log(rooms.size);
+        let DefaultAvatar: AvatarResult = { atlasUrl: "", spriteSheetUrl: "" }
+
+        DefaultAvatar.atlasUrl = assetUrl(DEFAULT_AVATAR.atlasUrl)
+        DefaultAvatar.spriteSheetUrl = assetUrl(DEFAULT_AVATAR.spriteSheetUrl)
+
 
         if (isGuest) {
-            GameRoom.addPlayer(socket, DisplayName, DEFAULT_AVATAR);
+
+            GameRoom.addPlayer(socket, DisplayName, DefaultAvatar);
         } else {
-            GameRoom.addPlayer(socket, DisplayName, DEFAULT_AVATAR);
+            GameRoom.addPlayer(socket, DisplayName, DefaultAvatar);
 
             GetEquippedAvatar(playerID)
-                .then(( modelUrl ) => {
+                .then((modelUrl) => {
                     GameRoom.UpdatePlayerAvatar(socket.id, modelUrl);
                 })
                 .catch((err) => {

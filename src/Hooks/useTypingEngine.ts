@@ -954,7 +954,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
         // });
 
         console.log("clicked");
-        inputref.current?.focus()
+        inputref.current?.focus({preventScroll:true})
 
 
     }
@@ -1280,7 +1280,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
         if (state.status === "notstarted") {
 
-            inputref.current?.focus()
+            inputref.current?.focus({preventScroll:true})
             ResetCaret();
         }
 
@@ -2277,7 +2277,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
 
         // console.log("click");
-        inputref.current?.focus();
+        inputref.current?.focus({preventScroll:true});
 
 
         // inputref.current?.focus
@@ -2292,7 +2292,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
         ClearTimer()
         ResetCaret()
 
-        inputref.current?.focus()
+        inputref.current?.focus({preventScroll:true})
 
 
 

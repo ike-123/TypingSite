@@ -1,12 +1,13 @@
 // e.g. avatarService.ts
+import { any } from "zod";
 import { assetUrl } from "./lib/cdn.ts";
 import { prisma } from "./lib/prisma.ts"
 import { EquipSlot } from "@prisma/client";
 
 export const DEFAULT_AVATAR:AvatarResult = {
 
-    atlasUrl:"/Zombie.json",
-    spriteSheetUrl:"/Zombie.png"
+    atlasUrl:"shop-items/Zombie1/atlas.json",
+    spriteSheetUrl:"shop-items/Zombie1/spritesheet.png"
 }
 
 
@@ -39,7 +40,13 @@ export async function GetEquippedAvatar(userId: string): Promise<AvatarResult> {
 
 
     if (!equippedAvatar?.item || !equippedAvatar.item.assetUrl || !equippedAvatar.item.spriteSheetUrl) {
-        return DEFAULT_AVATAR;
+
+        let DefaultAvatar:AvatarResult = {atlasUrl:"",spriteSheetUrl:""}
+
+        DefaultAvatar.atlasUrl = assetUrl(DEFAULT_AVATAR.atlasUrl)
+        DefaultAvatar.spriteSheetUrl = assetUrl(DEFAULT_AVATAR.spriteSheetUrl)
+
+        return DefaultAvatar;
     }
 
     equippedAvatar.item.assetUrl = assetUrl(equippedAvatar?.item.assetUrl)

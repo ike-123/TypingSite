@@ -522,7 +522,7 @@ const Multiplayer = () => {
 
                                 </div>
 
-                                <Button onClick={EnableShowSetupScreen}>Change Name/Avatar</Button>
+                                {/* <Button onClick={EnableShowSetupScreen}>Change Name/Avatar</Button> */}
 
 
                                 <div className='flex flex-col items-center'>
