@@ -11,7 +11,7 @@ type SP_TypingTestProps = {
 };
 
 
-const SP_TypingTest = ({engine,HighlightIncorrectCurrentWord}:SP_TypingTestProps) => {
+const SP_TypingTest = ({ engine, HighlightIncorrectCurrentWord }: SP_TypingTestProps) => {
 
     return (
 
@@ -47,7 +47,7 @@ const SP_TypingTest = ({engine,HighlightIncorrectCurrentWord}:SP_TypingTestProps
 
                             <span data-word-index={engine.state.IndexToStartFrom + wordIndex} className='word' key={engine.state.IndexToStartFrom + wordIndex}>
 
-                                <span className={`${ (HighlightIncorrectCurrentWord && (engine.state.IndexToStartFrom + wordIndex) === (engine.state.CurrentWordIndex) && !engine.state.AllWordMap.get(engine.state.IndexToStartFrom + wordIndex)?.isCorrect && engine.state.TypedWord.length > 0)? " border-3 border-red-400 border-dashed rounded-xs" : "" } ${(engine.state.IndexToStartFrom + wordIndex) < engine.state.CurrentWordIndex ? (`${engine.state.AllWordMap.get(engine.state.IndexToStartFrom + wordIndex)?.isCorrect ? "correct" : "incorrectword"}`) : ""}`}>
+                                <span className={`${(HighlightIncorrectCurrentWord && (engine.state.IndexToStartFrom + wordIndex) === (engine.state.CurrentWordIndex) && !engine.state.AllWordMap.get(engine.state.IndexToStartFrom + wordIndex)?.isCorrect && engine.state.TypedWord.length > 0) ? " border-3 border-red-400 border-dashed rounded-xs" : ""} ${(engine.state.IndexToStartFrom + wordIndex) < engine.state.CurrentWordIndex ? (`${engine.state.AllWordMap.get(engine.state.IndexToStartFrom + wordIndex)?.isCorrect ? "correct" : "incorrectword"}`) : ""}`}>
                                     {/* split the word array to retrieve each letter and put it in a span */}
 
                                     {word.split("").map((character, letterindex) => {
@@ -125,7 +125,9 @@ const SP_TypingTest = ({engine,HighlightIncorrectCurrentWord}:SP_TypingTestProps
 
                     {/* <div className=''> */}
 
-                    <input className={`w-full h-[115px] text-transparent m-auto absolute outline-none pointer-events-none ${engine.focus? "opacity-0" : "backdrop-blur-xs"} `} ref={engine.inputref} id="input" type="text" autoComplete='off' spellCheck="false" autoCapitalize='false' autoCorrect='false' autoFocus value={engine.state.TypedWord} onFocus={() => { engine.SetFocus(true) }} onBlur={()=>{engine.SetFocus(false)}}  onKeyDown={engine.HandleKeyDown} onChange={engine.ChangeInput} onClick={engine.MoveCaretToEnd} />
+                    <input className={`w-full h-[115px] text-transparent m-auto absolute outline-none pointer-events-none ${engine.focus ? "opacity-0" : "backdrop-blur-xs"} `} ref={engine.inputref} id="input" type="text" autoComplete='off' spellCheck="false" autoCapitalize='false' autoCorrect='false' autoFocus value={engine.state.TypedWord} onFocus={() => { engine.SetFocus(true) }} onBlur={() => { engine.SetFocus(false) }} onKeyDown={engine.HandleKeyDown} onChange={engine.ChangeInput} onClick={engine.MoveCaretToEnd} 
+                       />
+                        
 
                     {/* </div> */}
 

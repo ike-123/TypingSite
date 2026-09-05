@@ -264,7 +264,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
 
 
-    
+
         const { value, inputEventData, keyPressEvent, textForDisplay, indexToChange, word, Init_Words, HighestIndexFoundOutOfBounds, RemainingWords, wordsSincePunctuation, isStartOfSentence, stoppedDueToError } = action.payload
 
 
@@ -956,7 +956,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
         // });
 
         console.log("clicked");
-        inputref.current?.focus({preventScroll:true})
+        inputref.current?.focus({ preventScroll: true })
 
 
     }
@@ -1282,7 +1282,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
         if (state.status === "notstarted") {
 
-            inputref.current?.focus({preventScroll:true})
+            inputref.current?.focus({ preventScroll: true })
             ResetCaret();
         }
 
@@ -1358,7 +1358,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
             dispatch({ type: "StartTest", payload: {} });
 
         }
-        let value:string = event.target.value.trimEnd();
+        let value: string = event.target.value.trimEnd();
         const inputEvent = event.nativeEvent as InputEvent;
         const inputEventData = inputEvent.data;
         // console.log(inputEvent)
@@ -1371,7 +1371,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
         //set the typed value max length to currentword length + 20
 
-        value = value.slice(0,state.words[state.CurrentWordIndex].length + 20)
+        value = value.slice(0, state.words[state.CurrentWordIndex].length + 20)
 
 
         //If there is a full stop at the end of the word. Check to see if the last key we pressed was '.' If not remove it.
@@ -1520,6 +1520,17 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
         }
 
+        //Prevent users clicking ctrl/Cmd + a to select all words
+        if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "a") {
+            event.preventDefault();
+        }
+
+        //block cmd/ctrl/opt + backspace
+        if(event.code === "Backspace" && (event.metaKey || event.ctrlKey || event.altKey)) {
+            event.preventDefault();
+        }
+
+
         if (event.code === "Backspace") {
 
             dispatch({ type: "BackspacePressed", payload: { keyPressEvent: event } })
@@ -1536,6 +1547,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
             // }
         }
+
 
     }
 
@@ -2284,7 +2296,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
 
         // console.log("click");
-        inputref.current?.focus({preventScroll:true});
+        inputref.current?.focus({ preventScroll: true });
 
 
         // inputref.current?.focus
@@ -2299,7 +2311,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
         ClearTimer()
         ResetCaret()
 
-        inputref.current?.focus({preventScroll:true})
+        inputref.current?.focus({ preventScroll: true })
 
 
 
