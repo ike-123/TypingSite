@@ -120,6 +120,16 @@ const SP_TypingTest = ({ engine, HighlightIncorrectCurrentWord }: SP_TypingTestP
 
                         ))}
 
+
+
+                        <div className={`absolute bg-background/65 top-0 w-full h-full ${engine.focus? `hidden`: ""} `}></div>
+
+
+                        {/* <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-1 pointer-events-none font-bold text-3xl p-2 text-black rounded-2xl bg-white/30 ${engine.focus? `hidden`: ""}`}>Click here or press any key to focus</div> */}
+                        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-1 pointer-events-none font-bold text-2xl p-2 text-white rounded-2xl  ${engine.focus? `hidden`: ""}`}>Press any key or click here to focus</div>
+
+
+
                     </div>
 
 

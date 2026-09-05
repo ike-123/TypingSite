@@ -340,6 +340,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
                     //UPDATE CORRECT AND INCORRECT COUNTS
 
                     //get key input and make sure it's a valid character key
+                    //We don't need this below (checking valid character) as we do it before we call the dispatch function
                     if (inputEventData && inputEventData.length === 1 && !/\s/.test(inputEventData)) {
 
                         // console.log("Typed character:", inputEventData);
@@ -1074,6 +1075,32 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
     //change the dependecncy to change on keypress rather than typedword.length. This is because currently it doesn't track space bar presses
     //try and change the margin from code rather than in html
 
+
+    useEffect(() => {
+
+        function handleKeyDown(e: any) {
+            // Don't steal focus if the user is already typing somewhere
+            if (document.activeElement === inputref.current) {
+                return;
+            }
+
+            // Ignore modifier keys on their own
+            if (e.ctrlKey || e.metaKey || e.altKey) {
+                return;
+            }
+
+            e.preventDefault()
+
+            inputref.current?.focus();
+        }
+
+        document.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    }, []);
+
     function incrementScroll() {
 
         setlineoffset(prev => prev + 1);
@@ -1354,13 +1381,20 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
         // console.log("tstate = ", state.status);
 
 
-        if (state.status === "notstarted") {
-            dispatch({ type: "StartTest", payload: {} });
 
-        }
+
+
         let value: string = event.target.value.trimEnd();
         const inputEvent = event.nativeEvent as InputEvent;
         const inputEventData = inputEvent.data;
+
+
+        console.log("valid input")
+
+        if (state.status === "notstarted") {
+            dispatch({ type: "StartTest", payload: {} });
+        }
+
         // console.log(inputEvent)
 
         if (value[value.length - 1] === "." && state.lastkeyPressed != "Period") {
@@ -1370,14 +1404,10 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
         }
 
         //set the typed value max length to currentword length + 20
-
         value = value.slice(0, state.words[state.CurrentWordIndex].length + 20)
-
 
         //If there is a full stop at the end of the word. Check to see if the last key we pressed was '.' If not remove it.
         dispatch({ type: "InputChanged", payload: { value, inputEventData } })
-
-
 
 
 
@@ -1526,7 +1556,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
         }
 
         //block cmd/ctrl/opt + backspace
-        if(event.code === "Backspace" && (event.metaKey || event.ctrlKey || event.altKey)) {
+        if (event.code === "Backspace" && (event.metaKey || event.ctrlKey || event.altKey)) {
             event.preventDefault();
         }
 
