@@ -264,7 +264,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
 
 
-
+    
         const { value, inputEventData, keyPressEvent, textForDisplay, indexToChange, word, Init_Words, HighestIndexFoundOutOfBounds, RemainingWords, wordsSincePunctuation, isStartOfSentence, stoppedDueToError } = action.payload
 
 
@@ -288,6 +288,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
                     //check if the word we typed is equal to the current word
 
                     TypedWord = value;
+
+                    //set the typedword max length to currentword length + 15
 
                     let iscorrect = false;
 
@@ -1356,7 +1358,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
             dispatch({ type: "StartTest", payload: {} });
 
         }
-        let value = event.target.value.trimEnd();
+        let value:string = event.target.value.trimEnd();
         const inputEvent = event.nativeEvent as InputEvent;
         const inputEventData = inputEvent.data;
         // console.log(inputEvent)
@@ -1366,6 +1368,11 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
             // console.log("last key pressed", state.lastkeyPressed);
             value = value.slice(0, -1);
         }
+
+        //set the typed value max length to currentword length + 20
+
+        value = value.slice(0,state.words[state.CurrentWordIndex].length + 20)
+
 
         //If there is a full stop at the end of the word. Check to see if the last key we pressed was '.' If not remove it.
         dispatch({ type: "InputChanged", payload: { value, inputEventData } })

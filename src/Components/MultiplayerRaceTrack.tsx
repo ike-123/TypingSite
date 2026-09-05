@@ -125,6 +125,14 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
                             // graphics.setFillStyle({ color: trackColour });
                             graphics.rect(0, 0, width * .9, rectangleheight);
                             graphics.fill({color: "0b0809", alpha:AlphaStrength});
+                            graphics.moveTo(0, rectangleheight);
+                            graphics.lineTo(width * 0.9, rectangleheight);
+                            graphics.stroke({
+                            color: "gray",
+                            width: 1,
+                            alpha: .5
+                            });
+                                                
                             
                         }} >
 
@@ -265,6 +273,7 @@ const MultiplayerRaceTrack = (props: MultiplayerProps) => {
                                     </pixiContainer>
                             } */}
 
+                           {/* Finish Results */}
                             <pixiContainer zIndex={2} x={width * .9 + ((width - width * .95) / 2)} y={7} >
 
                                 <HBox gap={18}>
