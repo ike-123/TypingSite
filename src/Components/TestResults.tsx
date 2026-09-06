@@ -190,6 +190,7 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
 
     return (
         <div className=''>
+
             <Card className='flex'>
 
                 <div className='w-full m-auto flex flex-col sm:flex-row gap-0'>
@@ -226,56 +227,63 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
                     <div className=' h-full w-full flex-5'>
                         <div className='h-60'>
 
-                            <ChartContainer className='h-full w-full' config={chartConfig}>
+                            {
+                                state.TotalTime < 1 ? <div className='h-full flex  items-center justify-center text-center border mr-5 rounded-sm '>
+                                    <h1 className='text-2xl '>Test too short</h1>
 
-                                <LineChart
-                                    accessibilityLayer
-                                    data={state.WpmEverySecond}
-                                    margin={{
-                                        left: 12,
-                                        right: 12,
-                                        bottom: 16,
-                                        top: 10
-                                    }}
-                                >
-                                    <CartesianGrid vertical={true} />
-                                    <XAxis
-                                        dataKey="time"
-                                        type='number'
-                                        domain={['dataMin', 'dataMax']}
-                                        tickLine={false}
-                                        axisLine={false}
-                                        tickMargin={8}
-                                        // tickCount={30}
-                                        ticks={generateTicks(minTime, maxTime, 30)}
-                                    // interval={"equidistantPreserveStart"}
-                                    >
+                                </div>
+                                    :
 
-                                        <Label position={"bottom"} value={"Time (s)"} offset={5} />
+                                    <ChartContainer className='h-full w-full' config={chartConfig}>
 
-                                    </XAxis>
+                                        <LineChart
+                                            accessibilityLayer
+                                            data={state.WpmEverySecond}
+                                            margin={{
+                                                left: 12,
+                                                right: 12,
+                                                bottom: 16,
+                                                top: 10
+                                            }}
+                                        >
+                                            <CartesianGrid vertical={true} />
+                                            <XAxis
+                                                dataKey="time"
+                                                type='number'
+                                                domain={['dataMin', 'dataMax']}
+                                                tickLine={false}
+                                                axisLine={false}
+                                                tickMargin={8}
+                                                // tickCount={30}
+                                                ticks={generateTicks(minTime, maxTime, 30)}
+                                            // interval={"equidistantPreserveStart"}
+                                            >
 
-                                    <YAxis dataKey="wpm" tickLine={false} axisLine={false} >
+                                                <Label position={"bottom"} value={"Time (s)"} offset={5} />
 
-                                        <Label position={"left"} value={"WPM"} angle={-45} offset={-20} />
+                                            </XAxis>
 
-                                    </YAxis>
+                                            <YAxis dataKey="wpm" tickLine={false} axisLine={false} >
 
-                                    <ChartTooltip
-                                        cursor={false}
-                                        content={<ChartTooltipContent hideLabel />}
-                                    />
-                                    <Line
-                                        dataKey="wpm"
-                                        type="natural"
-                                        stroke="var(--color-wpm)"
-                                        strokeWidth={2}
-                                        dot={false}
-                                    />
+                                                <Label position={"left"} value={"WPM"} angle={-45} offset={-20} />
+
+                                            </YAxis>
+
+                                            <ChartTooltip
+                                                cursor={false}
+                                                content={<ChartTooltipContent hideLabel />}
+                                            />
+                                            <Line
+                                                dataKey="wpm"
+                                                type="natural"
+                                                stroke="var(--color-wpm)"
+                                                strokeWidth={2}
+                                                dot={false}
+                                            />
 
 
 
-                                    {/* {
+                                            {/* {
                                         _mistakePoints = state.errors.map((time) => {
 
 
@@ -295,18 +303,18 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
                                         )
                                     } */}
 
-                                    {/* {
+                                            {/* {
 
 
                                         console.log("mistake", _mistakePoints)
                                     } */}
-                                    {/* <Scatter
+                                            {/* <Scatter
                                         data={data}
                                         fill="red"
                                     /> */}
 
 
-                                    {/* {state.errors.map((t) => {
+                                            {/* {state.errors.map((t) => {
                                         const y = interpolateY(state.WpmEverySecond, t)
                                         if (y == null) return null
 
@@ -322,34 +330,38 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
                                         )
                                     })} */}
 
-                                    {/* <ReferenceDot x={3.5} y={80} r={5} fill='red' /> */}
+                                            {/* <ReferenceDot x={3.5} y={80} r={5} fill='red' /> */}
 
 
-                                    {state.errors.map((time, id) => {
+                                            {state.errors.map((time, id) => {
 
-                                        if (time < 1) {
-                                            time = 1
-                                        }
-                                        if (time > state.count) {
-                                            // console.log(state.count)
-                                            time = state.count
-                                        }
-                                        // console.log(time)
-                                        return (
-                                            <ReferenceDot
-                                                key={id}
-                                                x={time}
-                                                y={0}
-                                                r={3}
-                                                fill="red"
-                                                stroke="black"
-                                            />
-                                        )
-                                    })}
+                                                if (time < 1) {
+                                                    time = 1
+                                                }
+                                                if (time > state.count) {
+                                                    // console.log(state.count)
+                                                    time = state.count
+                                                }
+                                                // console.log(time)
+                                                return (
+                                                    <ReferenceDot
+                                                        key={id}
+                                                        x={time}
+                                                        y={0}
+                                                        r={3}
+                                                        fill="red"
+                                                        stroke="black"
+                                                    />
+                                                )
+                                            })}
 
-                                </LineChart>
+                                        </LineChart>
 
-                            </ChartContainer>
+                                    </ChartContainer>
+                            }
+
+
+
                         </div>
 
                         <div className=' flex justify-around pt-10'>

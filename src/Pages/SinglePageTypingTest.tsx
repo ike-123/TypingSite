@@ -268,9 +268,13 @@ const SinglePageTypingTest = () => {
                 console.log("Test result won't be saved Error made")
                 return
             }
-            else if (engine.state.totalTime < 3) {
+            else if (engine.state.totalTime < 14) {
 
                 console.log("Test is too short will not save")
+                return
+            }
+            else if(engine.state.WPM === 0){
+                console.log("0 WPM will not save")
                 return
             }
 
