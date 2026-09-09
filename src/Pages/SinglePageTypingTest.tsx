@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/Components/ui/card'
 import SP_TypingTest from '@/Components/SP_TypingTest'
 import { useTypingEnigne, type TypingModeConfig } from '@/Hooks/useTypingEngine'
+import { toast } from "sonner"
 
 import { type modeID, Modes, type configID } from '@/utils/Typingmode'
 
@@ -265,18 +266,36 @@ const SinglePageTypingTest = () => {
             if (engine.state.stoppedDueToError) {
 
                 //Show a toast to the user here
-                console.log("Test result won't be saved Error made")
+                console.log("Test result won't be saved. Error made")
+
+                setTimeout(() => {
+                toast.error("Test result won't be saved. Error made", { position: "bottom-right" })
+                    
+                }, 500
+            );
                 return
             }
             else if (engine.state.totalTime < 14) {
 
                 console.log("Test is too short will not save")
+
+                toast.error("Test is too short will not save", { position: "bottom-right" })
+
+
+                
                 return
             }
             else if(engine.state.WPM === 0){
                 console.log("0 WPM will not save")
+                toast.error("0 WPM will not save", { position: "bottom-right" })
+
+                
+
+                
                 return
             }
+
+            //don't save test if error mode
 
             const results = {
                 wpm: engine.state.WPM,
