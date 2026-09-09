@@ -11,6 +11,7 @@ import { Input } from '@/Components/ui/input'
 import { Modes, type modeID } from '@/utils/Typingmode'
 import { quotes } from '@/utils/Quotes'
 import type { TestResultData } from '@/Components/TestResults'
+import { toast } from 'sonner'
 // import { count } from 'node:console'
 
 
@@ -2327,6 +2328,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
         // console.log("click");
         inputref.current?.focus({ preventScroll: true });
+        toast.dismiss("TestFinished")
 
 
         // inputref.current?.focus
@@ -2342,6 +2344,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
         ResetCaret()
 
         inputref.current?.focus({ preventScroll: true })
+        toast.dismiss("TestFinished")
+
 
 
 

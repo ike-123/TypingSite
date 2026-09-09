@@ -269,7 +269,8 @@ const SinglePageTypingTest = () => {
                 console.log("Test result won't be saved. Error made")
 
                 setTimeout(() => {
-                toast.error("Test result won't be saved. Error made", { position: "bottom-right" })
+                    toast.dismiss()
+                toast.error("Test result won't be saved. Error made", { position: "bottom-right", id : "TestFinished"})
                     
                 }, 500
             );
@@ -279,7 +280,7 @@ const SinglePageTypingTest = () => {
 
                 console.log("Test is too short will not save")
 
-                toast.error("Test is too short will not save", { position: "bottom-right" })
+                toast.error("Test is too short will not save", { position: "bottom-right", id : "TestFinished" })
 
 
                 
@@ -287,7 +288,7 @@ const SinglePageTypingTest = () => {
             }
             else if(engine.state.WPM === 0){
                 console.log("0 WPM will not save")
-                toast.error("0 WPM will not save", { position: "bottom-right" })
+                toast.error("0 WPM will not save", { position: "bottom-right",  id : "TestFinished" })
 
                 
 
