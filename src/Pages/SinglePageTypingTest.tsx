@@ -270,29 +270,33 @@ const SinglePageTypingTest = () => {
 
                 setTimeout(() => {
                     toast.dismiss()
-                toast.error("Test result won't be saved. Error made", { position: "bottom-right", id : "TestFinished"})
-                    
+                    toast.error("Test result won't be saved. Error made", { position: "bottom-right", id: "TestFinished" })
+
                 }, 500
-            );
+                );
                 return
             }
             else if (engine.state.totalTime < 14) {
 
-                console.log("Test is too short will not save")
+                console.log("Test is too short, will not be saved")
+                setTimeout(() => {
+                    toast.dismiss()
+                    toast.error("Test is too short, will not be saved", { position: "bottom-right", id: "TestFinished" })
+                }, 500
+                );
 
-                toast.error("Test is too short will not save", { position: "bottom-right", id : "TestFinished" })
 
-
-                
                 return
             }
-            else if(engine.state.WPM === 0){
+            else if (engine.state.WPM === 0) {
                 console.log("0 WPM will not save")
-                toast.error("0 WPM will not save", { position: "bottom-right",  id : "TestFinished" })
+                setTimeout(() => {
+                    toast.error("0 WPM. Test will not be saved", { position: "bottom-right", id: "TestFinished" })
+                }, 500
+                );
 
-                
 
-                
+
                 return
             }
 
@@ -454,12 +458,12 @@ const SinglePageTypingTest = () => {
                     {/* <DialogOverlay className="fixed inset-0 bg-white/50 p-10" /> */}
 
 
-
-
-
-
                     {/* <DialogContent className='w-full max-w-sm sm:max-w-full  bg-orange-300 '> */}
-                    <DialogContent onCloseAutoFocus={(e) => {
+                    <DialogContent
+                        onInteractOutside={(event) => event.preventDefault()}
+                        onEscapeKeyDown={(event) => event.preventDefault()} 
+                        showCloseButton={false}
+                        onCloseAutoFocus={(e) => {
                         e.preventDefault() //stop Radix from deciding focus
                         engine.inputref.current?.focus()
                     }} className=' max-w-7xl md:w-11/12 lg:w-10/12 xl:w-8/12'>
