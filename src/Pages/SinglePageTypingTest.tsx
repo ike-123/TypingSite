@@ -362,22 +362,23 @@ const SinglePageTypingTest = () => {
 
             </Card> */}
 
-            <NavMenu />
+            <div className={`${engine.hideUI ? "invisible" : ""}`}>
+                <NavMenu />
+            </div>
 
             <div className='flex flex-row w-full max-w-3/4  justify-center gap-50 mt-7'>
 
 
 
-                <div className='bg-zinc-900 flex flex-row items-center  gap-3 h-full pb-1.5 pt-1 px-3 rounded-md border-1 '>
+                <div className={`bg-zinc-900 ${engine.hideUI ? "invisible" : ""}  flex flex-row items-center  gap-3 h-full pb-1.5 pt-1 px-3 rounded-md border-1`}>
 
                     <div className='text-sm'>Mode:</div>
 
-
-                    <div className='flex justify-center gap-3 ' >
+                    <div className={`flex justify-center gap-3 `}>
 
                         {
                             Object.values(Modes).map((mode) => (
-                                <Button size={'sm'} key={mode.id} onClick={() => selectMode(mode.id)} className='bg-primary w-16 text-base font-bold' variant={mode.id === modeID ? "default" : "outline"}>{mode.id}</Button>
+                                <Button size={'sm'} key={mode.id} onClick={() => selectMode(mode.id)} className={`bg-primary w-16 ${engine.hideUI ? " transition-none " : ""} text-base font-bold`} variant={mode.id === modeID ? "default" : "outline"}>{mode.id}</Button>
                             ))
                         }
 
@@ -385,7 +386,7 @@ const SinglePageTypingTest = () => {
 
                 </div>
 
-                <div className='bg-zinc-900 flex flex-row gap-4  items-center gap-1 h-full pb-1.5 pt-1 px-3 rounded-md border-1 '>
+                <div className={`bg-zinc-900 flex flex-row gap-4 ${engine.hideUI ? "invisible" : ""} items-center gap-1 h-full pb-1.5 pt-1 px-3 rounded-md border-1`}>
 
                     <div className='text-sm'>{Modes[modeID].LengthDurationSetting.name}:</div>
 
@@ -395,7 +396,7 @@ const SinglePageTypingTest = () => {
                         {
                             Object.values(Modes[modeID].LengthDurationSetting.options).map((_LengthDurationSetting) => (
 
-                                <Button size={'sm'} key={_LengthDurationSetting} onClick={() => ChangeLengthDurationSetting(_LengthDurationSetting)} className='bg-primary  text-base font-bold' variant={_LengthDurationSetting === LengthDurationSetting ? "default" : "outline"}>{_LengthDurationSetting}</Button>
+                                <Button size={'sm'} key={_LengthDurationSetting} onClick={() => ChangeLengthDurationSetting(_LengthDurationSetting)} className={`bg-primary transition-none   text-base font-bold`} variant={_LengthDurationSetting === LengthDurationSetting ? "default" : "outline"}>{_LengthDurationSetting}</Button>
 
                             ))
                         }
@@ -414,7 +415,7 @@ const SinglePageTypingTest = () => {
                 <Button onClick={} className='bg-primary w-25'>Quote</Button>
             </div> */}
 
-            <div className='bg-zinc-900 flex flex-row items-center justify-center gap-1  h-full p-1 px-5 rounded-md border mt-6 mb-15'>
+            <div className={`bg-zinc-900 flex flex-row items-center ${engine.hideUI ? "invisible" : ""} justify-center gap-1  h-full p-1 px-5 rounded-md border mt-6 mb-15`}>
 
                 <div className='text-xs font-bold mr-3'>
                     Configs
@@ -424,7 +425,7 @@ const SinglePageTypingTest = () => {
                     {
                         Object.values(Modes[modeID].allowedConfigs).map((config) => (
 
-                            <Button size={'sm'} key={config} onClick={() => changeConfig(config)} className='bg-primary' variant={Allowedconfigs.includes(config) ? "default" : "outline"}>{config}</Button>
+                            <Button size={'sm'} key={config} onClick={() => changeConfig(config)} className={`bg-primary transition-none `} variant={Allowedconfigs.includes(config) ? "default" : "outline"}>{config}</Button>
 
                         ))
                     }
@@ -461,12 +462,12 @@ const SinglePageTypingTest = () => {
                     {/* <DialogContent className='w-full max-w-sm sm:max-w-full  bg-orange-300 '> */}
                     <DialogContent
                         onInteractOutside={(event) => event.preventDefault()}
-                        onEscapeKeyDown={(event) => event.preventDefault()} 
+                        onEscapeKeyDown={(event) => event.preventDefault()}
                         showCloseButton={false}
                         onCloseAutoFocus={(e) => {
-                        e.preventDefault() //stop Radix from deciding focus
-                        engine.inputref.current?.focus()
-                    }} className=' max-w-7xl md:w-11/12 lg:w-10/12 xl:w-8/12'>
+                            e.preventDefault() //stop Radix from deciding focus
+                            engine.inputref.current?.focus()
+                        }} className=' max-w-7xl md:w-11/12 lg:w-10/12 xl:w-8/12'>
 
                         <TestResults modeConfig={{ mode: modeID, configs: Allowedconfigs, LengthDurationSetting }} state={engine.state} NextTestFunction={engine.Reset} RedoTestFunction={engine.Redo} />
 

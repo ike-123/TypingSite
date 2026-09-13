@@ -11,7 +11,7 @@ const NavMenu = () => {
 
                 {({ isActive }) => (
 
-                    <Button className='rounded-full text-xl h-full' variant={isActive ? "default" : "ghost"}>Solo</Button>
+                    <Button className='rounded-full transition-none text-xl h-full' variant={isActive ? "default" : "ghost"}>Solo</Button>
 
                 )}
 
@@ -21,7 +21,7 @@ const NavMenu = () => {
 
                 {({ isActive }) => (
 
-                    <Button className='rounded-full text-xl h-full' variant={isActive ? "default" : "ghost"}>Multiplayer</Button>
+                    <Button className='rounded-full transition-none text-xl h-full' variant={isActive ? "default" : "ghost"}>Multiplayer</Button>
 
                 )}
 
@@ -32,7 +32,7 @@ const NavMenu = () => {
 
                 {({ isActive }) => (
 
-                    <Button className='rounded-full text-xl h-full' variant={isActive ? "default" : "ghost"}>Games</Button>
+                    <Button className='rounded-full transition-none text-xl h-full' variant={isActive ? "default" : "ghost"}>Games</Button>
 
                 )}
 

@@ -149,6 +149,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
     const inputref = useRef<HTMLInputElement | null>(null);
 
     const [focus, SetFocus] = useState(true);
+    const [hideUI, SetHideUi] = useState(false)
 
     const TextContainerref = useRef<HTMLDivElement | null>(null);
 
@@ -1082,6 +1083,11 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
         function handleKeyDown(e: any) {
             // Don't steal focus if the user is already typing somewhere
             if (document.activeElement === inputref.current) {
+
+                // if (state.status === "typing") {
+                //hide UI when a key is pressed, test has started and is focused
+                SetHideUi(true)
+                // }
                 return;
             }
 
@@ -1094,8 +1100,13 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
             inputref.current?.focus();
         }
+        function handleMouseMove() {
+            SetHideUi(false)
+        }
 
+        //Focus on any input when key is pressed
         document.addEventListener("keydown", handleKeyDown);
+        document.addEventListener("mousemove", handleMouseMove)
 
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
@@ -1342,6 +1353,8 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
             console.log("test stopped")
 
             dispatch({ type: "FinishTest", payload: {} })
+            SetHideUi(false)
+
 
         }
     }, [state.stopTest])
@@ -2329,7 +2342,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
         // console.log("click");
         inputref.current?.focus({ preventScroll: true });
         toast.dismiss("TestFinished")
-
+        SetHideUi(false)
 
         // inputref.current?.focus
 
@@ -2345,9 +2358,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
         inputref.current?.focus({ preventScroll: true })
         toast.dismiss("TestFinished")
-
-
-
+        SetHideUi(false)
 
         dispatch({ type: "RedoTest", payload: {} })
     }
@@ -2366,6 +2377,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
         lineoffset,
         focus,
         SetFocus,
+        hideUI,
         HandleKeyDown,
         ChangeInput,
         Reset,

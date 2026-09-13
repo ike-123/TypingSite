@@ -35,7 +35,7 @@ const SP_TypingTest = ({ engine, HighlightIncorrectCurrentWord }: SP_TypingTestP
 
                     {/* <div id='wordcontainer' className={`relative text-3xl text-[#8a8c8f]`} style={{ marginTop: engine.margin > 0 ? -(engine.margin * 39) : 0, }}> */}
                     {/* <div ref={engine.WordContainerRef}  id='wordcontainer' className={`relative text-3xl text-[#8a8c8f]`} style={{ transform: `translateY(-${engine.lineoffset * engine.LINE_HEIGHT}px)` }}> */}
-                    <div ref={engine.WordContainerRef} id='wordcontainer' className={`relative mx-[2px] text-3xl text-[#8a8c8f]`} onClick={engine.MoveCaretToEnd} >
+                    <div ref={engine.WordContainerRef} id='wordcontainer' className={`relative mx-[2px] text-3xl text-[#8a8c8f] w-full`} onClick={engine.MoveCaretToEnd} >
 
 
                         <div ref={engine.caretRef} id='Textcontainer' className="absolute w-[2px] h-[33px] bg-white transition-all duration-100" />
