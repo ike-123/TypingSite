@@ -80,6 +80,8 @@ export const Modes: Record<modeID, TypingModeConfig> = {
 
                 const TextToDisplay = `${state.totalTime-state.count}`
 
+                console.log("inside typing mode" , state.status)
+
                 return{
                     ...state,
                     displayText:TextToDisplay,

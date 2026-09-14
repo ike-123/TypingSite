@@ -1084,9 +1084,10 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
             // Don't steal focus if the user is already typing somewhere
             if (document.activeElement === inputref.current) {
 
+                console.log("status", state.status)
                 // if (state.status === "typing") {
                 //hide UI when a key is pressed, test has started and is focused
-                SetHideUi(true)
+                // SetHideUi(true)
                 // }
                 return;
             }
@@ -1327,6 +1328,9 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
         if (state.status === "typing") {
 
+            SetHideUi(true)
+
+
             intervalRef.current = setInterval(() => {
 
                 dispatch({ type: "Update_EverySecond", payload: {} })
@@ -1420,10 +1424,12 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
         //set the typed value max length to currentword length + 20
         value = value.slice(0, state.words[state.CurrentWordIndex].length + 20)
 
-        //If there is a full stop at the end of the word. Check to see if the last key we pressed was '.' If not remove it.
+        //If there is a full stop at the end of the word we'll check to see if the last key we pressed was '.' If not remove it.
         dispatch({ type: "InputChanged", payload: { value, inputEventData } })
 
-
+        if (state.status === "typing") {
+            SetHideUi(true)
+        }
 
         // setTypedWord(value)
 
@@ -1492,12 +1498,16 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
         if (event.code === "Space") {
             event.preventDefault();
 
+
             const { word, wordsSincePunctuation, isStartOfSentence } = GenerateRandomWord(state);
 
 
 
             dispatch({ type: "SpacebarPressed", payload: { keyPressEvent: event, word, wordsSincePunctuation, isStartOfSentence } })
 
+            if (state.status === "typing") {
+                SetHideUi(true)
+            }
 
             // if (TypedWord.length > 0) {
 
