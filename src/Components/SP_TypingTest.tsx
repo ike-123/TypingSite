@@ -30,15 +30,15 @@ const SP_TypingTest = ({ engine, HighlightIncorrectCurrentWord }: SP_TypingTestP
 
             <div className="TypeTestContainer font-sans">
 
-                <div ref={engine.TextContainerref} className='flex h-[115px] overflow-hidden relative'>
+                <div ref={engine.TextContainerref} className='flex h-[125px] overflow-hidden relative'>
 
 
                     {/* <div id='wordcontainer' className={`relative text-3xl text-[#8a8c8f]`} style={{ marginTop: engine.margin > 0 ? -(engine.margin * 39) : 0, }}> */}
                     {/* <div ref={engine.WordContainerRef}  id='wordcontainer' className={`relative text-3xl text-[#8a8c8f]`} style={{ transform: `translateY(-${engine.lineoffset * engine.LINE_HEIGHT}px)` }}> */}
-                    <div ref={engine.WordContainerRef} id='wordcontainer' className={`relative mx-[2px] text-3xl text-[#8a8c8f] w-full`} onClick={engine.MoveCaretToEnd} >
+                    <div ref={engine.WordContainerRef} id='wordcontainer' className={`relative mx-[2px] text-[32px] leading-10 text-[#8a8c8f] w-full`} onClick={engine.MoveCaretToEnd} >
 
 
-                        <div ref={engine.caretRef} id='Textcontainer' className="absolute w-[2px] h-[33px] bg-white transition-all duration-100" />
+                        <div ref={engine.caretRef} className="absolute w-[2px] h-[33px] bg-white transition-all duration-100" />
 
                         {/* loop through all the words in the words array */}
                         {engine.state.words.slice(engine.state.IndexToStartFrom).map((word, wordIndex) => (
@@ -135,7 +135,7 @@ const SP_TypingTest = ({ engine, HighlightIncorrectCurrentWord }: SP_TypingTestP
 
                     {/* <div className=''> */}
 
-                    <input className={`w-full h-[115px] text-transparent m-auto absolute outline-none pointer-events-none ${engine.focus ? "opacity-0" : "backdrop-blur-xs"} `} ref={engine.inputref} id="input" type="text" autoComplete='off' spellCheck="false" autoCapitalize='false' autoCorrect='false' autoFocus value={engine.state.TypedWord} onFocus={() => { engine.SetFocus(true) }} onBlur={() => { engine.SetFocus(false) }} onKeyDown={engine.HandleKeyDown} onChange={engine.ChangeInput} onClick={engine.MoveCaretToEnd} 
+                    <input className={`w-full h-[125px] text-transparent m-auto absolute outline-none pointer-events-none ${engine.focus ? "opacity-0" : "backdrop-blur-xs"} `} ref={engine.inputref} id="input" type="text" autoComplete='off' spellCheck="false" autoCapitalize='false' autoCorrect='false' autoFocus value={engine.state.TypedWord} onFocus={() => { engine.SetFocus(true) }} onBlur={() => { engine.SetFocus(false) }} onKeyDown={engine.HandleKeyDown} onChange={engine.ChangeInput} onClick={engine.MoveCaretToEnd} 
                        />
                         
 

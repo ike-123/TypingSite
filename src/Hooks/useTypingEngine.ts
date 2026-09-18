@@ -194,7 +194,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
     const punctuation = ["!",]
 
 
-    const LINE_HEIGHT = 39;
+    const LINE_HEIGHT = 43;
     const TARGET_LINE = 1; // 0 = first line, 1 = second line
     const MAX_CARET_Y = (TARGET_LINE) * LINE_HEIGHT;
 
@@ -1024,13 +1024,15 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
         // console.log("typedword ", TypedWord.length);
         // console.log(CurrentWord);
 
-
         if (caretTop > MAX_CARET_Y) {
+
+            //If the difference between the top of the current word and the top of the text
+            //  container is greater than MAX_CARET_Y then delete the top row of words
+
             // console.log("maxcarety = ", MAX_CARET_Y);P
             // incrementScroll();
             // console.log("delete")
             Delete()
-
         }
 
         if (!letterElement) {
@@ -1041,6 +1043,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
             // SetTop(CurrentWordsSpansRef.current[0]?.offsetTop!);
             caretElement.style.top = `${CurrentWordsSpansRef.current[0]?.offsetTop}px`
             // caretTop = caretElement.offsetTop
+            console.log("carret offset top = ", caretElement.offsetTop)
             SetTop(caretElement.offsetTop)
             // console.log("changed")
 
@@ -1123,9 +1126,10 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
     function Delete() {
 
         // setlineoffset(prev => prev + 1);
+
+        //Get All spans
         const spans = WordContainerRef.current!.querySelectorAll<HTMLSpanElement>("span.word");
 
-        console.log(spans)
 
         const TextContainerRect = TextContainerref.current!.getBoundingClientRect();
 
@@ -1151,9 +1155,11 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
             // console.log(span);
 
-            if (span.getBoundingClientRect().top - TextContainerRect?.top <= 1) {
+            if (span.getBoundingClientRect().top - TextContainerRect?.top <= 2) {
 
                 //span is above the Text Container.
+                console.log(span)
+                console.log("less than")
                 SpanstoRemove.push(span);
             }
 
@@ -1167,7 +1173,12 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
         }
 
         // console.log("start")
-        console.log(SpanstoRemove)
+        // console.log(SpanstoRemove)
+        
+        if(SpanstoRemove.length === 0){
+            console.log("No spans found")
+            return
+        }
 
         const IndexOfSpansToRemove = SpanstoRemove.map((span) => {
             const Index = parseInt(span.dataset.wordIndex!, 10);
@@ -1177,7 +1188,7 @@ export function useTypingEnigne({ mode, config, LengthDurationSetting, providedT
 
         const HighestIndexFoundOutOfBounds = Math.max(...IndexOfSpansToRemove)
 
-        console.log("highest ", HighestIndexFoundOutOfBounds);
+        // console.log("highest ", HighestIndexFoundOutOfBounds);
 
         dispatch({ type: "UpdateAllwordMap", payload: { HighestIndexFoundOutOfBounds } })
 
