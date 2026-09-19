@@ -629,7 +629,43 @@ app.post("/api/testresult", protectRoute, async (req, res) => {
         console.log("ConfigKey " + NormalizedConfigKey)
 
 
+        let isPb = ""
+        // Fetch the users PB score
+        const PB = await prisma.typingTest.aggregate({
+            where: {
+                userId,
+                mode,
+                lengthDurationSetting: LengthDurationSetting,
 
+                ...(NormalizedConfigKey == null
+                    ? {
+                        OR: [
+                            { configKey: null },
+                            { configKey: "" }
+                        ]
+                    }
+                    : {
+                        configKey: NormalizedConfigKey
+                    })
+            },
+
+            _max: { wpm: true },
+        })
+
+
+        console.log("Comparing ", wpm, " to PB of", PB._max.wpm)
+        console.log(wpm + PB._max.wpm)
+
+        if (PB._max.wpm != null) {
+            if (wpm > PB._max.wpm) {
+                console.log("new pb")
+                isPb = "New_PB"
+            }
+            else if (wpm === PB._max.wpm) {
+                console.log("equal")
+                isPb = "Joint_PB"
+            }
+        }
 
 
         const testresult = await prisma.typingTest.create({
@@ -646,7 +682,11 @@ app.post("/api/testresult", protectRoute, async (req, res) => {
             }
         })
 
-        res.json(testresult);
+
+        console.log(isPb)
+        isPb = "New_PB"
+
+        res.json({ ...testresult, isPb });
 
 
     } catch (error) {
@@ -833,7 +873,7 @@ app.get("/api/PBandHistory", protectRoute, async (req, res) => {
 
         if (Array.isArray(configs)) {
 
-            console.log("is array")
+            // console.log("is array")
             let FilteredConfigs = configs.filter(item => item !== "error")
 
             if (FilteredConfigs.length > 0) {

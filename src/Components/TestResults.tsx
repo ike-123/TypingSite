@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { ArrowBigRight, RotateCcw, TrendingUp } from "lucide-react"
 import { Button } from '@/components/ui/button'
@@ -33,6 +33,8 @@ import {
 import type { State } from '@/Hooks/useTypingEngine'
 import type { configID, modeID } from '@/utils/Typingmode'
 
+import confetti from "canvas-confetti"
+import { DiaTextReveal } from "@/components/ui/dia-text-reveal"
 
 export const description = "A line chart"
 
@@ -93,6 +95,7 @@ type TestResultsProps = {
     modeConfig: ModeConfigResults
     NextTestFunction: any
     RedoTestFunction: any
+    isPb: string
 }
 
 // let _mistakePoints:TestResultData | null[] = [];
@@ -117,8 +120,9 @@ type TestResultsProps = {
 
 
 
-const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: TestResultsProps) => {
+const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction, isPb }: TestResultsProps) => {
 
+    const [pbtext, SetPbText] = useState(<></>)
 
     function interpolateY(data: TestResultData[], targetTime: number) {
 
@@ -187,6 +191,59 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
 
     ];
 
+    const ShootParticles = () => {
+        const end = Date.now() + 1.5 * 1000 // 3 seconds
+        const colors1 = ["#a786ff", "#eca184"]
+        const colors2 = ["#a786ff", "#f8deb1"]
+
+        const frame = () => {
+            if (Date.now() > end) return
+            confetti({
+                particleCount: 2,
+                angle: 60,
+                spread: 55,
+                startVelocity: 70,
+                origin: { x: 0, y: 0.5 },
+                colors: colors1,
+            })
+            confetti({
+                particleCount: 2,
+                angle: 120,
+                spread: 55,
+                startVelocity: 70,
+                origin: { x: 1, y: 0.5 },
+                colors: colors2,
+            })
+            requestAnimationFrame(frame)
+        }
+        frame()
+    }
+
+    useEffect(() => {
+        if (isPb === "New_PB") {
+            SetPbText(
+
+                <div className=" mb-2">
+                    <DiaTextReveal
+                        className="font-bold text-4xl mb-2"
+                        text="New PB"
+                        duration={3}
+                        textColor='oklch(79.5% 0.184 86.047)'
+                        colors={["#A97CF8", "#F38CB8", "#FDCC92"]}
+                    />
+                </div>
+            )
+            ShootParticles();
+        }
+        else if (isPb === "Joint_PB") {
+            SetPbText(
+                <h1 className='font-bold text-center text-yellow-300 text-base mb-2 '>
+                    You equaled your PB
+                </h1>
+            )
+        }
+
+    }, [isPb])
 
     return (
         <div className=''>
@@ -199,6 +256,9 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
 
                         {/* WPM */}
                         <div className='flex flex-col items-center mt-2'>
+
+
+                            {isPb ? pbtext : ""}
 
                             <h1 className='text-6xl font-bold text-primary'>
                                 {state.WPM}
@@ -221,6 +281,10 @@ const TestResults = ({ state, modeConfig, NextTestFunction, RedoTestFunction }: 
                                 Accuracy
                             </h1>
                         </div>
+
+                        {/* {
+                            isPb === "New_PB" ? ShootParticles() : null
+                        } */}
 
                     </div>
 

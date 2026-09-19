@@ -75,6 +75,8 @@ const SinglePageTypingTest = () => {
 
     const [ShowResults, SetShowResults] = useState(false)
 
+    const [ispb,SetIsPb] = useState<string>("")
+
 
     function selectMode(id: modeID) {
 
@@ -265,18 +267,18 @@ const SinglePageTypingTest = () => {
 
             if (engine.state.stoppedDueToError) {
 
-                //Show a toast to the user here
-                console.log("Test result won't be saved. Error made")
+                // //Show a toast to the user here
+                // console.log("Test result won't be saved. Error made")
 
-                setTimeout(() => {
-                    toast.dismiss()
-                    toast.error("Test result won't be saved. Error made", { position: "bottom-right", id: "TestFinished" })
+                // setTimeout(() => {
+                //     toast.dismiss()
+                //     toast.error("Test result won't be saved. Error made", { position: "bottom-right", id: "TestFinished" })
 
-                }, 500
-                );
-                return
+                // }, 500
+                // );
+                // return
             }
-            else if (engine.state.totalTime < 14) {
+            else if (engine.state.totalTime < 2) {
 
                 console.log("Test is too short, will not be saved")
                 setTimeout(() => {
@@ -320,6 +322,8 @@ const SinglePageTypingTest = () => {
                         { withCredentials: true }
                     );
 
+                    // console.log(data.data.isPb)
+                    SetIsPb(data.data.isPb)
                     console.log(data);
                 } catch (error) {
                     console.error("Failed to save test result", error);
@@ -469,7 +473,7 @@ const SinglePageTypingTest = () => {
                             engine.inputref.current?.focus()
                         }} className=' max-w-7xl md:w-11/12 lg:w-10/12 xl:w-8/12'>
 
-                        <TestResults modeConfig={{ mode: modeID, configs: Allowedconfigs, LengthDurationSetting }} state={engine.state} NextTestFunction={engine.Reset} RedoTestFunction={engine.Redo} />
+                        <TestResults modeConfig={{ mode: modeID, configs: Allowedconfigs, LengthDurationSetting }} state={engine.state} NextTestFunction={engine.Reset} RedoTestFunction={engine.Redo} isPb={ispb} />
 
                     </DialogContent>
 
