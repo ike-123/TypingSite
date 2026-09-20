@@ -654,7 +654,6 @@ app.post("/api/testresult", protectRoute, async (req, res) => {
 
 
         console.log("Comparing ", wpm, " to PB of", PB._max.wpm)
-        console.log(wpm + PB._max.wpm)
 
         if (PB._max.wpm != null) {
             if (wpm > PB._max.wpm) {
@@ -683,9 +682,7 @@ app.post("/api/testresult", protectRoute, async (req, res) => {
         })
 
 
-        console.log(isPb)
-        isPb = "New_PB"
-
+        // console.log(isPb)
         res.json({ ...testresult, isPb });
 
 

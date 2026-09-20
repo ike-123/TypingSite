@@ -267,18 +267,18 @@ const SinglePageTypingTest = () => {
 
             if (engine.state.stoppedDueToError) {
 
-                // //Show a toast to the user here
-                // console.log("Test result won't be saved. Error made")
+                //Show a toast to the user here
+                console.log("Test result won't be saved. Error made")
 
-                // setTimeout(() => {
-                //     toast.dismiss()
-                //     toast.error("Test result won't be saved. Error made", { position: "bottom-right", id: "TestFinished" })
+                setTimeout(() => {
+                    toast.dismiss()
+                    toast.error("Test result won't be saved. Error made", { position: "bottom-right", id: "TestFinished" })
 
-                // }, 500
-                // );
-                // return
+                }, 500
+                );
+                return
             }
-            else if (engine.state.totalTime < 2) {
+            else if (engine.state.totalTime < 14) {
 
                 console.log("Test is too short, will not be saved")
                 setTimeout(() => {

@@ -30,7 +30,7 @@ const SP_TypingTest = ({ engine, HighlightIncorrectCurrentWord }: SP_TypingTestP
 
             <div className="TypeTestContainer font-sans">
 
-                <div ref={engine.TextContainerref} className='flex h-[125px] overflow-hidden relative'>
+                <div ref={engine.TextContainerref}  className='flex h-[125px] overflow-hidden relative'>
 
 
                     {/* <div id='wordcontainer' className={`relative text-3xl text-[#8a8c8f]`} style={{ marginTop: engine.margin > 0 ? -(engine.margin * 39) : 0, }}> */}
@@ -38,7 +38,7 @@ const SP_TypingTest = ({ engine, HighlightIncorrectCurrentWord }: SP_TypingTestP
                     <div ref={engine.WordContainerRef} id='wordcontainer' className={`relative mx-[2px] text-[32px] leading-10 text-[#8a8c8f] w-full`} onClick={engine.MoveCaretToEnd} >
 
 
-                        <div ref={engine.caretRef} className="absolute w-[2px] h-[33px] bg-white transition-all duration-100" />
+                        <div ref={engine.caretRef} className={`absolute w-[2px] h-[33px] bg-white transition-all ${engine.hideUI ? "" : "animate-[caret-blink_1s_steps(1)_infinite]"}  duration-100`} />
 
                         {/* loop through all the words in the words array */}
                         {engine.state.words.slice(engine.state.IndexToStartFrom).map((word, wordIndex) => (
